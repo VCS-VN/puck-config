@@ -9,7 +9,8 @@ const URL =
 
 const httpClient = axios.create({
   baseURL: process
-    ? process.env.NEXT_PUBLIC_CUSTOMER_API_URL
+    ? process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL ||
+      get(import.meta, "meta.VITE_CUSTOMER_API_URL")
     : get(import.meta, "meta.VITE_CUSTOMER_API_URL"),
 });
 
