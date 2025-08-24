@@ -657,7 +657,8 @@ console.log(
   getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
 );
 var httpClient = axios.create({
-  baseURL: getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
+  baseURL: "http://localhost:9800"
+  // getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL"),
 });
 console.log(
   ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",
