@@ -719,7 +719,10 @@ var httpClient_default = httpClient;
 
 // src/services/sale/product/product.api.ts
 var getProducts = async (payload) => {
-  console.log("\u{1F680} ~ getProducts ~ httpClient:", httpClient_default);
+  console.log(
+    "\u{1F680} ~ getProducts ~ httpClient:",
+    process.env.NEXT_PUBLIC_CUSTOMER_API_URL
+  );
   const response = await httpClient_default.get(`/api/v1/products`, {
     params: payload
   });
