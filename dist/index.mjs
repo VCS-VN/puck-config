@@ -639,6 +639,9 @@ import { Card, Image, Select, Skeleton } from "antd";
 import { ErrorBoundary } from "react-error-boundary";
 import { useState } from "react";
 
+// src/services/sale/product/product.api.ts
+import { get as get3 } from "lodash";
+
 // src/client/httpClient.ts
 import axios from "axios";
 
@@ -652,13 +655,10 @@ function getEnv(key) {
 }
 
 // src/client/httpClient.ts
-console.log(
-  ";jaosdasdfasdfasdjfoasdf",
-  getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
-);
+import { get as get2 } from "lodash";
 var URL = getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 var httpClient = axios.create({
-  baseURL: URL
+  baseURL: process.env.NEXT_PUBLIC_CUSTOMER_API_URL || get2(import.meta, "meta.VITE_CUSTOMER_API_URL")
 });
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
@@ -716,9 +716,10 @@ var httpClient_default = httpClient;
 var getProducts = async (payload) => {
   console.log(
     "\u{1F680} ~ getProducts ~ httpClient:",
-    process.env.NEXT_PUBLIC_CUSTOMER_API_URL,
+    process.env.NEXT_PUBLIC_CUSTOMER_API_URL || get3(import.meta, "meta.VITE_CUSTOMER_API_URL"),
     httpClient_default.defaults?.baseURL
   );
+  httpClient_default.defaults.baseURL = process.env.NEXT_PUBLIC_CUSTOMER_API_URL;
   const response = await httpClient_default.get(`/api/v1/products`, {
     params: payload
   });
@@ -832,7 +833,7 @@ var ProductCard = withLayout(ProductCardInternal);
 // src/blocks/ProductGrid/index.tsx
 import { Row, Col, Card as Card2, Image as Image2, Pagination, Skeleton as Skeleton2 } from "antd";
 import { useMemo, useState as useState2 } from "react";
-import { get as get2, round } from "lodash";
+import { get as get4, round } from "lodash";
 import { jsx as jsx12, jsxs as jsxs2 } from "react/jsx-runtime";
 var ProductGridRender = ({
   columns,
@@ -867,7 +868,7 @@ var ProductGridRender = ({
       },
       `skeleton-${i}`
     )) : products.map((p) => {
-      const defaultModel = get2(p, "defaultModel", get2(p, "models.0"));
+      const defaultModel = get4(p, "defaultModel", get4(p, "models.0"));
       return /* @__PURE__ */ jsx12(Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ jsx12(
         Card2,
         {

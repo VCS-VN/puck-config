@@ -2,16 +2,15 @@
 
 import axios from "axios";
 import { getEnv } from "@/utils/env-key";
-console.log(
-  ";jaosdasdfasdfasdjfoasdf",
-  getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
-);
+import { get } from "lodash";
 
 const URL =
   getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 
 const httpClient = axios.create({
-  baseURL: URL,
+  baseURL:
+    process.env.NEXT_PUBLIC_CUSTOMER_API_URL ||
+    get(import.meta, "meta.VITE_CUSTOMER_API_URL"),
 });
 
 const getLocalToken = () => {
