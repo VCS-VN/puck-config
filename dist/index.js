@@ -678,10 +678,13 @@ var import_lodash = require("lodash");
 var import_meta = {};
 var URL = "";
 if (typeof process !== "undefined") {
+  console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf");
   URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
 } else {
+  console.log("aj828238jklasjdf");
   URL = (0, import_lodash.get)(import_meta, "meta.VITE_CUSTOMER_API_URL", "");
 }
+console.log("ajsodfjoasjdfo, ", URL);
 var httpClient = import_axios.default.create({
   baseURL: URL
 });

@@ -1,6 +1,5 @@
 "use client";
 
-import { get } from "lodash";
 import httpClient from "../../../client/httpClient";
 import { IProduct } from "./product.type";
 

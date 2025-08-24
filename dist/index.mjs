@@ -644,10 +644,13 @@ import axios from "axios";
 import { get } from "lodash";
 var URL = "";
 if (typeof process !== "undefined") {
+  console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf");
   URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
 } else {
+  console.log("aj828238jklasjdf");
   URL = get(import.meta, "meta.VITE_CUSTOMER_API_URL", "");
 }
+console.log("ajsodfjoasjdfo, ", URL);
 var httpClient = axios.create({
   baseURL: URL
 });

@@ -5,10 +5,14 @@ import { get } from "lodash";
 
 let URL = "";
 if (typeof process !== "undefined") {
+  console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf");
   URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL as string;
 } else {
+  console.log("aj828238jklasjdf");
   URL = get(import.meta, "meta.VITE_CUSTOMER_API_URL", "");
 }
+
+console.log("ajsodfjoasjdfo, ", URL);
 
 const httpClient = axios.create({
   baseURL: URL,
