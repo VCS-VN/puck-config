@@ -1128,6 +1128,11 @@ var PuckConfig = {
     }
   }
 };
+
+// src/query-provider.tsx
+var import_react_query3 = require("@tanstack/react-query");
+var import_jsx_runtime15 = require("react/jsx-runtime");
+var queryClient = new import_react_query3.QueryClient();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   PuckConfig,

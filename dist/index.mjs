@@ -1095,6 +1095,11 @@ var PuckConfig = {
     }
   }
 };
+
+// src/query-provider.tsx
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { jsx as jsx15 } from "react/jsx-runtime";
+var queryClient = new QueryClient();
 export {
   PuckConfig,
   getGlobalClassName,
