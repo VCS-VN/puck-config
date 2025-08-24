@@ -645,13 +645,13 @@ import { get } from "lodash";
 var initHttpClient = () => {
   let URL = "";
   if (typeof process !== "undefined") {
-    console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf");
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
+    console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
-    console.log("aj828238jklasjdf");
     URL = get(import.meta, "env.VITE_CUSTOMER_API_URL", "");
+    console.log("aj828238jklasjdf", URL);
   }
-  const httpClient2 = axios.create({
+  const httpClient = axios.create({
     baseURL: URL
   });
   const getLocalToken = () => {
@@ -659,7 +659,7 @@ var initHttpClient = () => {
   };
   const refreshToken = async () => {
     const token = localStorage.getItem("refreshToken");
-    const response = await httpClient2.get("/api/v1/auth/refresh-token", {
+    const response = await httpClient.get("/api/v1/auth/refresh-token", {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -670,7 +670,7 @@ var initHttpClient = () => {
       localStorage.setItem("accessToken", accessToken);
     }
   };
-  httpClient2.interceptors.request.use(
+  httpClient.interceptors.request.use(
     (config) => {
       const token = getLocalToken();
       if (token && !config?.headers?.Authorization) {
@@ -682,7 +682,7 @@ var initHttpClient = () => {
       return Promise.reject(error);
     }
   );
-  httpClient2.interceptors.response.use(
+  httpClient.interceptors.response.use(
     (res) => res,
     async (e) => {
       const status = e.response ? e.response.status : null;
@@ -704,20 +704,20 @@ var initHttpClient = () => {
       throw e;
     }
   );
-  return httpClient2;
+  return httpClient;
 };
 
 // src/services/sale/product/product.api.ts
 var getProducts = async (payload) => {
-  const httpClient2 = initHttpClient();
-  const response = await httpClient2.get(`/api/v1/products`, {
+  const httpClient = initHttpClient();
+  const response = await httpClient.get(`/api/v1/products`, {
     params: payload
   });
   return response.data;
 };
 var getProductDetail = async (id, queries) => {
-  const httpClient2 = initHttpClient();
-  const response = await httpClient2.get(`/api/v1/products/${id}`, {
+  const httpClient = initHttpClient();
+  const response = await httpClient.get(`/api/v1/products/${id}`, {
     params: queries
   });
   return response.data;

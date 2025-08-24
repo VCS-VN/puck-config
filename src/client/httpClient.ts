@@ -82,11 +82,11 @@ import { get } from "lodash";
 export const initHttpClient = () => {
   let URL = "";
   if (typeof process !== "undefined") {
-    console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf");
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL as string;
+    console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
-    console.log("aj828238jklasjdf");
     URL = get(import.meta, "env.VITE_CUSTOMER_API_URL", "");
+    console.log("aj828238jklasjdf", URL);
   }
 
   const httpClient = axios.create({

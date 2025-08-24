@@ -62,6 +62,7 @@ export const createProductOption = async (payload: {
   data: any;
   storeId: string;
 }) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.post(
     "/api/v1/product-options",
     payload.data,
