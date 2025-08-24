@@ -642,8 +642,14 @@ import { useState } from "react";
 // src/client/httpClient.ts
 import axios from "axios";
 import { get } from "lodash";
+var URL = "";
+if (typeof process !== "undefined") {
+  URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
+} else {
+  URL = get(import.meta, "meta.VITE_CUSTOMER_API_URL", "");
+}
 var httpClient = axios.create({
-  baseURL: process ? process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL || get(import.meta, "meta.VITE_CUSTOMER_API_URL") : get(import.meta, "meta.VITE_CUSTOMER_API_URL")
+  baseURL: URL
 });
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");

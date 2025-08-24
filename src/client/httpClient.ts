@@ -3,11 +3,15 @@
 import axios from "axios";
 import { get } from "lodash";
 
+let URL = "";
+if (typeof process !== "undefined") {
+  URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL as string;
+} else {
+  URL = get(import.meta, "meta.VITE_CUSTOMER_API_URL", "");
+}
+
 const httpClient = axios.create({
-  baseURL: process
-    ? process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL ||
-      get(import.meta, "meta.VITE_CUSTOMER_API_URL")
-    : get(import.meta, "meta.VITE_CUSTOMER_API_URL"),
+  baseURL: URL,
 });
 
 const getLocalToken = () => {

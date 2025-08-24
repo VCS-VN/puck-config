@@ -675,8 +675,14 @@ var import_react3 = require("react");
 var import_axios = __toESM(require("axios"));
 var import_lodash = require("lodash");
 var import_meta = {};
+var URL = "";
+if (typeof process !== "undefined") {
+  URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
+} else {
+  URL = (0, import_lodash.get)(import_meta, "meta.VITE_CUSTOMER_API_URL", "");
+}
 var httpClient = import_axios.default.create({
-  baseURL: process ? process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL || (0, import_lodash.get)(import_meta, "meta.VITE_CUSTOMER_API_URL") : (0, import_lodash.get)(import_meta, "meta.VITE_CUSTOMER_API_URL")
+  baseURL: URL
 });
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
