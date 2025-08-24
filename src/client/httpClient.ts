@@ -1,3 +1,5 @@
+"use client";
+
 import axios from "axios";
 import { getEnv } from "@/utils/env-key";
 console.log(
