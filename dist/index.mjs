@@ -656,9 +656,9 @@ console.log(
   ";jaosdasdfasdfasdjfoasdf",
   getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
 );
+var URL = getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 var httpClient = axios.create({
-  baseURL: "http://localhost:9800"
-  // getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL"),
+  baseURL: URL || "http://localhost:9800"
 });
 console.log(
   ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",

@@ -6,9 +6,12 @@ console.log(
   ";jaosdasdfasdfasdjfoasdf",
   getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
 );
+
+const URL =
+  getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
+
 const httpClient = axios.create({
-  baseURL: "http://localhost:9800",
-  // getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL"),
+  baseURL: URL,
 });
 console.log(
   ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",
