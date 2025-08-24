@@ -675,15 +675,13 @@ var import_react3 = require("react");
 var import_axios = __toESM(require("axios"));
 
 // src/utils/env-key.ts
+var import_lodash = require("lodash");
 var import_meta = {};
 function getEnv(key) {
-  if (typeof import_meta !== "undefined" && import_meta.env) {
-    return import_meta.env[key];
+  if (key.includes("VITE_")) {
+    return (0, import_lodash.get)(import_meta, `env.${key}`);
   }
-  if (typeof process !== "undefined" && process.env) {
-    return process.env[key];
-  }
-  return void 0;
+  return (0, import_lodash.get)(process, `env.${key}`);
 }
 
 // src/client/httpClient.ts
@@ -694,6 +692,10 @@ console.log(
 var httpClient = import_axios.default.create({
   baseURL: getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
 });
+console.log(
+  ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",
+  httpClient
+);
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
 };
@@ -748,6 +750,7 @@ var httpClient_default = httpClient;
 
 // src/services/sale/product/product.api.ts
 var getProducts = async (payload) => {
+  console.log("\u{1F680} ~ getProducts ~ httpClient:", httpClient_default);
   const response = await httpClient_default.get(`/api/v1/products`, {
     params: payload
   });
@@ -861,7 +864,7 @@ var ProductCard = withLayout(ProductCardInternal);
 // src/blocks/ProductGrid/index.tsx
 var import_antd4 = require("antd");
 var import_react4 = require("react");
-var import_lodash = require("lodash");
+var import_lodash2 = require("lodash");
 var import_jsx_runtime12 = require("react/jsx-runtime");
 var ProductGridRender = ({
   columns,
@@ -896,7 +899,7 @@ var ProductGridRender = ({
       },
       `skeleton-${i}`
     )) : products.map((p) => {
-      const defaultModel = (0, import_lodash.get)(p, "defaultModel", (0, import_lodash.get)(p, "models.0"));
+      const defaultModel = (0, import_lodash2.get)(p, "defaultModel", (0, import_lodash2.get)(p, "models.0"));
       return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         import_antd4.Card,
         {
@@ -913,7 +916,7 @@ var ProductGridRender = ({
             import_antd4.Card.Meta,
             {
               title: p.name,
-              description: `${(0, import_lodash.round)(
+              description: `${(0, import_lodash2.round)(
                 (defaultModel?.price ?? p.price ?? 0) / 100,
                 0
               )} \u20AB`

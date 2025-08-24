@@ -1,9 +1,9 @@
+import { get } from "lodash";
+
 export function getEnv(key: string): string | undefined {
-  if (typeof import.meta !== "undefined" && (import.meta as any).env) {
-    return (import.meta as any).env[key];
+  if (key.includes("VITE_")) {
+    return get(import.meta, `env.${key}`);
   }
-  if (typeof process !== "undefined" && process.env) {
-    return process.env[key];
-  }
-  return undefined;
+
+  return get(process, `env.${key}`);
 }

@@ -10,6 +10,10 @@ const httpClient = axios.create({
   baseURL:
     getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL"),
 });
+console.log(
+  ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",
+  httpClient
+);
 
 const getLocalToken = () => {
   return localStorage.getItem("accessToken");
