@@ -6,7 +6,8 @@ import { IProduct } from "./product.type";
 export const getProducts = async (payload?: any) => {
   console.log(
     "🚀 ~ getProducts ~ httpClient:",
-    process.env.NEXT_PUBLIC_CUSTOMER_API_URL
+    process.env.NEXT_PUBLIC_CUSTOMER_API_URL,
+    httpClient.defaults?.baseURL
   );
   const response = await httpClient.get(`/api/v1/products`, {
     params: payload,
