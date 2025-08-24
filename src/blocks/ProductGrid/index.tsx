@@ -1,28 +1,40 @@
-import { Row, Col, Card, Image, Pagination, Skeleton } from "antd";
-import { ComponentConfig } from "@measured/puck";
+import { Card, Image, List, Input, Divider } from "antd";
+import { ComponentConfig, Render } from "@measured/puck";
 import { withLayout } from "../../components/Layout";
 import { Section } from "../../components/Section";
-import { ErrorBoundary } from "react-error-boundary";
-import { FC, useMemo, useState } from "react";
+import { FC, useState } from "react";
 import { get, round } from "lodash";
 import { useGetProductsQuery } from "../../hooks/products";
 
 export type ProductGridProps = {
-  columns: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  xxl: number;
   limit: number;
   categoryId?: string;
 };
 
 const ProductGridRender: FC<ProductGridProps> = ({
-  columns,
+  xs,
+  sm,
+  md,
+  lg,
+  xl,
+  xxl,
   limit,
   categoryId,
 }) => {
   // const store = useRecoilValue(CurrentStoreState);
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useGetProductsQuery(
+
+  const { data: products, isLoading } = useGetProductsQuery(
     {
       // storeSlug: store?.slug,
+      search,
       isGettingModels: true,
       isGettingDefaultModel: true,
       limit,
@@ -32,60 +44,58 @@ const ProductGridRender: FC<ProductGridProps> = ({
     // { enabled: !!store?.slug }
   );
 
-  const products = useMemo(() => data?.data || [], [data?.data]);
-
-  const span = Math.max(1, Math.floor(24 / columns));
+  console.log({ xs, sm, md, lg, xl, xxl });
 
   return (
     <Section>
-      a
-      <Row gutter={16}>
-        {isLoading
-          ? Array.from({ length: limit }).map((_, i) => (
-              <Col
-                span={span}
-                key={`skeleton-${i}`}
-                style={{ marginBottom: 16 }}
-              >
-                <Card>
-                  <Skeleton.Image style={{ width: "100%", height: 200 }} />
-                  <Skeleton active paragraph={{ rows: 2 }} />
-                </Card>
-              </Col>
-            ))
-          : products.map((p: any) => {
-              const defaultModel = get(p, "defaultModel", get(p, "models.0"));
+      <Input.Search
+        placeholder="Search..."
+        onSearch={setSearch}
+        loading={isLoading}
+      />
+      <Divider />
+      <List
+        grid={{
+          gutter: 16,
+          xs,
+          sm,
+          md,
+          lg,
+          xl,
+          xxl,
+        }}
+        dataSource={products?.data || []}
+        loading={isLoading}
+        pagination={{
+          total: products?.total,
+          onChange: (p) => setPage(p),
+        }}
+        renderItem={(p) => {
+          const defaultModel = get(p, "defaultModel", get(p, "models.0"));
 
-              return (
-                <Col span={span} key={p.id} style={{ marginBottom: 16 }}>
-                  <Card
-                    hoverable
-                    cover={
-                      <Image
-                        src={p.image || "/no-product-image.png"}
-                        alt={p.name}
-                        preview={false}
-                      />
-                    }
-                  >
-                    <Card.Meta
-                      title={p.name}
-                      description={`${round(
-                        (defaultModel?.price ?? p.price ?? 0) / 100,
-                        0
-                      )} ₫`}
-                    />
-                  </Card>
-                </Col>
-              );
-            })}
-      </Row>
-      <Pagination
-        current={page}
-        pageSize={limit}
-        total={data?.total}
-        onChange={(p) => setPage(p)}
-        style={{ marginTop: 16, textAlign: "center" }}
+          return (
+            <List.Item>
+              <Card
+                hoverable
+                cover={
+                  <Image
+                    src={p.image || "/no-product-image.png"}
+                    alt={p.name}
+                    preview={false}
+                  />
+                }
+              >
+                <Card.Meta
+                  title={p.name}
+                  description={`${round(
+                    (defaultModel?.price ?? p.price ?? 0) / 100,
+                    0
+                  )} ₫`}
+                />
+              </Card>
+            </List.Item>
+          );
+        }}
       />
     </Section>
   );
@@ -124,7 +134,12 @@ const ProductGridRender: FC<ProductGridProps> = ({
 
 const ProductGridInternal: ComponentConfig<ProductGridProps> = {
   fields: {
-    columns: { type: "number", label: "Columns", min: 1, max: 4 },
+    xs: { type: "number", label: "Xs Columns", min: 1, max: 2 },
+    sm: { type: "number", label: "Sm Columns", min: 1, max: 4 },
+    md: { type: "number", label: "Md Columns", min: 1, max: 4 },
+    lg: { type: "number", label: "Lg Columns", min: 1, max: 6 },
+    xl: { type: "number", label: "Xl Columns", min: 1, max: 8 },
+    xxl: { type: "number", label: "Xxl Columns", min: 1, max: 12 },
     limit: { type: "number", label: "Limit", min: 1, max: 20 },
     // categoryId: {
     //   type: "custom",
@@ -133,8 +148,13 @@ const ProductGridInternal: ComponentConfig<ProductGridProps> = {
     // },
   },
   defaultProps: {
-    columns: 3,
-    limit: 6,
+    xs: 2,
+    sm: 2,
+    md: 4,
+    lg: 4,
+    xl: 5,
+    xxl: 6,
+    limit: 10,
     categoryId: undefined,
   },
   render: (props) => <ProductGridRender {...props} />,

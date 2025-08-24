@@ -137,6 +137,11 @@ var layoutField = {
       type: "select",
       label: "Vertical Padding",
       options: [{ label: "0px", value: "0px" }, ...spacingOptions]
+    },
+    padding2: {
+      type: "select",
+      label: "Vertical Padding2",
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     }
   }
 };
@@ -174,6 +179,7 @@ function withLayout(componentConfig) {
         spanCol: 1,
         spanRow: 1,
         padding: "0px",
+        padding2: "0px",
         grow: false,
         ...componentConfig.defaultProps?.layout
       }
@@ -187,7 +193,8 @@ function withLayout(componentConfig) {
             objectFields: {
               spanCol: layoutField.objectFields.spanCol,
               spanRow: layoutField.objectFields.spanRow,
-              padding: layoutField.objectFields.padding
+              padding: layoutField.objectFields.padding,
+              padding2: layoutField.objectFields.padding2
             }
           }
         };
@@ -199,7 +206,8 @@ function withLayout(componentConfig) {
             ...layoutField,
             objectFields: {
               grow: layoutField.objectFields.grow,
-              padding: layoutField.objectFields.padding
+              padding: layoutField.objectFields.padding,
+              padding2: layoutField.objectFields.padding2
             }
           }
         };
@@ -209,7 +217,8 @@ function withLayout(componentConfig) {
         layout: {
           ...layoutField,
           objectFields: {
-            padding: layoutField.objectFields.padding
+            padding: layoutField.objectFields.padding,
+            padding2: layoutField.objectFields.padding2
           }
         }
       };
@@ -821,19 +830,26 @@ var ProductCardInternal = {
 var ProductCard = withLayout(ProductCardInternal);
 
 // src/blocks/ProductGrid/index.tsx
-import { Row, Col, Card as Card2, Image as Image2, Pagination, Skeleton as Skeleton2 } from "antd";
-import { useMemo, useState as useState2 } from "react";
+import { Card as Card2, Image as Image2, List, Input as Input2, Divider } from "antd";
+import { useState as useState2 } from "react";
 import { get, round } from "lodash";
 import { jsx as jsx12, jsxs as jsxs2 } from "react/jsx-runtime";
 var ProductGridRender = ({
-  columns,
+  xs,
+  sm,
+  md,
+  lg,
+  xl,
+  xxl,
   limit,
   categoryId
 }) => {
+  const [search, setSearch] = useState2("");
   const [page, setPage] = useState2(1);
-  const { data, isLoading } = useGetProductsQuery(
+  const { data: products, isLoading } = useGetProductsQuery(
     {
       // storeSlug: store?.slug,
+      search,
       isGettingModels: true,
       isGettingDefaultModel: true,
       limit,
@@ -842,63 +858,74 @@ var ProductGridRender = ({
     }
     // { enabled: !!store?.slug }
   );
-  const products = useMemo(() => data?.data || [], [data?.data]);
-  const span = Math.max(1, Math.floor(24 / columns));
+  console.log({ xs, sm, md, lg, xl, xxl });
   return /* @__PURE__ */ jsxs2(Section, { children: [
-    "a",
-    /* @__PURE__ */ jsx12(Row, { gutter: 16, children: isLoading ? Array.from({ length: limit }).map((_, i) => /* @__PURE__ */ jsx12(
-      Col,
-      {
-        span,
-        style: { marginBottom: 16 },
-        children: /* @__PURE__ */ jsxs2(Card2, { children: [
-          /* @__PURE__ */ jsx12(Skeleton2.Image, { style: { width: "100%", height: 200 } }),
-          /* @__PURE__ */ jsx12(Skeleton2, { active: true, paragraph: { rows: 2 } })
-        ] })
-      },
-      `skeleton-${i}`
-    )) : products.map((p) => {
-      const defaultModel = get(p, "defaultModel", get(p, "models.0"));
-      return /* @__PURE__ */ jsx12(Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ jsx12(
-        Card2,
-        {
-          hoverable: true,
-          cover: /* @__PURE__ */ jsx12(
-            Image2,
-            {
-              src: p.image || "/no-product-image.png",
-              alt: p.name,
-              preview: false
-            }
-          ),
-          children: /* @__PURE__ */ jsx12(
-            Card2.Meta,
-            {
-              title: p.name,
-              description: `${round(
-                (defaultModel?.price ?? p.price ?? 0) / 100,
-                0
-              )} \u20AB`
-            }
-          )
-        }
-      ) }, p.id);
-    }) }),
     /* @__PURE__ */ jsx12(
-      Pagination,
+      Input2.Search,
       {
-        current: page,
-        pageSize: limit,
-        total: data?.total,
-        onChange: (p) => setPage(p),
-        style: { marginTop: 16, textAlign: "center" }
+        placeholder: "Search...",
+        onSearch: setSearch,
+        loading: isLoading
+      }
+    ),
+    /* @__PURE__ */ jsx12(Divider, {}),
+    /* @__PURE__ */ jsx12(
+      List,
+      {
+        grid: {
+          gutter: 16,
+          xs,
+          sm,
+          md,
+          lg,
+          xl,
+          xxl
+        },
+        dataSource: products?.data || [],
+        loading: isLoading,
+        pagination: {
+          total: products?.total,
+          onChange: (p) => setPage(p)
+        },
+        renderItem: (p) => {
+          const defaultModel = get(p, "defaultModel", get(p, "models.0"));
+          return /* @__PURE__ */ jsx12(List.Item, { children: /* @__PURE__ */ jsx12(
+            Card2,
+            {
+              hoverable: true,
+              cover: /* @__PURE__ */ jsx12(
+                Image2,
+                {
+                  src: p.image || "/no-product-image.png",
+                  alt: p.name,
+                  preview: false
+                }
+              ),
+              children: /* @__PURE__ */ jsx12(
+                Card2.Meta,
+                {
+                  title: p.name,
+                  description: `${round(
+                    (defaultModel?.price ?? p.price ?? 0) / 100,
+                    0
+                  )} \u20AB`
+                }
+              )
+            }
+          ) });
+        }
       }
     )
   ] });
 };
 var ProductGridInternal = {
   fields: {
-    columns: { type: "number", label: "Columns", min: 1, max: 4 },
+    xs: { type: "number", label: "Xs Columns", min: 1, max: 2 },
+    sm: { type: "number", label: "Sm Columns", min: 1, max: 4 },
+    md: { type: "number", label: "Md Columns", min: 1, max: 4 },
+    lg: { type: "number", label: "Lg Columns", min: 1, max: 6 },
+    xl: { type: "number", label: "Xl Columns", min: 1, max: 8 },
+    xxl: { type: "number", label: "Xxl Columns", min: 1, max: 12 },
     limit: { type: "number", label: "Limit", min: 1, max: 20 }
     // categoryId: {
     //   type: "custom",
@@ -907,8 +934,13 @@ var ProductGridInternal = {
     // },
   },
   defaultProps: {
-    columns: 3,
-    limit: 6,
+    xs: 2,
+    sm: 2,
+    md: 4,
+    lg: 4,
+    xl: 5,
+    xxl: 6,
+    limit: 10,
     categoryId: void 0
   },
   render: (props) => /* @__PURE__ */ jsx12(ProductGridRender, { ...props })

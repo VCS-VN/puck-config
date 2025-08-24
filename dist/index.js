@@ -170,6 +170,11 @@ var layoutField = {
       type: "select",
       label: "Vertical Padding",
       options: [{ label: "0px", value: "0px" }, ...spacingOptions]
+    },
+    padding2: {
+      type: "select",
+      label: "Vertical Padding2",
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     }
   }
 };
@@ -207,6 +212,7 @@ function withLayout(componentConfig) {
         spanCol: 1,
         spanRow: 1,
         padding: "0px",
+        padding2: "0px",
         grow: false,
         ...componentConfig.defaultProps?.layout
       }
@@ -220,7 +226,8 @@ function withLayout(componentConfig) {
             objectFields: {
               spanCol: layoutField.objectFields.spanCol,
               spanRow: layoutField.objectFields.spanRow,
-              padding: layoutField.objectFields.padding
+              padding: layoutField.objectFields.padding,
+              padding2: layoutField.objectFields.padding2
             }
           }
         };
@@ -232,7 +239,8 @@ function withLayout(componentConfig) {
             ...layoutField,
             objectFields: {
               grow: layoutField.objectFields.grow,
-              padding: layoutField.objectFields.padding
+              padding: layoutField.objectFields.padding,
+              padding2: layoutField.objectFields.padding2
             }
           }
         };
@@ -242,7 +250,8 @@ function withLayout(componentConfig) {
         layout: {
           ...layoutField,
           objectFields: {
-            padding: layoutField.objectFields.padding
+            padding: layoutField.objectFields.padding,
+            padding2: layoutField.objectFields.padding2
           }
         }
       };
@@ -860,14 +869,21 @@ var import_react4 = require("react");
 var import_lodash = require("lodash");
 var import_jsx_runtime12 = require("react/jsx-runtime");
 var ProductGridRender = ({
-  columns,
+  xs,
+  sm,
+  md,
+  lg,
+  xl,
+  xxl,
   limit,
   categoryId
 }) => {
+  const [search, setSearch] = (0, import_react4.useState)("");
   const [page, setPage] = (0, import_react4.useState)(1);
-  const { data, isLoading } = useGetProductsQuery(
+  const { data: products, isLoading } = useGetProductsQuery(
     {
       // storeSlug: store?.slug,
+      search,
       isGettingModels: true,
       isGettingDefaultModel: true,
       limit,
@@ -876,63 +892,74 @@ var ProductGridRender = ({
     }
     // { enabled: !!store?.slug }
   );
-  const products = (0, import_react4.useMemo)(() => data?.data || [], [data?.data]);
-  const span = Math.max(1, Math.floor(24 / columns));
+  console.log({ xs, sm, md, lg, xl, xxl });
   return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(Section, { children: [
-    "a",
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Row, { gutter: 16, children: isLoading ? Array.from({ length: limit }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-      import_antd4.Col,
-      {
-        span,
-        style: { marginBottom: 16 },
-        children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_antd4.Card, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Skeleton.Image, { style: { width: "100%", height: 200 } }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Skeleton, { active: true, paragraph: { rows: 2 } })
-        ] })
-      },
-      `skeleton-${i}`
-    )) : products.map((p) => {
-      const defaultModel = (0, import_lodash.get)(p, "defaultModel", (0, import_lodash.get)(p, "models.0"));
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        import_antd4.Card,
-        {
-          hoverable: true,
-          cover: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            import_antd4.Image,
-            {
-              src: p.image || "/no-product-image.png",
-              alt: p.name,
-              preview: false
-            }
-          ),
-          children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            import_antd4.Card.Meta,
-            {
-              title: p.name,
-              description: `${(0, import_lodash.round)(
-                (defaultModel?.price ?? p.price ?? 0) / 100,
-                0
-              )} \u20AB`
-            }
-          )
-        }
-      ) }, p.id);
-    }) }),
     /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-      import_antd4.Pagination,
+      import_antd4.Input.Search,
       {
-        current: page,
-        pageSize: limit,
-        total: data?.total,
-        onChange: (p) => setPage(p),
-        style: { marginTop: 16, textAlign: "center" }
+        placeholder: "Search...",
+        onSearch: setSearch,
+        loading: isLoading
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Divider, {}),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      import_antd4.List,
+      {
+        grid: {
+          gutter: 16,
+          xs,
+          sm,
+          md,
+          lg,
+          xl,
+          xxl
+        },
+        dataSource: products?.data || [],
+        loading: isLoading,
+        pagination: {
+          total: products?.total,
+          onChange: (p) => setPage(p)
+        },
+        renderItem: (p) => {
+          const defaultModel = (0, import_lodash.get)(p, "defaultModel", (0, import_lodash.get)(p, "models.0"));
+          return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.List.Item, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            import_antd4.Card,
+            {
+              hoverable: true,
+              cover: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                import_antd4.Image,
+                {
+                  src: p.image || "/no-product-image.png",
+                  alt: p.name,
+                  preview: false
+                }
+              ),
+              children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                import_antd4.Card.Meta,
+                {
+                  title: p.name,
+                  description: `${(0, import_lodash.round)(
+                    (defaultModel?.price ?? p.price ?? 0) / 100,
+                    0
+                  )} \u20AB`
+                }
+              )
+            }
+          ) });
+        }
       }
     )
   ] });
 };
 var ProductGridInternal = {
   fields: {
-    columns: { type: "number", label: "Columns", min: 1, max: 4 },
+    xs: { type: "number", label: "Xs Columns", min: 1, max: 2 },
+    sm: { type: "number", label: "Sm Columns", min: 1, max: 4 },
+    md: { type: "number", label: "Md Columns", min: 1, max: 4 },
+    lg: { type: "number", label: "Lg Columns", min: 1, max: 6 },
+    xl: { type: "number", label: "Xl Columns", min: 1, max: 8 },
+    xxl: { type: "number", label: "Xxl Columns", min: 1, max: 12 },
     limit: { type: "number", label: "Limit", min: 1, max: 20 }
     // categoryId: {
     //   type: "custom",
@@ -941,8 +968,13 @@ var ProductGridInternal = {
     // },
   },
   defaultProps: {
-    columns: 3,
-    limit: 6,
+    xs: 2,
+    sm: 2,
+    md: 4,
+    lg: 4,
+    xl: 5,
+    xxl: 6,
+    limit: 10,
     categoryId: void 0
   },
   render: (props) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProductGridRender, { ...props })

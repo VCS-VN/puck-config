@@ -13,6 +13,7 @@ const getClassName = getClassNameFactory("Layout", styles);
 
 type LayoutFieldProps = {
   padding?: string;
+  padding2?: string;
   spanCol?: number;
   spanRow?: number;
   grow?: boolean;
@@ -57,6 +58,12 @@ export const layoutField: ObjectField<LayoutFieldProps> = {
       label: "Vertical Padding",
       options: [{ label: "0px", value: "0px" }, ...spacingOptions],
     },
+
+    padding2: {
+      type: "select",
+      label: "Vertical Padding2",
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions],
+    },
   },
 };
 
@@ -90,7 +97,7 @@ Layout.displayName = "Layout";
 export { Layout };
 
 export function withLayout<
-  ThisComponentConfig extends ComponentConfig<any> = ComponentConfig,
+  ThisComponentConfig extends ComponentConfig<any> = ComponentConfig
 >(componentConfig: ThisComponentConfig): ThisComponentConfig {
   return {
     ...componentConfig,
@@ -104,6 +111,7 @@ export function withLayout<
         spanCol: 1,
         spanRow: 1,
         padding: "0px",
+        padding2: "0px",
         grow: false,
         ...componentConfig.defaultProps?.layout,
       },
@@ -118,6 +126,7 @@ export function withLayout<
               spanCol: layoutField.objectFields.spanCol,
               spanRow: layoutField.objectFields.spanRow,
               padding: layoutField.objectFields.padding,
+              padding2: layoutField.objectFields.padding2,
             },
           },
         };
@@ -130,6 +139,7 @@ export function withLayout<
             objectFields: {
               grow: layoutField.objectFields.grow,
               padding: layoutField.objectFields.padding,
+              padding2: layoutField.objectFields.padding2,
             },
           },
         };
@@ -141,6 +151,7 @@ export function withLayout<
           ...layoutField,
           objectFields: {
             padding: layoutField.objectFields.padding,
+            padding2: layoutField.objectFields.padding2,
           },
         },
       };

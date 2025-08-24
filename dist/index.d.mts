@@ -91,7 +91,12 @@ type CategoryGridProps = {
 };
 
 type ProductGridProps = {
-    columns: number;
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+    xxl: number;
     limit: number;
     categoryId?: string;
 };
@@ -110,6 +115,7 @@ type ButtonProps = {
 
 type LayoutFieldProps = {
     padding?: string;
+    padding2?: string;
     spanCol?: number;
     spanRow?: number;
     grow?: boolean;
