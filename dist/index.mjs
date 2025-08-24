@@ -716,7 +716,8 @@ var httpClient_default = httpClient;
 var getProducts = async (payload) => {
   console.log(
     "\u{1F680} ~ getProducts ~ httpClient:",
-    process.env.NEXT_PUBLIC_CUSTOMER_API_URL
+    process.env.NEXT_PUBLIC_CUSTOMER_API_URL,
+    httpClient_default.defaults?.baseURL
   );
   const response = await httpClient_default.get(`/api/v1/products`, {
     params: payload
