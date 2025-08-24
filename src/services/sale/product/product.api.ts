@@ -1,14 +1,10 @@
 "use client";
 
-import httpClient from "../../../client/httpClient";
+import { initHttpClient } from "@/client/httpClient";
 import { IProduct } from "./product.type";
 
 export const getProducts = async (payload?: any) => {
-  console.log(
-    "ajsodfjoasdjasififi19283u23",
-    httpClient.defaults.baseURL,
-    payload
-  );
+  const httpClient = initHttpClient();
   const response = await httpClient.get(`/api/v1/products`, {
     params: payload,
   });
@@ -17,6 +13,7 @@ export const getProducts = async (payload?: any) => {
 };
 
 export const getProductDetail = async (id?: string, queries?: any) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.get(`/api/v1/products/${id}`, {
     params: queries,
   });
@@ -25,6 +22,7 @@ export const getProductDetail = async (id?: string, queries?: any) => {
 };
 
 export const assignProductToStorageLabel = async (payload: any) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.post(
     `/api/v1/ffm/inbound/storage-labels/product`,
     payload
@@ -34,12 +32,14 @@ export const assignProductToStorageLabel = async (payload: any) => {
 };
 
 export const deleteProduct = async (id: string) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.delete(`/api/v1/products/${id}`);
 
   return response.data;
 };
 
 export const createProduct = async (data: any) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.post("/api/v1/products", data);
 
   return response.data;
@@ -49,6 +49,7 @@ export const updateProduct = async (payload: {
   id?: string;
   data: Partial<IProduct>;
 }) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.put(
     `/api/v1/products/${payload.id}`,
     payload.data
@@ -61,6 +62,7 @@ export const createProductOption = async (payload: {
   data: any;
   storeId: string;
 }) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.post(
     "/api/v1/product-options",
     payload.data,
@@ -79,6 +81,7 @@ export const updateProductOption = async (payload: {
   data: any;
   storeId: string;
 }) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.put(
     `/api/v1/product-options/${payload.id}`,
     payload.data,
@@ -96,6 +99,7 @@ export const deleteProductOption = async (payload: {
   id: string;
   storeId: string;
 }) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.delete(
     `/api/v1/product-options/${payload.id}`,
     {
@@ -109,6 +113,7 @@ export const deleteProductOption = async (payload: {
 };
 
 export const getProductOptions = async (payload?: any) => {
+  const httpClient = initHttpClient();
   const response = await httpClient.get(`/api/v1/product-options`, {
     params: payload,
   });

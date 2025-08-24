@@ -1,8 +1,6 @@
 "use client";
 
-import { MERCHANT_STATUS } from "@/utils/enums";
 import { ICategory } from "../category/category.type";
-import { IVariant } from "../variant/variant.type";
 
 export interface IProduct {
   id?: string;
@@ -15,7 +13,7 @@ export interface IProduct {
   thirdPartyPlatform?: string;
   variants?: any[];
   image?: string;
-  statusId: MERCHANT_STATUS;
+  statusId: number;
   category?: ICategory | null;
   categoryId?: string | null;
   images: {
@@ -30,17 +28,17 @@ export interface IProduct {
   quantity: number;
   productOptions: Partial<IProductOption>[];
   descriptions: string;
-  status: MERCHANT_STATUS;
+  status: number;
   defaultModel: any;
 }
 
 export interface IProductOption {
   id: string;
-  variant: Partial<IVariant>;
-  product: Partial<IProduct>;
+  variant: any;
+  product: any;
   price: number;
   onlinePrice: number;
-  status: MERCHANT_STATUS;
+  status: number;
   createdAt: string;
   isDefault: boolean;
   description: string;
