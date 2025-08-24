@@ -85,8 +85,9 @@ export const initHttpClient = () => {
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL as string;
     console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
-    URL = get(import.meta, "env.VITE_CUSTOMER_API_URL", "");
-    console.log("aj828238jklasjdf", URL);
+    URL = import.meta.env.VITE_API_URL;
+    // get(import.meta, "env.VITE_CUSTOMER_API_URL", "");
+    console.log("aj828238jklasjdf", import.meta, import.meta);
   }
 
   const httpClient = axios.create({

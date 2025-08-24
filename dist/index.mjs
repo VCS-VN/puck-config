@@ -641,15 +641,14 @@ import { useState } from "react";
 
 // src/client/httpClient.ts
 import axios from "axios";
-import { get } from "lodash";
 var initHttpClient = () => {
   let URL = "";
   if (typeof process !== "undefined") {
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
     console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
-    URL = get(import.meta, "env.VITE_CUSTOMER_API_URL", "");
-    console.log("aj828238jklasjdf", URL);
+    URL = import.meta.env.VITE_API_URL;
+    console.log("aj828238jklasjdf", import.meta, import.meta);
   }
   const httpClient = axios.create({
     baseURL: URL
@@ -824,7 +823,7 @@ var ProductCard = withLayout(ProductCardInternal);
 // src/blocks/ProductGrid/index.tsx
 import { Row, Col, Card as Card2, Image as Image2, Pagination, Skeleton as Skeleton2 } from "antd";
 import { useMemo, useState as useState2 } from "react";
-import { get as get2, round } from "lodash";
+import { get, round } from "lodash";
 import { jsx as jsx12, jsxs as jsxs2 } from "react/jsx-runtime";
 var ProductGridRender = ({
   columns,
@@ -859,7 +858,7 @@ var ProductGridRender = ({
       },
       `skeleton-${i}`
     )) : products.map((p) => {
-      const defaultModel = get2(p, "defaultModel", get2(p, "models.0"));
+      const defaultModel = get(p, "defaultModel", get(p, "models.0"));
       return /* @__PURE__ */ jsx12(Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ jsx12(
         Card2,
         {

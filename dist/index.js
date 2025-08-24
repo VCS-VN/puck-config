@@ -674,7 +674,6 @@ var import_react3 = require("react");
 
 // src/client/httpClient.ts
 var import_axios = __toESM(require("axios"));
-var import_lodash = require("lodash");
 var import_meta = {};
 var initHttpClient = () => {
   let URL = "";
@@ -682,8 +681,8 @@ var initHttpClient = () => {
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
     console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
-    URL = (0, import_lodash.get)(import_meta, "env.VITE_CUSTOMER_API_URL", "");
-    console.log("aj828238jklasjdf", URL);
+    URL = import_meta.env.VITE_API_URL;
+    console.log("aj828238jklasjdf", import_meta, import_meta);
   }
   const httpClient = import_axios.default.create({
     baseURL: URL
@@ -858,7 +857,7 @@ var ProductCard = withLayout(ProductCardInternal);
 // src/blocks/ProductGrid/index.tsx
 var import_antd4 = require("antd");
 var import_react4 = require("react");
-var import_lodash2 = require("lodash");
+var import_lodash = require("lodash");
 var import_jsx_runtime12 = require("react/jsx-runtime");
 var ProductGridRender = ({
   columns,
@@ -893,7 +892,7 @@ var ProductGridRender = ({
       },
       `skeleton-${i}`
     )) : products.map((p) => {
-      const defaultModel = (0, import_lodash2.get)(p, "defaultModel", (0, import_lodash2.get)(p, "models.0"));
+      const defaultModel = (0, import_lodash.get)(p, "defaultModel", (0, import_lodash.get)(p, "models.0"));
       return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         import_antd4.Card,
         {
@@ -910,7 +909,7 @@ var ProductGridRender = ({
             import_antd4.Card.Meta,
             {
               title: p.name,
-              description: `${(0, import_lodash2.round)(
+              description: `${(0, import_lodash.round)(
                 (defaultModel?.price ?? p.price ?? 0) / 100,
                 0
               )} \u20AB`
