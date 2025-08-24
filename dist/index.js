@@ -676,79 +676,82 @@ var import_react3 = require("react");
 var import_axios = __toESM(require("axios"));
 var import_lodash = require("lodash");
 var import_meta = {};
-var URL = "";
-if (typeof process !== "undefined") {
-  URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
-  console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
-} else {
-  URL = (0, import_lodash.get)(import_meta, "env.VITE_CUSTOMER_API_URL", "");
-  console.log("aj828238jklasjdf", URL);
-}
-console.log("ajsodfjoasjdfo, ", URL);
-var httpClient = import_axios.default.create({
-  baseURL: URL
-});
-var getLocalToken = () => {
-  return localStorage.getItem("accessToken");
-};
-var refreshToken = async () => {
-  const token = localStorage.getItem("refreshToken");
-  const response = await httpClient.get("/api/v1/auth/refresh-token", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+var initHttpClient = () => {
+  let URL = "";
+  if (typeof process !== "undefined") {
+    console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf");
+    URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
+  } else {
+    console.log("aj828238jklasjdf");
+    URL = (0, import_lodash.get)(import_meta, "env.VITE_CUSTOMER_API_URL", "");
+  }
+  const httpClient2 = import_axios.default.create({
+    baseURL: URL
   });
-  if (response?.data) {
-    const { refreshToken: refreshToken2, accessToken } = response.data;
-    localStorage.setItem("refreshToken", refreshToken2);
-    localStorage.setItem("accessToken", accessToken);
-  }
+  const getLocalToken = () => {
+    return localStorage.getItem("accessToken");
+  };
+  const refreshToken = async () => {
+    const token = localStorage.getItem("refreshToken");
+    const response = await httpClient2.get("/api/v1/auth/refresh-token", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    if (response?.data) {
+      const { refreshToken: refreshToken2, accessToken } = response.data;
+      localStorage.setItem("refreshToken", refreshToken2);
+      localStorage.setItem("accessToken", accessToken);
+    }
+  };
+  httpClient2.interceptors.request.use(
+    (config) => {
+      const token = getLocalToken();
+      if (token && !config?.headers?.Authorization) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  httpClient2.interceptors.response.use(
+    (res) => res,
+    async (e) => {
+      const status = e.response ? e.response.status : null;
+      const config = e.config;
+      switch (status) {
+        case 401:
+          if (config.url !== "/api/v1/auth/refresh-token" && config.url !== "/api/v1/auth/login") {
+            await refreshToken();
+          } else if (config.url === "/api/v1/auth/refresh-token") {
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("accessToken");
+            const url = encodeURIComponent(location.href);
+            location.href = `/sign-in?return=${url}`;
+          }
+          break;
+        default:
+          break;
+      }
+      throw e;
+    }
+  );
+  return httpClient2;
 };
-httpClient.interceptors.request.use(
-  (config) => {
-    const token = getLocalToken();
-    if (token && !config?.headers?.Authorization) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-httpClient.interceptors.response.use(
-  (res) => res,
-  async (e) => {
-    const status = e.response ? e.response.status : null;
-    const config = e.config;
-    switch (status) {
-      case 401:
-        if (config.url !== "/api/v1/auth/refresh-token" && config.url !== "/api/v1/auth/login") {
-          await refreshToken();
-        } else if (config.url === "/api/v1/auth/refresh-token") {
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("accessToken");
-          const url = encodeURIComponent(location.href);
-          location.href = `/sign-in?return=${url}`;
-        }
-        break;
-      default:
-        break;
-    }
-    throw e;
-  }
-);
 
 // src/services/sale/product/product.api.ts
 var getProducts = async (payload) => {
-  console.log("ajsodfjoasdjasififi19283u23", httpClient, payload);
-  const response = await httpClient.get(`/api/v1/products`, {
+  const httpClient2 = initHttpClient();
+  const response = await httpClient2.get(`/api/v1/products`, {
     params: payload
   });
   return response.data;
 };
 var getProductDetail = async (id, queries) => {
-  const response = await httpClient.get(`/api/v1/products/${id}`, {
+  const httpClient2 = initHttpClient();
+  const response = await httpClient2.get(`/api/v1/products/${id}`, {
     params: queries
   });
   return response.data;
