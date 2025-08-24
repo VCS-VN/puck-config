@@ -1,6 +1,9 @@
 import axios from "axios";
 import { getEnv } from "@/utils/env-key";
-
+console.log(
+  ";jaosdasdfasdfasdjfoasdf",
+  getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
+);
 const httpClient = axios.create({
   baseURL:
     getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL"),

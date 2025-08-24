@@ -687,6 +687,10 @@ function getEnv(key) {
 }
 
 // src/client/httpClient.ts
+console.log(
+  ";jaosdasdfasdfasdjfoasdf",
+  getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
+);
 var httpClient = import_axios.default.create({
   baseURL: getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL")
 });
