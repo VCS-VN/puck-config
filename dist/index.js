@@ -689,7 +689,7 @@ var import_lodash2 = require("lodash");
 var import_meta2 = {};
 var URL = getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 var httpClient = import_axios.default.create({
-  baseURL: process.env.NEXT_PUBLIC_CUSTOMER_API_URL || (0, import_lodash2.get)(import_meta2, "meta.VITE_CUSTOMER_API_URL")
+  baseURL: (0, import_lodash2.get)(process, "env.NEXT_PUBLIC_CUSTOMER_API_URL") || (0, import_lodash2.get)(import_meta2, "meta.VITE_CUSTOMER_API_URL")
 });
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
