@@ -13,11 +13,6 @@ const URL =
 const httpClient = axios.create({
   baseURL: URL,
 });
-console.log(
-  ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",
-  httpClient,
-  URL
-);
 
 const getLocalToken = () => {
   return localStorage.getItem("accessToken");

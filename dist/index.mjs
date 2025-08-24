@@ -660,11 +660,6 @@ var URL = getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_UR
 var httpClient = axios.create({
   baseURL: URL
 });
-console.log(
-  ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",
-  httpClient,
-  URL
-);
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
 };
