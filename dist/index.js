@@ -31,6 +31,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var index_exports = {};
 __export(index_exports, {
   PuckConfig: () => PuckConfig,
+  PuckProvider: () => PuckProvider,
   getGlobalClassName: () => getGlobalClassName,
   spacingOptions: () => spacingOptions
 });
@@ -1133,9 +1134,13 @@ var PuckConfig = {
 var import_react_query3 = require("@tanstack/react-query");
 var import_jsx_runtime15 = require("react/jsx-runtime");
 var queryClient = new import_react_query3.QueryClient();
+var PuckProvider = ({ children }) => {
+  return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react_query3.QueryClientProvider, { client: queryClient, children });
+};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   PuckConfig,
+  PuckProvider,
   getGlobalClassName,
   spacingOptions
 });

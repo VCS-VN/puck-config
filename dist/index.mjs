@@ -1100,8 +1100,12 @@ var PuckConfig = {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { jsx as jsx15 } from "react/jsx-runtime";
 var queryClient = new QueryClient();
+var PuckProvider = ({ children }) => {
+  return /* @__PURE__ */ jsx15(QueryClientProvider, { client: queryClient, children });
+};
 export {
   PuckConfig,
+  PuckProvider,
   getGlobalClassName,
   spacingOptions
 };

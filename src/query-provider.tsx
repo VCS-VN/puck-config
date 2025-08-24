@@ -7,10 +7,8 @@ interface PuckProviderProps {
 
 const queryClient = new QueryClient();
 
-const PuckProvider: FC<PuckProviderProps> = ({ children }) => {
+export const PuckProvider: FC<PuckProviderProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
-
-export default PuckProvider;
