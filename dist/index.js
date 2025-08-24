@@ -671,9 +671,6 @@ var import_antd3 = require("antd");
 var import_react_error_boundary = require("react-error-boundary");
 var import_react3 = require("react");
 
-// src/services/sale/product/product.api.ts
-var import_lodash3 = require("lodash");
-
 // src/client/httpClient.ts
 var import_axios = __toESM(require("axios"));
 
@@ -747,14 +744,7 @@ httpClient.interceptors.response.use(
 var httpClient_default = httpClient;
 
 // src/services/sale/product/product.api.ts
-var import_meta3 = {};
 var getProducts = async (payload) => {
-  console.log(
-    "\u{1F680} ~ getProducts ~ httpClient:",
-    process.env.NEXT_PUBLIC_CUSTOMER_API_URL || (0, import_lodash3.get)(import_meta3, "meta.VITE_CUSTOMER_API_URL"),
-    httpClient_default.defaults?.baseURL
-  );
-  httpClient_default.defaults.baseURL = process.env.NEXT_PUBLIC_CUSTOMER_API_URL;
   const response = await httpClient_default.get(`/api/v1/products`, {
     params: payload
   });
@@ -868,7 +858,7 @@ var ProductCard = withLayout(ProductCardInternal);
 // src/blocks/ProductGrid/index.tsx
 var import_antd4 = require("antd");
 var import_react4 = require("react");
-var import_lodash4 = require("lodash");
+var import_lodash3 = require("lodash");
 var import_jsx_runtime12 = require("react/jsx-runtime");
 var ProductGridRender = ({
   columns,
@@ -903,7 +893,7 @@ var ProductGridRender = ({
       },
       `skeleton-${i}`
     )) : products.map((p) => {
-      const defaultModel = (0, import_lodash4.get)(p, "defaultModel", (0, import_lodash4.get)(p, "models.0"));
+      const defaultModel = (0, import_lodash3.get)(p, "defaultModel", (0, import_lodash3.get)(p, "models.0"));
       return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         import_antd4.Card,
         {
@@ -920,7 +910,7 @@ var ProductGridRender = ({
             import_antd4.Card.Meta,
             {
               title: p.name,
-              description: `${(0, import_lodash4.round)(
+              description: `${(0, import_lodash3.round)(
                 (defaultModel?.price ?? p.price ?? 0) / 100,
                 0
               )} \u20AB`
