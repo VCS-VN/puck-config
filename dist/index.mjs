@@ -647,7 +647,7 @@ var initHttpClient = () => {
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
     console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
-    URL = import.meta.env.VITE_API_URL;
+    URL = import.meta.env.VITE_CUSTOMER_API_URL;
     console.log("aj828238jklasjdf", import.meta, import.meta);
   }
   const httpClient = axios.create({

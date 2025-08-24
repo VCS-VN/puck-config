@@ -681,7 +681,7 @@ var initHttpClient = () => {
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
     console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
-    URL = import_meta.env.VITE_API_URL;
+    URL = import_meta.env.VITE_CUSTOMER_API_URL;
     console.log("aj828238jklasjdf", import_meta, import_meta);
   }
   const httpClient = import_axios.default.create({
