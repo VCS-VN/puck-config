@@ -1,3 +1,5 @@
+"use client";
+
 import { MERCHANT_STATUS } from "@/utils/enums";
 import { ICategory } from "../category/category.type";
 import { IVariant } from "../variant/variant.type";

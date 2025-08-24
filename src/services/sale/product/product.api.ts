@@ -1,3 +1,5 @@
+"use client";
+
 import httpClient from "../../../client/httpClient";
 import { IProduct } from "./product.type";
 

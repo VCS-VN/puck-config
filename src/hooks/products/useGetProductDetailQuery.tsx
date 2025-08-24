@@ -1,3 +1,5 @@
+"use client";
+
 import { getProductDetail } from "../../services/sale/product/product.api";
 import { IProduct } from "../../services/sale/product/product.type";
 import { QueryType } from "../../utils/type";

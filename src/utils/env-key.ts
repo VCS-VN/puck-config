@@ -1,3 +1,5 @@
+"use client";
+
 import { get } from "lodash";
 
 export function getEnv(key: string): string | undefined {
