@@ -691,11 +691,12 @@ console.log(
 );
 var URL = getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 var httpClient = import_axios.default.create({
-  baseURL: URL || "http://localhost:9800"
+  baseURL: URL
 });
 console.log(
   ";jaosdasdfasdfasdjfoasdf httpClienthttpClienthttpClient",
-  httpClient
+  httpClient,
+  URL
 );
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
