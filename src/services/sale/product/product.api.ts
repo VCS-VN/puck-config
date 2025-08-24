@@ -4,6 +4,11 @@ import httpClient from "../../../client/httpClient";
 import { IProduct } from "./product.type";
 
 export const getProducts = async (payload?: any) => {
+  console.log(
+    "ajsodfjoasdjasififi19283u23",
+    httpClient.defaults.baseURL,
+    payload
+  );
   const response = await httpClient.get(`/api/v1/products`, {
     params: payload,
   });

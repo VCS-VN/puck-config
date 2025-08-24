@@ -742,6 +742,11 @@ var httpClient_default = httpClient;
 
 // src/services/sale/product/product.api.ts
 var getProducts = async (payload) => {
+  console.log(
+    "ajsodfjoasdjasififi19283u23",
+    httpClient_default.defaults.baseURL,
+    payload
+  );
   const response = await httpClient_default.get(`/api/v1/products`, {
     params: payload
   });
