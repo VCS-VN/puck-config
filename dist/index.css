@@ -1,0 +1,68 @@
+/* src/blocks/Grid/styles.module.css */
+.Grid {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+}
+@media (min-width: 768px) {
+  .Grid {
+    display: grid;
+  }
+}
+
+/* src/components/Section/styles.module.css */
+.Section:not(.Section .Section) {
+  padding-inline-start: 16px;
+  padding-inline-end: 16px;
+}
+@media (min-width: 768px) {
+  .Section:not(.Section .Section) {
+    padding-inline-start: 24px;
+    padding-inline-end: 24px;
+  }
+}
+.Section-inner {
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  height: 100%;
+  width: 100%;
+}
+.Section .Section .Section-inner {
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+}
+
+/* src/components/Layout/styles.module.css */
+.Layout {
+  display: block;
+}
+
+/* src/blocks/Flex/styles.module.css */
+.Flex {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+}
+.Flex-item {
+  flex: 1;
+}
+
+/* src/blocks/Space/styles.module.css */
+.Space {
+  display: block;
+  height: var(--size);
+  width: var(--size);
+}
+.Space--vertical {
+  width: 100%;
+}
+.Space--horizontal {
+  width: var(--size);
+  height: 100%;
+}
+
+/* src/blocks/Heading/styles.module.css */
+.Heading {
+  margin: 0;
+}
+/*# sourceMappingURL=index.css.map */

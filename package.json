@@ -1,0 +1,45 @@
+{
+  "name": "puck-config",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@measured/puck": "^0.20.1",
+    "@tanstack/react-query": "^5.85.5",
+    "antd": "^5.27.1",
+    "axios": "^1.11.0",
+    "classnames": "^2.5.1",
+    "dotenv": "^17.2.1",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.541.0",
+    "react": "18.3.0",
+    "react-dom": "18.3.0",
+    "react-error-boundary": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^24.3.0",
+    "@types/react": "18.3.10",
+    "@types/react-dom": "18.3.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "packageManager": "pnpm@10.8.0+sha512.0e82714d1b5b43c74610193cb20734897c1d00de89d0e18420aebc5977fa13d780a9cb05734624e81ebd81cc876cd464794850641c48b9544326b5622ca29971"
+}
