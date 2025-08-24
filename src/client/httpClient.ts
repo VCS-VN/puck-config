@@ -8,9 +8,9 @@ const URL =
   getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 
 const httpClient = axios.create({
-  baseURL:
-    get(process, "env.NEXT_PUBLIC_CUSTOMER_API_URL") ||
-    get(import.meta, "meta.VITE_CUSTOMER_API_URL"),
+  baseURL: process
+    ? process.env.NEXT_PUBLIC_CUSTOMER_API_URL
+    : get(import.meta, "meta.VITE_CUSTOMER_API_URL"),
 });
 
 const getLocalToken = () => {

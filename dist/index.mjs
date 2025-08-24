@@ -655,7 +655,7 @@ function getEnv(key) {
 import { get as get2 } from "lodash";
 var URL = getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 var httpClient = axios.create({
-  baseURL: get2(process, "env.NEXT_PUBLIC_CUSTOMER_API_URL") || get2(import.meta, "meta.VITE_CUSTOMER_API_URL")
+  baseURL: process ? process.env.NEXT_PUBLIC_CUSTOMER_API_URL : get2(import.meta, "meta.VITE_CUSTOMER_API_URL")
 });
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
