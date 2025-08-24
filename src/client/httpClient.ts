@@ -1,11 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { getEnv } from "@/utils/env-key";
 import { get } from "lodash";
-
-const URL =
-  getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 
 const httpClient = axios.create({
   baseURL: process

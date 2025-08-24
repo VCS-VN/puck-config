@@ -641,21 +641,9 @@ import { useState } from "react";
 
 // src/client/httpClient.ts
 import axios from "axios";
-
-// src/utils/env-key.ts
 import { get } from "lodash";
-function getEnv(key) {
-  if (key.includes("VITE_")) {
-    return get(import.meta, `env.${key}`);
-  }
-  return get(process, `env.${key}`);
-}
-
-// src/client/httpClient.ts
-import { get as get2 } from "lodash";
-var URL = getEnv("VITE_CUSTOMER_API_URL") || getEnv("NEXT_PUBLIC_CUSTOMER_API_URL");
 var httpClient = axios.create({
-  baseURL: process ? process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL || get2(import.meta, "meta.VITE_CUSTOMER_API_URL") : get2(import.meta, "meta.VITE_CUSTOMER_API_URL")
+  baseURL: process ? process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL || get(import.meta, "meta.VITE_CUSTOMER_API_URL") : get(import.meta, "meta.VITE_CUSTOMER_API_URL")
 });
 var getLocalToken = () => {
   return localStorage.getItem("accessToken");
@@ -824,7 +812,7 @@ var ProductCard = withLayout(ProductCardInternal);
 // src/blocks/ProductGrid/index.tsx
 import { Row, Col, Card as Card2, Image as Image2, Pagination, Skeleton as Skeleton2 } from "antd";
 import { useMemo, useState as useState2 } from "react";
-import { get as get3, round } from "lodash";
+import { get as get2, round } from "lodash";
 import { jsx as jsx12, jsxs as jsxs2 } from "react/jsx-runtime";
 var ProductGridRender = ({
   columns,
@@ -859,7 +847,7 @@ var ProductGridRender = ({
       },
       `skeleton-${i}`
     )) : products.map((p) => {
-      const defaultModel = get3(p, "defaultModel", get3(p, "models.0"));
+      const defaultModel = get2(p, "defaultModel", get2(p, "models.0"));
       return /* @__PURE__ */ jsx12(Col, { span, style: { marginBottom: 16 }, children: /* @__PURE__ */ jsx12(
         Card2,
         {
