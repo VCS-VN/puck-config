@@ -857,7 +857,7 @@ var ProductsRender = ({
       limit,
       page,
       categoryId,
-      storeId: storeId || import.meta.env.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
+      storeId: storeId || import.meta?.env?.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
     }
     // { enabled: !!store?.slug }
   );
@@ -956,6 +956,7 @@ var ProductsInternal = {
     categoryId: void 0
   },
   render: (props) => {
+    console.log("\u{1F680} ~ props:", props.puck.metadata);
     return /* @__PURE__ */ jsx12(ProductsRender, { ...props });
   }
 };

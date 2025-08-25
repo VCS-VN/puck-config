@@ -178,7 +178,7 @@ const ProductsInternal: ComponentConfig<ProductsProps> = {
     categoryId: undefined,
   },
   render: (props) => {
-    // console.log("🚀 ~ props:", get(props.puck.metadata, "entityId"));
+    console.log("🚀 ~ props:", props.puck.metadata);
     return <ProductsRender {...props} />;
   },
 };
