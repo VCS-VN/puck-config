@@ -34,7 +34,7 @@ const ProductGridRender: FC<ProductGridProps> = ({
   const { data: products, isLoading } = useGetProductsQuery(
     {
       // storeSlug: store?.slug,
-      search,
+      query: search,
       isGettingModels: true,
       isGettingDefaultModel: true,
       limit,
