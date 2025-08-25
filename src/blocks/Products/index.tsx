@@ -47,7 +47,7 @@ const ProductsRender: FC<ProductsProps> = ({
       categoryId,
       storeId:
         storeId ||
-        import.meta.env.VITE_ENTITY_ID ||
+        import.meta?.env?.VITE_ENTITY_ID ||
         process?.env?.NEXT_PUBLIC_ENTITY_ID,
     }
     // { enabled: !!store?.slug }
