@@ -829,12 +829,12 @@ var ProductCardInternal = {
 };
 var ProductCard = withLayout(ProductCardInternal);
 
-// src/blocks/ProductGrid/index.tsx
+// src/blocks/Products/index.tsx
 import { Card as Card2, Image as Image2, List, Input as Input2, Divider } from "antd";
 import { useState as useState2 } from "react";
 import { get, round } from "lodash";
 import { jsx as jsx12, jsxs as jsxs2 } from "react/jsx-runtime";
-var ProductGridRender = ({
+var ProductsRender = ({
   xs,
   sm,
   md,
@@ -843,7 +843,8 @@ var ProductGridRender = ({
   xxl,
   limit,
   categoryId,
-  searchSize
+  searchSize,
+  storeId
 }) => {
   const [search, setSearch] = useState2("");
   const [page, setPage] = useState2(1);
@@ -855,11 +856,11 @@ var ProductGridRender = ({
       isGettingDefaultModel: true,
       limit,
       page,
-      categoryId
+      categoryId,
+      storeId: storeId || import.meta.env.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
     }
     // { enabled: !!store?.slug }
   );
-  console.log({ xs, sm, md, lg, xl, xxl });
   return /* @__PURE__ */ jsxs2(Section, { children: [
     /* @__PURE__ */ jsx12(
       Input2.Search,
@@ -920,7 +921,7 @@ var ProductGridRender = ({
     )
   ] });
 };
-var ProductGridInternal = {
+var ProductsInternal = {
   fields: {
     xs: { type: "number", label: "Xs Columns", min: 1, max: 2 },
     sm: { type: "number", label: "Sm Columns", min: 1, max: 4 },
@@ -954,9 +955,11 @@ var ProductGridInternal = {
     searchSize: "middle",
     categoryId: void 0
   },
-  render: (props) => /* @__PURE__ */ jsx12(ProductGridRender, { ...props })
+  render: (props) => {
+    return /* @__PURE__ */ jsx12(ProductsRender, { ...props });
+  }
 };
-var ProductGrid = withLayout(ProductGridInternal);
+var Products = withLayout(ProductsInternal);
 
 // src/blocks/CategoryGrid/index.tsx
 import { ErrorBoundary as ErrorBoundary2 } from "react-error-boundary";
@@ -998,7 +1001,7 @@ var PuckConfig = {
     },
     storefront: {
       title: "Product",
-      components: ["ProductCard", "ProductGrid", "CategoryGrid"]
+      components: ["ProductCard", "Products", "CategoryGrid"]
     }
   },
   components: {
@@ -1016,8 +1019,8 @@ var PuckConfig = {
     Text,
     Input,
     Button,
+    Products,
     ProductCard,
-    ProductGrid,
     CategoryGrid,
     Divider: { fields: {}, render: () => /* @__PURE__ */ jsx14(AntDivider, {}) },
     // Typography

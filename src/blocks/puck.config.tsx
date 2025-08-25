@@ -14,7 +14,7 @@ import Root from "./root";
 import { Input } from "./Input";
 import { Button } from "./Button";
 import { ProductCard } from "./ProductCard";
-import { ProductGrid } from "./ProductGrid";
+import { Products } from "./Products";
 import { CategoryGrid } from "./CategoryGrid";
 
 export const PuckConfig = {
@@ -36,7 +36,7 @@ export const PuckConfig = {
     },
     storefront: {
       title: "Product",
-      components: ["ProductCard", "ProductGrid", "CategoryGrid"],
+      components: ["ProductCard", "Products", "CategoryGrid"],
     },
   },
 
@@ -60,8 +60,8 @@ export const PuckConfig = {
     Input,
     Button,
 
+    Products,
     ProductCard,
-    ProductGrid,
     CategoryGrid,
 
     Divider: { fields: {}, render: () => <AntDivider /> },

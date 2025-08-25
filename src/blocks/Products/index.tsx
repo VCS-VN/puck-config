@@ -7,7 +7,7 @@ import { get, round } from "lodash";
 import { useGetProductsQuery } from "../../hooks/products";
 import { SizeType } from "antd/es/config-provider/SizeContext";
 
-export type ProductGridProps = {
+export type ProductsProps = {
   xs: number;
   sm: number;
   md: number;
@@ -17,9 +17,10 @@ export type ProductGridProps = {
   limit: number;
   categoryId?: string;
   searchSize: SizeType;
+  storeId?: string;
 };
 
-const ProductGridRender: FC<ProductGridProps> = ({
+const ProductsRender: FC<ProductsProps> = ({
   xs,
   sm,
   md,
@@ -29,6 +30,7 @@ const ProductGridRender: FC<ProductGridProps> = ({
   limit,
   categoryId,
   searchSize,
+  storeId,
 }) => {
   // const store = useRecoilValue(CurrentStoreState);
   const [search, setSearch] = useState("");
@@ -43,11 +45,13 @@ const ProductGridRender: FC<ProductGridProps> = ({
       limit,
       page,
       categoryId,
+      storeId:
+        storeId ||
+        import.meta.env.VITE_ENTITY_ID ||
+        process?.env?.NEXT_PUBLIC_ENTITY_ID,
     }
     // { enabled: !!store?.slug }
   );
-
-  console.log({ xs, sm, md, lg, xl, xxl });
 
   return (
     <Section>
@@ -139,7 +143,7 @@ const ProductGridRender: FC<ProductGridProps> = ({
 //   );
 // };
 
-const ProductGridInternal: ComponentConfig<ProductGridProps> = {
+const ProductsInternal: ComponentConfig<ProductsProps> = {
   fields: {
     xs: { type: "number", label: "Xs Columns", min: 1, max: 2 },
     sm: { type: "number", label: "Sm Columns", min: 1, max: 4 },
@@ -173,7 +177,10 @@ const ProductGridInternal: ComponentConfig<ProductGridProps> = {
     searchSize: "middle",
     categoryId: undefined,
   },
-  render: (props) => <ProductGridRender {...props} />,
+  render: (props) => {
+    // console.log("🚀 ~ props:", get(props.puck.metadata, "entityId"));
+    return <ProductsRender {...props} />;
+  },
 };
 
-export const ProductGrid = withLayout(ProductGridInternal);
+export const Products = withLayout(ProductsInternal);

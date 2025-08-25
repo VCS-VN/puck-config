@@ -863,12 +863,13 @@ var ProductCardInternal = {
 };
 var ProductCard = withLayout(ProductCardInternal);
 
-// src/blocks/ProductGrid/index.tsx
+// src/blocks/Products/index.tsx
 var import_antd4 = require("antd");
 var import_react4 = require("react");
 var import_lodash = require("lodash");
 var import_jsx_runtime12 = require("react/jsx-runtime");
-var ProductGridRender = ({
+var import_meta2 = {};
+var ProductsRender = ({
   xs,
   sm,
   md,
@@ -877,7 +878,8 @@ var ProductGridRender = ({
   xxl,
   limit,
   categoryId,
-  searchSize
+  searchSize,
+  storeId
 }) => {
   const [search, setSearch] = (0, import_react4.useState)("");
   const [page, setPage] = (0, import_react4.useState)(1);
@@ -889,11 +891,11 @@ var ProductGridRender = ({
       isGettingDefaultModel: true,
       limit,
       page,
-      categoryId
+      categoryId,
+      storeId: storeId || import_meta2.env.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
     }
     // { enabled: !!store?.slug }
   );
-  console.log({ xs, sm, md, lg, xl, xxl });
   return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(Section, { children: [
     /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
       import_antd4.Input.Search,
@@ -954,7 +956,7 @@ var ProductGridRender = ({
     )
   ] });
 };
-var ProductGridInternal = {
+var ProductsInternal = {
   fields: {
     xs: { type: "number", label: "Xs Columns", min: 1, max: 2 },
     sm: { type: "number", label: "Sm Columns", min: 1, max: 4 },
@@ -988,9 +990,11 @@ var ProductGridInternal = {
     searchSize: "middle",
     categoryId: void 0
   },
-  render: (props) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProductGridRender, { ...props })
+  render: (props) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProductsRender, { ...props });
+  }
 };
-var ProductGrid = withLayout(ProductGridInternal);
+var Products = withLayout(ProductsInternal);
 
 // src/blocks/CategoryGrid/index.tsx
 var import_react_error_boundary2 = require("react-error-boundary");
@@ -1032,7 +1036,7 @@ var PuckConfig = {
     },
     storefront: {
       title: "Product",
-      components: ["ProductCard", "ProductGrid", "CategoryGrid"]
+      components: ["ProductCard", "Products", "CategoryGrid"]
     }
   },
   components: {
@@ -1050,8 +1054,8 @@ var PuckConfig = {
     Text,
     Input,
     Button,
+    Products,
     ProductCard,
-    ProductGrid,
     CategoryGrid,
     Divider: { fields: {}, render: () => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_antd5.Divider, {}) },
     // Typography
