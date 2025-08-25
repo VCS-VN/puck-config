@@ -877,7 +877,6 @@ var import_antd4 = require("antd");
 var import_react4 = require("react");
 var import_lodash = require("lodash");
 var import_jsx_runtime12 = require("react/jsx-runtime");
-var import_meta3 = {};
 var ProductsRender = ({
   xs,
   sm,
@@ -901,7 +900,7 @@ var ProductsRender = ({
       limit,
       page,
       categoryId,
-      storeId: storeId || import_meta3?.env?.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
+      storeId
     }
     // { enabled: !!store?.slug }
   );

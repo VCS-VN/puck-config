@@ -45,10 +45,7 @@ const ProductsRender: FC<ProductsProps> = ({
       limit,
       page,
       categoryId,
-      storeId:
-        storeId ||
-        import.meta?.env?.VITE_ENTITY_ID ||
-        process?.env?.NEXT_PUBLIC_ENTITY_ID,
+      storeId: storeId,
     }
     // { enabled: !!store?.slug }
   );

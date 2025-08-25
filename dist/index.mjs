@@ -865,7 +865,7 @@ var ProductsRender = ({
       limit,
       page,
       categoryId,
-      storeId: storeId || import.meta?.env?.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
+      storeId
     }
     // { enabled: !!store?.slug }
   );
