@@ -1,5 +1,6 @@
 import * as _measured_puck from '@measured/puck';
 import { DefaultComponentProps, ComponentDataOptionalId, WithId, Content, BaseData, BaseField, PuckComponent, Fields, AppState, Metadata, ResolveDataTrigger, Slot as Slot$1 } from '@measured/puck';
+import { SizeType } from 'antd/es/config-provider/SizeContext';
 import { ButtonProps as ButtonProps$1, InputProps as InputProps$1 } from 'antd';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { FC } from 'react';
@@ -99,6 +100,7 @@ type ProductGridProps = {
     xxl: number;
     limit: number;
     categoryId?: string;
+    searchSize: SizeType;
 };
 
 type ProductCardProps = {

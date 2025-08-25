@@ -5,6 +5,7 @@ import { Section } from "../../components/Section";
 import { FC, useState } from "react";
 import { get, round } from "lodash";
 import { useGetProductsQuery } from "../../hooks/products";
+import { SizeType } from "antd/es/config-provider/SizeContext";
 
 export type ProductGridProps = {
   xs: number;
@@ -15,6 +16,7 @@ export type ProductGridProps = {
   xxl: number;
   limit: number;
   categoryId?: string;
+  searchSize: SizeType;
 };
 
 const ProductGridRender: FC<ProductGridProps> = ({
@@ -26,6 +28,7 @@ const ProductGridRender: FC<ProductGridProps> = ({
   xxl,
   limit,
   categoryId,
+  searchSize,
 }) => {
   // const store = useRecoilValue(CurrentStoreState);
   const [search, setSearch] = useState("");
@@ -52,6 +55,7 @@ const ProductGridRender: FC<ProductGridProps> = ({
         placeholder="Search..."
         onSearch={setSearch}
         loading={isLoading}
+        size={searchSize}
       />
       <Divider />
       <List
@@ -144,6 +148,14 @@ const ProductGridInternal: ComponentConfig<ProductGridProps> = {
     xl: { type: "number", label: "Xl Columns", min: 1, max: 8 },
     xxl: { type: "number", label: "Xxl Columns", min: 1, max: 12 },
     limit: { type: "number", label: "Limit", min: 1, max: 20 },
+    searchSize: {
+      type: "select",
+      label: "Search Size",
+      options: [
+        { value: "middle", label: "Middle" },
+        { value: "large", label: "Large" },
+      ],
+    },
     // categoryId: {
     //   type: "custom",
     //   label: "Category",
@@ -158,6 +170,7 @@ const ProductGridInternal: ComponentConfig<ProductGridProps> = {
     xl: 5,
     xxl: 6,
     limit: 10,
+    searchSize: "middle",
     categoryId: undefined,
   },
   render: (props) => <ProductGridRender {...props} />,

@@ -876,7 +876,8 @@ var ProductGridRender = ({
   xl,
   xxl,
   limit,
-  categoryId
+  categoryId,
+  searchSize
 }) => {
   const [search, setSearch] = (0, import_react4.useState)("");
   const [page, setPage] = (0, import_react4.useState)(1);
@@ -899,7 +900,8 @@ var ProductGridRender = ({
       {
         placeholder: "Search...",
         onSearch: setSearch,
-        loading: isLoading
+        loading: isLoading,
+        size: searchSize
       }
     ),
     /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_antd4.Divider, {}),
@@ -960,7 +962,15 @@ var ProductGridInternal = {
     lg: { type: "number", label: "Lg Columns", min: 1, max: 6 },
     xl: { type: "number", label: "Xl Columns", min: 1, max: 8 },
     xxl: { type: "number", label: "Xxl Columns", min: 1, max: 12 },
-    limit: { type: "number", label: "Limit", min: 1, max: 20 }
+    limit: { type: "number", label: "Limit", min: 1, max: 20 },
+    searchSize: {
+      type: "select",
+      label: "Search Size",
+      options: [
+        { value: "middle", label: "Middle" },
+        { value: "large", label: "Large" }
+      ]
+    }
     // categoryId: {
     //   type: "custom",
     //   label: "Category",
@@ -975,6 +985,7 @@ var ProductGridInternal = {
     xl: 5,
     xxl: 6,
     limit: 10,
+    searchSize: "middle",
     categoryId: void 0
   },
   render: (props) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProductGridRender, { ...props })
