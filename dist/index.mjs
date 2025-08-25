@@ -896,7 +896,7 @@ var ProductGridRender = ({
               cover: /* @__PURE__ */ jsx12(
                 Image2,
                 {
-                  src: p.image || "/no-product-image.png",
+                  src: p.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
                   alt: p.name,
                   preview: false
                 }

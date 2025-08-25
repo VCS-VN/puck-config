@@ -930,7 +930,7 @@ var ProductGridRender = ({
               cover: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
                 import_antd4.Image,
                 {
-                  src: p.image || "/no-product-image.png",
+                  src: p.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
                   alt: p.name,
                   preview: false
                 }
