@@ -654,10 +654,8 @@ var initHttpClient = () => {
   let URL = "";
   if (typeof process !== "undefined") {
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
-    console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
     URL = import.meta.env.VITE_CUSTOMER_API_URL;
-    console.log("aj828238jklasjdf", import.meta, import.meta);
   }
   const httpClient = axios.create({
     baseURL: URL
@@ -745,6 +743,16 @@ var useGetProductDetailQuery = (productId, queries, props) => {
 // src/hooks/products/useGetProductsQuery.tsx
 import { useQuery as useQuery2 } from "@tanstack/react-query";
 var useGetProductsQuery = (queries, props) => {
+  let storeId = queries?.storeId;
+  if (typeof process !== "undefined") {
+    storeId = process?.env?.NEXT_PUBLIC_ENTITY_ID;
+  } else {
+    storeId = import.meta?.env?.VITE_ENTITY_ID;
+  }
+  queries = {
+    ...queries,
+    storeId: queries?.storeId || storeId
+  };
   return useQuery2({
     ...props,
     queryKey: ["products", queries],

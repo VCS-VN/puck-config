@@ -688,10 +688,8 @@ var initHttpClient = () => {
   let URL = "";
   if (typeof process !== "undefined") {
     URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL;
-    console.log("jaosdfjosdjfjasdfjsdjfsidfifiififjasidfjiasdf", URL);
   } else {
     URL = import_meta.env.VITE_CUSTOMER_API_URL;
-    console.log("aj828238jklasjdf", import_meta, import_meta);
   }
   const httpClient = import_axios.default.create({
     baseURL: URL
@@ -778,7 +776,18 @@ var useGetProductDetailQuery = (productId, queries, props) => {
 
 // src/hooks/products/useGetProductsQuery.tsx
 var import_react_query2 = require("@tanstack/react-query");
+var import_meta2 = {};
 var useGetProductsQuery = (queries, props) => {
+  let storeId = queries?.storeId;
+  if (typeof process !== "undefined") {
+    storeId = process?.env?.NEXT_PUBLIC_ENTITY_ID;
+  } else {
+    storeId = import_meta2?.env?.VITE_ENTITY_ID;
+  }
+  queries = {
+    ...queries,
+    storeId: queries?.storeId || storeId
+  };
   return (0, import_react_query2.useQuery)({
     ...props,
     queryKey: ["products", queries],
@@ -868,7 +877,7 @@ var import_antd4 = require("antd");
 var import_react4 = require("react");
 var import_lodash = require("lodash");
 var import_jsx_runtime12 = require("react/jsx-runtime");
-var import_meta2 = {};
+var import_meta3 = {};
 var ProductsRender = ({
   xs,
   sm,
@@ -892,7 +901,7 @@ var ProductsRender = ({
       limit,
       page,
       categoryId,
-      storeId: storeId || import_meta2?.env?.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
+      storeId: storeId || import_meta3?.env?.VITE_ENTITY_ID || process?.env?.NEXT_PUBLIC_ENTITY_ID
     }
     // { enabled: !!store?.slug }
   );

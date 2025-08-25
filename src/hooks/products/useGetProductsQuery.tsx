@@ -8,6 +8,18 @@ import { useQuery } from "@tanstack/react-query";
 type Props = Partial<QueryType<{ data: IProduct[]; total: number }>>;
 
 export const useGetProductsQuery = (queries?: any, props?: Props) => {
+  let storeId = queries?.storeId;
+  if (typeof process !== "undefined") {
+    storeId = process?.env?.NEXT_PUBLIC_ENTITY_ID;
+  } else {
+    storeId = import.meta?.env?.VITE_ENTITY_ID;
+  }
+
+  queries = {
+    ...queries,
+    storeId: queries?.storeId || storeId,
+  };
+
   return useQuery({
     ...props,
     queryKey: ["products", queries],
