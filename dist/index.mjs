@@ -964,8 +964,7 @@ var ProductsInternal = {
     categoryId: void 0
   },
   render: (props) => {
-    console.log("\u{1F680} ~ props:", props.puck.metadata);
-    return /* @__PURE__ */ jsx12(ProductsRender, { ...props });
+    return /* @__PURE__ */ jsx12(ProductsRender, { ...props, storeId: props?.puck?.metadata?.storeId });
   }
 };
 var Products = withLayout(ProductsInternal);

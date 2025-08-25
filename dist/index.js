@@ -999,8 +999,7 @@ var ProductsInternal = {
     categoryId: void 0
   },
   render: (props) => {
-    console.log("\u{1F680} ~ props:", props.puck.metadata);
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProductsRender, { ...props });
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProductsRender, { ...props, storeId: props?.puck?.metadata?.storeId });
   }
 };
 var Products = withLayout(ProductsInternal);
