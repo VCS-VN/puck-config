@@ -1,10 +1,10 @@
-import {
-  Divider as AntDivider,
-  Form as AntForm,
-  Image as AntImage,
-  Input as AntdInput,
-  Button as AntdButton,
-} from "antd";
+// import {
+//   Divider as AntDivider,
+//   Form as AntForm,
+//   Image as AntImage,
+//   Input as AntdInput,
+//   Button as AntdButton,
+// } from "antd";
 import { Grid } from "./Grid";
 import { Flex } from "./Flex";
 import { Space } from "./Space";
@@ -64,7 +64,7 @@ export const PuckConfig = {
     ProductCard,
     CategoryGrid,
 
-    Divider: { fields: {}, render: () => <AntDivider /> },
+    // Divider: { fields: {}, render: () => <AntDivider /> },
 
     // Typography
 
@@ -76,22 +76,22 @@ export const PuckConfig = {
     },
 
     // Media
-    Image: {
-      fields: { src: { type: "text" }, alt: { type: "text" } },
-      render: ({ src, alt }: any) => <AntImage src={src} alt={alt} />,
-    },
-    Video: {
-      fields: { url: { type: "text" } },
-      render: ({ url }: any) => (
-        <iframe
-          width="560"
-          height="315"
-          src={url}
-          frameBorder="0"
-          allowFullScreen
-        />
-      ),
-    },
+    // Image: {
+    //   fields: { src: { type: "text" }, alt: { type: "text" } },
+    //   render: ({ src, alt }: any) => <AntImage src={src} alt={alt} />,
+    // },
+    // Video: {
+    //   fields: { url: { type: "text" } },
+    //   render: ({ url }: any) => (
+    //     <iframe
+    //       width="560"
+    //       height="315"
+    //       src={url}
+    //       frameBorder="0"
+    //       allowFullScreen
+    //     />
+    //   ),
+    // },
 
     // // CMS
     // BlogList: {
@@ -173,23 +173,23 @@ export const PuckConfig = {
 
     // Interaction
 
-    Form: {
-      fields: { placeholder: { type: "text" } },
-      render: ({ placeholder }: any) => (
-        <AntForm layout="inline" onFinish={(v) => console.log(v)}>
-          <AntForm.Item name="input">
-            <AntdInput placeholder={placeholder} />
-          </AntForm.Item>
-          <AntForm.Item>
-            <AntdButton htmlType="submit">Gửi</AntdButton>
-          </AntForm.Item>
-        </AntForm>
-      ),
-    },
-    SearchBar: {
-      fields: {},
-      render: () => <AntdInput.Search placeholder="Tìm kiếm..." />,
-    },
+    // Form: {
+    //   fields: { placeholder: { type: "text" } },
+    //   render: ({ placeholder }: any) => (
+    //     <AntForm layout="inline" onFinish={(v) => console.log(v)}>
+    //       <AntForm.Item name="input">
+    //         <AntdInput placeholder={placeholder} />
+    //       </AntForm.Item>
+    //       <AntForm.Item>
+    //         <AntdButton htmlType="submit">Gửi</AntdButton>
+    //       </AntForm.Item>
+    //     </AntForm>
+    //   ),
+    // },
+    // SearchBar: {
+    //   fields: {},
+    //   render: () => <AntdInput.Search placeholder="Tìm kiếm..." />,
+    // },
 
     // Utility
     SEO: {

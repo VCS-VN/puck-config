@@ -1,11 +1,11 @@
-import { Card, Image, List, Input, Divider } from "antd";
+// import { Card, Image, List, Input, Divider } from "antd";
 import { ComponentConfig, Render } from "@measured/puck";
 import { withLayout } from "../../components/Layout";
 import { Section } from "../../components/Section";
 import { FC, useState } from "react";
 import { get, round } from "lodash";
 import { useGetProductsQuery } from "../../hooks/products";
-import { SizeType } from "antd/es/config-provider/SizeContext";
+// import { SizeType } from "antd/es/config-provider/SizeContext";
 
 export type ProductsProps = {
   xs: number;
@@ -16,7 +16,7 @@ export type ProductsProps = {
   xxl: number;
   limit: number;
   categoryId?: string;
-  searchSize: SizeType;
+  // searchSize: SizeType;
   storeId?: string;
 };
 
@@ -29,7 +29,7 @@ const ProductsRender: FC<ProductsProps> = ({
   xxl,
   limit,
   categoryId,
-  searchSize,
+  // searchSize,
   storeId,
 }) => {
   // const store = useRecoilValue(CurrentStoreState);
@@ -52,9 +52,13 @@ const ProductsRender: FC<ProductsProps> = ({
 
   return (
     <Section>
-      <Input.Search
+      <></>
+      {/* <Input.Search
         placeholder="Search..."
-        onSearch={setSearch}
+        onSearch={(e) => {
+          setSearch(e);
+          setPage(1);
+        }}
         loading={isLoading}
         size={searchSize}
       />
@@ -74,6 +78,8 @@ const ProductsRender: FC<ProductsProps> = ({
         pagination={{
           total: products?.total,
           onChange: (p) => setPage(p),
+          pageSize: limit,
+          current: page,
         }}
         renderItem={(p) => {
           const defaultModel = get(p, "defaultModel", get(p, "models.0"));
@@ -84,6 +90,7 @@ const ProductsRender: FC<ProductsProps> = ({
                 hoverable
                 cover={
                   <Image
+                    className="object-cover min-h-[150px]"
                     src={
                       p.image ||
                       "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
@@ -104,7 +111,7 @@ const ProductsRender: FC<ProductsProps> = ({
             </List.Item>
           );
         }}
-      />
+      /> */}
     </Section>
   );
 };
@@ -149,14 +156,14 @@ const ProductsInternal: ComponentConfig<ProductsProps> = {
     xl: { type: "number", label: "Xl Columns", min: 1, max: 8 },
     xxl: { type: "number", label: "Xxl Columns", min: 1, max: 12 },
     limit: { type: "number", label: "Limit", min: 1, max: 20 },
-    searchSize: {
-      type: "select",
-      label: "Search Size",
-      options: [
-        { value: "middle", label: "Middle" },
-        { value: "large", label: "Large" },
-      ],
-    },
+    // searchSize: {
+    //   type: "select",
+    //   label: "Search Size",
+    //   options: [
+    //     { value: "middle", label: "Middle" },
+    //     { value: "large", label: "Large" },
+    //   ],
+    // },
     // categoryId: {
     //   type: "custom",
     //   label: "Category",
@@ -171,7 +178,7 @@ const ProductsInternal: ComponentConfig<ProductsProps> = {
     xl: 5,
     xxl: 6,
     limit: 10,
-    searchSize: "middle",
+    // searchSize: "middle",
     categoryId: undefined,
   },
   render: (props) => {

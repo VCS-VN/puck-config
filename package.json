@@ -15,18 +15,21 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@chakra-ui/react": "^3.25.0",
+    "@emotion/react": "^11.14.0",
     "@measured/puck": "^0.20.1",
     "@tanstack/react-query": "^5.85.5",
     "@uidotdev/usehooks": "^2.4.1",
-    "antd": "^5.27.1",
     "axios": "^1.11.0",
     "classnames": "^2.5.1",
     "dotenv": "^17.2.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.541.0",
+    "next-themes": "^0.4.6",
     "react": "18.3.0",
     "react-dom": "18.3.0",
     "react-error-boundary": "^6.0.0",
+    "react-icons": "^5.5.0",
     "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {
