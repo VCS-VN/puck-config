@@ -1,21 +1,35 @@
 // src/components/Grid.tsx
 import { ComponentConfig } from "@measured/puck";
-import { Box, Grid as ChakraGrid, Stack, Text } from "@chakra-ui/react";
+import { Box, SimpleGrid } from "@chakra-ui/react";
 import { withLayout } from "@/components/Layout";
 
 const baseGrid: ComponentConfig = {
   fields: {
+    items: {
+      type: "array",
+      label: "Grid Columns",
+      arrayFields: {
+        label: {
+          type: "text",
+          label: "Column Label (for editor reference)",
+        },
+        content: {
+          type: "slot",
+        },
+      },
+      min: 1, // At least 1 column
+    },
     mobile: {
       label: "Mobile Settings",
       type: "object",
       objectFields: {
         columns: {
-          label: "Number of Columns (Mobile)",
+          label: "Number of Columns ",
           type: "number",
           min: 1,
           max: 12,
         },
-        gap: { label: "Gap (Mobile)", type: "text" },
+        gap: { label: "Gap (px)", type: "text" },
       },
     },
     tablet: {
@@ -46,16 +60,17 @@ const baseGrid: ComponentConfig = {
     },
   },
   defaultProps: {
+    items: [{ label: "Column 1", content: [] }],
     mobile: {
       columns: 1,
       gap: "4",
     },
     tablet: {
-      columns: 2,
+      columns: 1,
       gap: "4",
     },
     desktop: {
-      columns: 3,
+      columns: 1,
       gap: "4",
     },
     layout: {
@@ -73,86 +88,31 @@ const baseGrid: ComponentConfig = {
       borderRadius: "0",
     },
   },
-  render: (
-    props: {
-      puck: any;
-      previewBreakpoint: any;
-      mobile: any;
-      tablet: any;
-      desktop: any;
-    },
-    a,
-    b
-  ) => {
-    console.log("🚀 ~ props:", props, a, b);
-    const { puck, previewBreakpoint, mobile, tablet, desktop } = props;
-    console.log("🚀 ~ previewBreakpoint:", previewBreakpoint);
-    const isEditing = puck.isEditing;
-
-    const content = <Box>{puck.renderDropZone({ zone: "content" })}</Box>;
-
-    if (isEditing) {
-      let selectedGrid;
-      switch (previewBreakpoint) {
-        case "mobile":
-          selectedGrid = (
-            <ChakraGrid
-              templateColumns={`repeat(${mobile.columns}, 1fr)`}
-              gap={mobile.gap}
-            >
-              {content}
-            </ChakraGrid>
-          );
-          break;
-        case "tablet":
-          selectedGrid = (
-            <ChakraGrid
-              templateColumns={`repeat(${tablet.columns}, 1fr)`}
-              gap={tablet.gap}
-            >
-              {content}
-            </ChakraGrid>
-          );
-          break;
-        case "desktop":
-        default:
-          selectedGrid = (
-            <ChakraGrid
-              templateColumns={`repeat(${desktop.columns}, 1fr)`}
-              gap={desktop.gap}
-            >
-              {content}
-            </ChakraGrid>
-          );
-          break;
-      }
-      return selectedGrid;
-    }
+  render: ({ items, mobile, tablet, desktop, bgImage }) => {
+    const content = items.map((col: any, index: number) => (
+      <Box key={index}>
+        <col.content minEmptyHeight={100} />
+      </Box>
+    ));
 
     return (
-      <>
-        <ChakraGrid
-          templateColumns={`repeat(${mobile.columns}, 1fr)`}
-          gap={mobile.gap}
-          display={{ base: "grid", md: "none" }}
-        >
-          {content}
-        </ChakraGrid>
-        <ChakraGrid
-          templateColumns={`repeat(${tablet.columns}, 1fr)`}
-          gap={tablet.gap}
-          display={{ base: "none", md: "grid", lg: "none" }}
-        >
-          {content}
-        </ChakraGrid>
-        <ChakraGrid
-          templateColumns={`repeat(${desktop.columns}, 1fr)`}
-          gap={desktop.gap}
-          display={{ base: "none", lg: "grid" }}
-        >
-          {content}
-        </ChakraGrid>
-      </>
+      <SimpleGrid
+        backgroundImage={bgImage}
+        columns={{
+          base: mobile.columns,
+          sm: tablet.columns,
+          md: tablet.columns,
+          lg: desktop.columns,
+        }}
+        gap={{
+          base: mobile.gap,
+          sm: tablet.gap,
+          md: tablet.gap,
+          lg: desktop.gap,
+        }}
+      >
+        {content}
+      </SimpleGrid>
     );
   },
 };

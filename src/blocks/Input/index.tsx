@@ -1,69 +1,47 @@
-import { ALargeSmall } from "lucide-react";
-import { Section } from "../../components/Section";
-import { WithLayout, withLayout } from "../../components/Layout";
-import { ComponentConfig } from "@measured/puck";
-// import { Input as AntInput, InputProps as AntInputProps } from "antd";
+import { withLayout } from "@/components/Layout";
+import { VariableState } from "@/services/common/variable.state";
+import { type ComponentConfig } from "@measured/puck";
+import { useRecoilState } from "recoil";
+import { Input as ChakraInput } from "@chakra-ui/react";
+import { useEffect, useMemo } from "react";
+import { get } from "lodash";
 
-export type InputProps = WithLayout<{
-  placeholder?: string;
-  padding?: string;
-  // size?: AntInputProps["size"];
-  maxWidth?: string;
-  // variant?: AntInputProps["variant"];
-  disabled?: boolean;
-}>;
-
-const InnerInput: ComponentConfig<InputProps> = {
+const baseInput: ComponentConfig = {
   fields: {
-    placeholder: {
-      type: "text",
-    },
-    // size: {
-    //   type: "select",
-    //   labelIcon: <ALargeSmall size={16} />,
-    //   options: [
-    //     { label: "Large", value: "large" },
-    //     { label: "Default", value: "default" },
-    //     { label: "Small", value: "small" },
-    //   ],
-    // },
-    // // disabled: { type: "" },
-    // variant: {
-    //   type: "select",
-    //   labelIcon: <ALargeSmall size={16} />,
-    //   options: [
-    //     { label: "Borderless", value: "borderless" },
-    //     { label: "Filled", value: "filled" },
-
-    //     {
-    //       label: "Outlined",
-    //       value: "outlined",
-    //     },
-    //     {
-    //       label: "Underlined",
-    //       value: "underlined",
-    //     },
-    //   ],
-    // },
+    variableName: { type: "text", label: "Variable Name (e.g., searchQuery)" },
+    placeholder: { type: "text", label: "Placeholder" },
+    initialValue: { type: "text", label: "Value" },
   },
   defaultProps: {
-    placeholder: "Placeholder",
-    // variant: "outlined",
-    // size: "large",
-    disabled: false,
+    variableName: "",
+    placeholder: "",
+    initialValue: "",
   },
-  render: ({ placeholder, maxWidth }) => {
+  render: ({ variableName, placeholder, initialValue }) => {
+    const [variables, setVariables] = useRecoilState(VariableState);
+
+    const value = useMemo(() => {
+      return get("variables", variableName, initialValue);
+    }, [variableName, variables, initialValue]);
+
+    useEffect(() => {
+      if (variableName) {
+        setVariables({ ...variables, [variableName]: value });
+      }
+    }, [value, variableName]);
+
     return (
-      <Section maxWidth={maxWidth}>
-        <></>
-        {/* <AntInput
-          placeholder={placeholder}
-          variant={variant || "filled"}
-          size={size}
-        /> */}
-      </Section>
+      <ChakraInput
+        placeholder={placeholder || "Placeholder"}
+        onChange={(e) => {
+          return setVariables((prev) => ({
+            ...prev,
+            [variableName]: e.target.value,
+          }));
+        }}
+      />
     );
   },
 };
 
-export const Input = withLayout(InnerInput);
+export const Input = withLayout(baseInput);

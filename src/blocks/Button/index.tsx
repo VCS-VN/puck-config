@@ -42,7 +42,6 @@ export const Button: ComponentConfig<ButtonProps> = {
   },
   defaultProps: {
     label: "Button",
-    // variant: "solid",
   },
   render: ({ href, label, puck }) => {
     return (

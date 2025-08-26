@@ -7,13 +7,13 @@
 // } from "antd";
 import { Grid } from "./Grid";
 import { Flex } from "./Flex";
-import { Space } from "./Space";
+import { Container } from "./Container";
 import { Heading } from "./Heading";
 import { Text } from "./Text";
 import Root from "./root";
 import { Input } from "./Input";
 import { Button } from "./Button";
-import { ProductCard } from "./ProductCard";
+import { Product } from "./Product";
 import { Products } from "./Products";
 import { CategoryGrid } from "./CategoryGrid";
 
@@ -21,38 +21,30 @@ export const PuckConfig = {
   root: Root,
   categories: {
     layout: {
-      components: ["Grid", "Flex", "Space"],
+      components: ["Container", "Grid", "Flex"],
+      defaultExpanded: true,
     },
     typography: {
       components: ["Heading", "Text"],
+      defaultExpanded: false,
     },
     interactive: {
       title: "Actions",
-      components: ["Button", "RichText", "Input"],
-    },
-    other: {
-      title: "Other",
-      components: ["Card", "Hero", "Logos", "Stats", "Template"],
+      components: ["Button", "Input"],
+      defaultExpanded: false,
     },
     storefront: {
       title: "Product",
-      components: ["ProductCard", "Products", "CategoryGrid"],
+      components: ["Products"],
+      defaultExpanded: false,
     },
   },
 
   components: {
-    Container: {
-      fields: {
-        background: { type: "text" },
-        padding: { type: "number" },
-      },
-      render: ({ background, padding, children }: any) => (
-        <div style={{ background, padding }}>{children}</div>
-      ),
-    },
+    Container,
     Grid,
     Flex,
-    Space,
+    // Space,
 
     Heading,
     Text,
@@ -61,7 +53,7 @@ export const PuckConfig = {
     Button,
 
     Products,
-    ProductCard,
+    Product,
     CategoryGrid,
 
     // Divider: { fields: {}, render: () => <AntDivider /> },

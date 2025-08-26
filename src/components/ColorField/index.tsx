@@ -15,7 +15,7 @@ export const colorField = {
       <input
         type="color"
         name={name}
-        value={value.startsWith("#") ? value : "#ffffff"} // Fallback to white if not hex
+        value={value?.startsWith("#") ? value : "#ffffff"} // Fallback to white if not hex
         onChange={(e) => onChange(e.target.value)}
       />
     </FieldLabel>

@@ -1,9 +1,9 @@
 // import { Card, Image, Select, Skeleton } from "antd";
-import { ComponentConfig } from "@measured/puck";
+import { type ComponentConfig } from "@measured/puck";
 import { withLayout } from "../../components/Layout";
 import { Section } from "../../components/Section";
 import { ErrorBoundary } from "react-error-boundary";
-import { FC, useState } from "react";
+import { useState, type FC } from "react";
 import { useGetProductDetailQuery } from "../../hooks/products";
 
 export type ProductCardProps = {
@@ -11,7 +11,7 @@ export type ProductCardProps = {
   showVariantSelector?: boolean;
 };
 
-const ProductCardRender: FC<ProductCardProps> = ({
+const ProductRender: FC<ProductCardProps> = ({
   productId,
   showVariantSelector,
 }) => {
@@ -76,7 +76,7 @@ const ProductCardRender: FC<ProductCardProps> = ({
   );
 };
 
-const ProductCardInternal: ComponentConfig<ProductCardProps> = {
+const ProductInternal: ComponentConfig<ProductCardProps> = {
   fields: {
     productId: { type: "text", label: "Product ID" },
     showVariantSelector: {
@@ -95,10 +95,10 @@ const ProductCardInternal: ComponentConfig<ProductCardProps> = {
   render: (props) => (
     <Section>
       <ErrorBoundary fallbackRender={() => <div>Unable to load product.</div>}>
-        <ProductCardRender {...props} />
+        <ProductRender {...props} />
       </ErrorBoundary>
     </Section>
   ),
 };
 
-export const ProductCard = withLayout(ProductCardInternal);
+export const Product = withLayout(ProductInternal);
