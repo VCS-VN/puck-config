@@ -1450,10 +1450,10 @@ var PuckConfig = {
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { QueryClient } from "@tanstack/react-query";
 import { RecoilRoot } from "recoil";
-import { Fragment as Fragment3, jsx as jsx16 } from "react/jsx-runtime";
+import { jsx as jsx16 } from "react/jsx-runtime";
 var queryClient = new QueryClient();
 var PuckProvider = ({ children }) => {
-  return /* @__PURE__ */ jsx16(RecoilRoot, { children: /* @__PURE__ */ jsx16(ChakraProvider, { value: defaultSystem, children: /* @__PURE__ */ jsx16(Fragment3, {}) }) });
+  return /* @__PURE__ */ jsx16(RecoilRoot, { children: /* @__PURE__ */ jsx16(ChakraProvider, { value: defaultSystem, children }) });
 };
 export {
   PuckConfig,

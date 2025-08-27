@@ -1482,7 +1482,7 @@ var import_recoil4 = require("recoil");
 var import_jsx_runtime16 = require("react/jsx-runtime");
 var queryClient = new import_react_query3.QueryClient();
 var PuckProvider = ({ children }) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_recoil4.RecoilRoot, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react11.ChakraProvider, { value: import_react11.defaultSystem, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_jsx_runtime16.Fragment, {}) }) });
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_recoil4.RecoilRoot, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react11.ChakraProvider, { value: import_react11.defaultSystem, children }) });
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
