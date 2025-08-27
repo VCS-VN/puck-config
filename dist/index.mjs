@@ -1448,12 +1448,12 @@ var PuckConfig = {
 
 // src/query-provider.tsx
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RecoilRoot } from "recoil";
 import { jsx as jsx16 } from "react/jsx-runtime";
 var queryClient = new QueryClient();
 var PuckProvider = ({ children }) => {
-  return /* @__PURE__ */ jsx16(RecoilRoot, { children: /* @__PURE__ */ jsx16(ChakraProvider, { value: defaultSystem, children }) });
+  return /* @__PURE__ */ jsx16(RecoilRoot, { children: /* @__PURE__ */ jsx16(ChakraProvider, { value: defaultSystem, children: /* @__PURE__ */ jsx16(QueryClientProvider, { client: queryClient, children }) }) });
 };
 export {
   PuckConfig,
