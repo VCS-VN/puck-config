@@ -1,10 +1,3 @@
-// import {
-//   Divider as AntDivider,
-//   Form as AntForm,
-//   Image as AntImage,
-//   Input as AntdInput,
-//   Button as AntdButton,
-// } from "antd";
 import { Grid } from "./Grid";
 import { Flex } from "./Flex";
 import { Container } from "./Container";
@@ -44,7 +37,6 @@ export const PuckConfig = {
     Container,
     Grid,
     Flex,
-    // Space,
 
     Heading,
     Text,
@@ -55,10 +47,6 @@ export const PuckConfig = {
     Products,
     Product,
     CategoryGrid,
-
-    // Divider: { fields: {}, render: () => <AntDivider /> },
-
-    // Typography
 
     RichText: {
       fields: { html: { type: "textarea" } },

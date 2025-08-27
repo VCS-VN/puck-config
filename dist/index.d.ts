@@ -1,88 +1,7 @@
-import * as _measured_puck from '@measured/puck';
-import { DefaultComponentProps, ComponentDataOptionalId, WithId, Content, BaseData, BaseField, PuckComponent, Fields, AppState, Metadata, ResolveDataTrigger } from '@measured/puck';
 import * as react_jsx_runtime from 'react/jsx-runtime';
+import * as _measured_puck from '@measured/puck';
+import { DefaultComponentProps } from '@measured/puck';
 import { FC } from 'react';
-
-type OptionsObj = Record<string, any>;
-type Options = string | OptionsObj;
-declare const getGlobalClassName: (rootClass: string, options: Options) => string;
-
-type Exact<T, Target> = Record<Exclude<keyof T, keyof Target>, never>;
-type BuiltinTypes = Date | RegExp | Error | Function | symbol | null | undefined;
-type Slot<Props extends {
-    [key: string]: DefaultComponentProps;
-} = {
-    [key: string]: DefaultComponentProps;
-}> = {
-    [K in keyof Props]: ComponentDataOptionalId<Props[K], K extends string ? K : never>;
-}[keyof Props][];
-type LeftOrExactRight<Union, Left, Right> = (Left & Union extends Right ? Exact<Union, Right> : Left) | (Right & Exact<Union, Right>);
-type ComponentConfigParams<Props extends DefaultComponentProps = DefaultComponentProps, UserFields extends FieldsExtension = never> = {
-    props: Props;
-    fields?: AssertHasValue<UserFields>;
-};
-type AssertHasValue<T, True = T, False = never> = [keyof T] extends [
-    never
-] ? False : True;
-type FieldsExtension = {
-    [Type in string]: {
-        type: Type;
-    };
-};
-type WithDeepSlots<T, SlotType = T> = T extends Slot ? SlotType : T extends (infer U)[] ? Array<WithDeepSlots<U, SlotType>> : T extends (infer U)[] ? WithDeepSlots<U, SlotType>[] : T extends BuiltinTypes ? T : T extends object ? {
-    [K in keyof T]: WithDeepSlots<T[K], SlotType>;
-} : T;
-type ComponentData<Props extends DefaultComponentProps = DefaultComponentProps, Name = string, Components extends Record<string, DefaultComponentProps> = Record<string, DefaultComponentProps>> = {
-    type: Name;
-    props: WithDeepSlots<WithId<Props>, Content<Components>>;
-} & BaseData<Props>;
-type ComponentConfig<RenderPropsOrParams extends LeftOrExactRight<RenderPropsOrParams, DefaultComponentProps, ComponentConfigParams> = DefaultComponentProps, FieldProps extends DefaultComponentProps = RenderPropsOrParams extends {
-    props: any;
-} ? RenderPropsOrParams["props"] : RenderPropsOrParams, DataShape = Omit<ComponentData<FieldProps>, "type">> = RenderPropsOrParams extends ComponentConfigParams<infer ParamsRenderProps, never> ? ComponentConfigInternal<ParamsRenderProps, FieldProps, DataShape, {}> : RenderPropsOrParams extends ComponentConfigParams<infer ParamsRenderProps, infer ParamsFields> ? ComponentConfigInternal<ParamsRenderProps, FieldProps, DataShape, ParamsFields[keyof ParamsFields] & BaseField> : ComponentConfigInternal<RenderPropsOrParams, FieldProps, DataShape>;
-type WithPartialProps<T, Props extends DefaultComponentProps> = Omit<T, "props"> & {
-    props?: Partial<Props>;
-};
-type ComponentConfigInternal<RenderProps extends DefaultComponentProps, FieldProps extends DefaultComponentProps, DataShape = Omit<ComponentData<FieldProps>, "type">, // NB this doesn't include AllProps, so types will not contain deep slot types. To fix, we require a breaking change.
-UserField extends BaseField = {}> = {
-    render: PuckComponent<RenderProps>;
-    label?: string;
-    defaultProps?: FieldProps;
-    fields?: Fields<FieldProps, UserField>;
-    permissions?: Partial<Permissions>;
-    inline?: boolean;
-    resolveFields?: (data: DataShape, params: {
-        changed: Partial<Record<keyof FieldProps, boolean> & {
-            id: string;
-        }>;
-        fields: Fields<FieldProps>;
-        lastFields: Fields<FieldProps>;
-        lastData: DataShape | null;
-        appState: AppState;
-        parent: ComponentData | null;
-    }) => Promise<Fields<FieldProps>> | Fields<FieldProps>;
-    resolveData?: (data: DataShape, params: {
-        changed: Partial<Record<keyof FieldProps, boolean> & {
-            id: string;
-        }>;
-        lastData: DataShape | null;
-        metadata: Metadata;
-        trigger: ResolveDataTrigger;
-    }) => Promise<WithPartialProps<DataShape, FieldProps>> | WithPartialProps<DataShape, FieldProps>;
-    resolvePermissions?: (data: DataShape, params: {
-        changed: Partial<Record<keyof FieldProps, boolean> & {
-            id: string;
-        }>;
-        lastPermissions: Partial<Permissions>;
-        permissions: Partial<Permissions>;
-        appState: AppState;
-        lastData: DataShape | null;
-    }) => Promise<Partial<Permissions>> | Partial<Permissions>;
-    metadata?: Metadata;
-};
-declare const spacingOptions: {
-    label: string;
-    value: string;
-}[];
 
 type CategoryGridProps = {
     limit: number;
@@ -637,4 +556,4 @@ interface PuckProviderProps {
 }
 declare const PuckProvider: FC<PuckProviderProps>;
 
-export { type AssertHasValue, type ComponentConfig, type ComponentConfigParams, type ComponentData, type Exact, type FieldsExtension, type LeftOrExactRight, PuckConfig, PuckProvider, type Slot, type WithDeepSlots, getGlobalClassName, spacingOptions };
+export { PuckConfig, PuckProvider };

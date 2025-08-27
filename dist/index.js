@@ -31,77 +31,9 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var index_exports = {};
 __export(index_exports, {
   PuckConfig: () => PuckConfig,
-  PuckProvider: () => PuckProvider,
-  getGlobalClassName: () => getGlobalClassName,
-  spacingOptions: () => spacingOptions
+  PuckProvider: () => PuckProvider
 });
 module.exports = __toCommonJS(index_exports);
-
-// src/utils/get-class-name-factory.ts
-var import_classnames = __toESM(require("classnames"));
-var getGlobalClassName = (rootClass, options) => {
-  if (typeof options === "string") {
-    return `${rootClass}-${options}`;
-  } else {
-    const mappedOptions = {};
-    for (const option in options) {
-      mappedOptions[`${rootClass}--${option}`] = options[option];
-    }
-    return (0, import_classnames.default)({
-      [rootClass]: true,
-      ...mappedOptions
-    });
-  }
-};
-var getClassNameFactory = (rootClass, styles, config = { baseClass: "" }) => (options = {}) => {
-  if (typeof options === "string") {
-    const descendant = options;
-    const style = styles[`${rootClass}-${descendant}`];
-    if (style) {
-      return config.baseClass + styles[`${rootClass}-${descendant}`] || "";
-    }
-    return "";
-  } else if (typeof options === "object") {
-    const modifiers = options;
-    const prefixedModifiers = {};
-    for (const modifier in modifiers) {
-      prefixedModifiers[styles[`${rootClass}--${modifier}`]] = modifiers[modifier];
-    }
-    const c = styles[rootClass];
-    return config.baseClass + (0, import_classnames.default)({
-      [c]: !!c,
-      // only apply the class if it exists
-      ...prefixedModifiers
-    });
-  } else {
-    return config.baseClass + styles[rootClass] || "";
-  }
-};
-var get_class_name_factory_default = getClassNameFactory;
-
-// src/utils/index.ts
-var spacingOptions = [
-  { label: "8px", value: "8px" },
-  { label: "16px", value: "16px" },
-  { label: "24px", value: "24px" },
-  { label: "32px", value: "32px" },
-  { label: "40px", value: "40px" },
-  { label: "48px", value: "48px" },
-  { label: "56px", value: "56px" },
-  { label: "64px", value: "64px" },
-  { label: "72px", value: "72px" },
-  { label: "80px", value: "80px" },
-  { label: "88px", value: "88px" },
-  { label: "96px", value: "96px" },
-  { label: "104px", value: "104px" },
-  { label: "112px", value: "112px" },
-  { label: "120px", value: "120px" },
-  { label: "128px", value: "128px" },
-  { label: "136px", value: "136px" },
-  { label: "144px", value: "144px" },
-  { label: "152px", value: "152px" },
-  { label: "160px", value: "160px" }
-];
 
 // src/blocks/Grid/index.tsx
 var import_react3 = require("@chakra-ui/react");
@@ -132,7 +64,7 @@ var colorField = {
 
 // src/components/Layout/index.tsx
 var import_jsx_runtime2 = require("react/jsx-runtime");
-var spacingOptions2 = [
+var spacingOptions = [
   { label: "8px", value: "8px" },
   { label: "16px", value: "16px" },
   { label: "24px", value: "24px" },
@@ -227,42 +159,42 @@ var layoutField = {
     paddingTop: {
       type: "select",
       label: "Padding Top",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     paddingRight: {
       type: "select",
       label: "Padding Right",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     paddingBottom: {
       type: "select",
       label: "Padding Bottom",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     paddingLeft: {
       type: "select",
       label: "Padding Left",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     marginTop: {
       type: "select",
       label: "Margin Top",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     marginRight: {
       type: "select",
       label: "Margin Right",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     marginBottom: {
       type: "select",
       label: "Margin Bottom",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     marginLeft: {
       type: "select",
       label: "Margin Left",
-      options: [{ label: "0px", value: "0px" }, ...spacingOptions2]
+      options: [{ label: "0px", value: "0px" }, ...spacingOptions]
     },
     bgColor: {
       label: "Background Color",
@@ -730,6 +662,34 @@ var import_react5 = require("react");
 
 // src/components/Section/styles.module.css
 var styles_default = {};
+
+// src/utils/get-class-name-factory.ts
+var import_classnames = __toESM(require("classnames"));
+var getClassNameFactory = (rootClass, styles, config = { baseClass: "" }) => (options = {}) => {
+  if (typeof options === "string") {
+    const descendant = options;
+    const style = styles[`${rootClass}-${descendant}`];
+    if (style) {
+      return config.baseClass + styles[`${rootClass}-${descendant}`] || "";
+    }
+    return "";
+  } else if (typeof options === "object") {
+    const modifiers = options;
+    const prefixedModifiers = {};
+    for (const modifier in modifiers) {
+      prefixedModifiers[styles[`${rootClass}--${modifier}`]] = modifiers[modifier];
+    }
+    const c = styles[rootClass];
+    return config.baseClass + (0, import_classnames.default)({
+      [c]: !!c,
+      // only apply the class if it exists
+      ...prefixedModifiers
+    });
+  } else {
+    return config.baseClass + styles[rootClass] || "";
+  }
+};
+var get_class_name_factory_default = getClassNameFactory;
 
 // src/components/Section/index.tsx
 var import_jsx_runtime6 = require("react/jsx-runtime");
@@ -1380,7 +1340,6 @@ var PuckConfig = {
     Container,
     Grid,
     Flex,
-    // Space,
     Heading,
     Text,
     Input,
@@ -1388,8 +1347,6 @@ var PuckConfig = {
     Products,
     Product,
     CategoryGrid,
-    // Divider: { fields: {}, render: () => <AntDivider /> },
-    // Typography
     RichText: {
       fields: { html: { type: "textarea" } },
       render: ({ html }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { dangerouslySetInnerHTML: { __html: html } })
@@ -1525,13 +1482,11 @@ var import_recoil4 = require("recoil");
 var import_jsx_runtime16 = require("react/jsx-runtime");
 var queryClient = new import_react_query3.QueryClient();
 var PuckProvider = ({ children }) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_recoil4.RecoilRoot, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react11.ChakraProvider, { value: import_react11.defaultSystem, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react_query3.QueryClientProvider, { client: queryClient }) }) });
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_recoil4.RecoilRoot, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react11.ChakraProvider, { value: import_react11.defaultSystem, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_jsx_runtime16.Fragment, {}) }) });
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   PuckConfig,
-  PuckProvider,
-  getGlobalClassName,
-  spacingOptions
+  PuckProvider
 });
 //# sourceMappingURL=index.js.map
