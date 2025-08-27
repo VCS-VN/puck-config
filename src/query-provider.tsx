@@ -14,7 +14,7 @@ export const PuckProvider: FC<PuckProviderProps> = ({ children }) => {
     <RecoilRoot>
       <ChakraProvider value={defaultSystem}>
         <QueryClientProvider client={queryClient}>
-          {children}
+          {/* {children} */}
         </QueryClientProvider>
       </ChakraProvider>
     </RecoilRoot>
