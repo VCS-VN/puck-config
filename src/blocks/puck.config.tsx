@@ -1,3 +1,10 @@
+// import {
+//   Divider as AntDivider,
+//   Form as AntForm,
+//   Image as AntImage,
+//   Input as AntdInput,
+//   Button as AntdButton,
+// } from "antd";
 import { Grid } from "./Grid";
 import { Flex } from "./Flex";
 import { Container } from "./Container";
@@ -9,7 +16,6 @@ import { Button } from "./Button";
 import { Products } from "./Products";
 import { Checkout } from "./Checkout";
 import { CategoryGrid } from "./CategoryGrid";
-// import {InputRichText} from "@/components/InputRichText";
 
 export const PuckConfig = {
   root: Root,

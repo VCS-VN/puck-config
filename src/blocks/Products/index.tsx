@@ -13,12 +13,12 @@ import {
   Skeleton,
   Text,
   Box,
-  Button
+  Button,
 } from "@chakra-ui/react";
 import { VariableState } from "@/services/common/variable.state";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import ButtonAddToCart from "./components/ButtonAddToCart";
-import {ProductionState} from "@/services/common/production.state.ts";
+import { ProductionState } from "@/services/common/production.state.ts";
 
 export type ProductsProps = {
   mobile: number;
@@ -29,7 +29,6 @@ export type ProductsProps = {
   // searchSize: SizeType;
   storeId?: string;
   variableName?: string;
-  noResults?: string;
   noResultsText?: string;
 };
 
@@ -47,10 +46,11 @@ const ProductsRender: FC<ProductsProps> = ({
   // const store = useRecoilValue(CurrentStoreState);
   const variables = useRecoilValue(VariableState);
   const [productionState, setProductionState] = useRecoilState(ProductionState);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
-  console.log("🚀 ~ ProductsRender ~ variables:", variables);
-  console.log("🚀 ~ ProductsRender ~ productionState:", productionState);
-  const keyAddToCart: string = 'productCart'
+  // console.log("🚀 ~ ProductsRender ~ variables:", variables);
+  // console.log("🚀 ~ ProductsRender ~ productionState:", productionState);
+  const keyAddToCart: string = "productCart";
   const valueOfSearchProductsVariable = useMemo(() => {
     if (!variableName) {
       return null;
@@ -64,10 +64,11 @@ const ProductsRender: FC<ProductsProps> = ({
   );
 
   const debouncedSetValue = useMemo(
-    () => debounce((value: string) => {
-      console.log("value",value)
-      setDebouncedValue(value)
-    }, 800),
+    () =>
+      debounce((value: string) => {
+        // console.log("value",value)
+        setDebouncedValue(value);
+      }, 800),
     []
   );
 
@@ -109,9 +110,10 @@ const ProductsRender: FC<ProductsProps> = ({
     }));
   }, [debouncedValue]);
 
-  const saveCartToStore = (carts:any[]) => {
+  const saveCartToStore = (carts: any[]) => {
     setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
-  }
+    setSelectedProduct(null);
+  };
   if (!isLoading && !products?.total) {
     return (
       <Box>
@@ -154,27 +156,46 @@ const ProductsRender: FC<ProductsProps> = ({
                       borderRadius="md"
                     />
                     <Card.Title>{product.name}</Card.Title>
-                    <Text textStyle="2xl" fontWeight="medium" letterSpacing="tight" mt="2">
+                    <Text
+                      textStyle="2xl"
+                      fontWeight="medium"
+                      letterSpacing="tight"
+                      mt="2"
+                    >
                       $
                       {`${round(
-                          (defaultModel?.price ?? product.price ?? 0) / 100,
-                          0
+                        (defaultModel?.price ?? product.price ?? 0) / 100,
+                        0
                       )}`}
                     </Text>
                   </CardBody>
-                  <CardFooter gap="2" >
-                    <ButtonAddToCart
-                        product={product}
-                        keyAddToCart={keyAddToCart}
-                        saveCartToStore={saveCartToStore}
-                    ></ButtonAddToCart>
+                  <CardFooter gap="2">
+                    <Button
+                      colorPalette={"orange"}
+                      onClick={() => {
+                        setSelectedProduct(product);
+                      }}
+                    >
+                      Add to cart
+                    </Button>
+                    {/* <ButtonAddToCart
+             
+                    /> */}
                   </CardFooter>
                 </Card.Root>
               );
             })}
+
+        <ButtonAddToCart
+          openDrawer={!!selectedProduct}
+          product={selectedProduct}
+          keyAddToCart={keyAddToCart}
+          saveCartToStore={saveCartToStore}
+          onCloseDrawer={() => setSelectedProduct(null)}
+        />
       </SimpleGrid>
 
-      {get(products, "total", 0) > 0 && (
+      {(products?.total || 0) > 0 && (
         <Pagination.Root
           mt="6"
           count={get(products, "total", 0)}
@@ -293,7 +314,7 @@ const ProductsInternal: ComponentConfig = {
         categoryId={categoryId}
         variableName={variableName}
         limit={limit}
-        noResults={noResultsText}
+        noResultsText={noResultsText}
         storeId={puck?.metadata?.storeId}
       />
     );

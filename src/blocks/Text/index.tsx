@@ -1,30 +1,29 @@
-import { ALargeSmall, AlignLeft } from "lucide-react";
 import { Section } from "../../components/Section";
 import { WithLayout, withLayout } from "../../components/Layout";
 import { ComponentConfig } from "@measured/puck";
 // import {InputRichText} from "@/components/InputRichText";
 export type TextProps = WithLayout<{
-  text?: any;
-  padding?: string;
-  maxWidth?: string;
+  // text?: any;
+  // padding?: string;
+  // maxWidth?: string;
 }>;
 
-const TextInner: ComponentConfig = {
+const TextInner: ComponentConfig<TextProps> = {
   fields: {
-    text: {
-      label: "Content",
-      // ...InputRichText
-    },
-    maxWidth: { type: "text" },
+    // text: {
+    //   label: "Content",
+    //   ...InputRichText
+    // },
+    // maxWidth: { type: "text" },
   },
   defaultProps: {
-    text: "Text",
+    // text: "Text",
   },
-  render: ({ text, maxWidth }) => {
+  render: ({}) => {
     return (
-      <Section maxWidth={maxWidth}>
+      <Section>
         <article className="prose max-w-none lg:prose-xl">
-          <div dangerouslySetInnerHTML={{ __html: text }} />
+          {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
         </article>
       </Section>
     );

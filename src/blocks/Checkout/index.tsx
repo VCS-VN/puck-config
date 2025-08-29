@@ -24,7 +24,6 @@ export type CheckoutProps = {
     // searchSize: SizeType;
     storeId?: string;
     variableName?: string;
-    noResults?: string;
     noResultsText?: string;
     urlToProduct?: string;
 };
@@ -57,7 +56,7 @@ const CheckoutRender: FC<CheckoutProps> = ({
                     saveCartToStore(cart)
                 }
             } catch (e) {
-                console.log("e", e)
+                // console.log("e", e)
             }
         }
     }
@@ -271,7 +270,7 @@ const CheckoutInternal: ComponentConfig = {
                 categoryId={categoryId}
                 variableName={variableName}
                 limit={limit}
-                noResults={noResultsText}
+                noResultsText={noResultsText}
                 urlToProduct={urlToProduct}
                 storeId={puck?.metadata?.storeId}
             />

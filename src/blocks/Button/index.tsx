@@ -1,16 +1,15 @@
 import { ComponentConfig } from "@measured/puck";
 
 // import { Button as AntButton, ButtonProps as AntButtonProps } from "antd";
-import { ALargeSmall } from "lucide-react";
 
 export type ButtonProps = {
-  // label: string;
-  // href?: string;
+  label: string;
+  href?: string;
   // variant: AntButtonProps["variant"];
   // size: AntButtonProps["size"];
 };
 
-export const Button: ComponentConfig = {
+export const Button: ComponentConfig<ButtonProps> = {
   label: "Button",
   fields: {
     label: {
@@ -41,11 +40,11 @@ export const Button: ComponentConfig = {
     // },
   },
   defaultProps: {
-    // label: "Button",
+    label: "Button",
     // variant: "solid",
     // size: "large",
   },
-  render: ({ href, variant, label, puck, size }) => {
+  render: ({ href, label, puck }) => {
     return (
       <div>
         {/* <AntButton

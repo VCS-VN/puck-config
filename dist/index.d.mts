@@ -13,6 +13,11 @@ type CategoryGridProps = {
     limit?: number;
 };
 
+type ButtonProps = {
+    label: string;
+    href?: string;
+};
+
 type LayoutFieldProps = {
     paddingTop?: string;
     paddingRight?: string;
@@ -273,42 +278,450 @@ declare const PuckConfig: {
             metadata?: _measured_puck.Metadata;
         };
         Text: {
-            render: _measured_puck.PuckComponent<_measured_puck.DefaultComponentProps>;
+            render: _measured_puck.PuckComponent<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }>;
             label?: string;
-            defaultProps?: _measured_puck.DefaultComponentProps | undefined;
-            fields?: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | undefined;
+            defaultProps?: {
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            } | undefined;
+            fields?: _measured_puck.Fields<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, {}> | undefined;
             permissions?: Partial<_measured_puck.Permissions>;
             inline?: boolean;
-            resolveFields?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<string | number, boolean> & {
+            resolveFields?: ((data: Omit<_measured_puck.ComponentData<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<"layout", boolean> & {
                     id: string;
                 }>;
-                fields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
-                lastFields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
-                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                fields: _measured_puck.Fields<{
+                    layout?: {
+                        paddingTop?: string;
+                        paddingRight?: string;
+                        paddingBottom?: string;
+                        paddingLeft?: string;
+                        marginTop?: string;
+                        marginRight?: string;
+                        marginBottom?: string;
+                        marginLeft?: string;
+                        spanCol?: number;
+                        spanRow?: number;
+                        startCol?: number;
+                        startRow?: number;
+                        grow?: boolean;
+                        shrink?: boolean;
+                        basis?: string;
+                        alignSelf?: string;
+                        justifySelf?: string;
+                        bgColor?: any;
+                        bgImage?: string;
+                        border?: string;
+                        borderRadius?: string;
+                    };
+                }, {}>;
+                lastFields: _measured_puck.Fields<{
+                    layout?: {
+                        paddingTop?: string;
+                        paddingRight?: string;
+                        paddingBottom?: string;
+                        paddingLeft?: string;
+                        marginTop?: string;
+                        marginRight?: string;
+                        marginBottom?: string;
+                        marginLeft?: string;
+                        spanCol?: number;
+                        spanRow?: number;
+                        startCol?: number;
+                        startRow?: number;
+                        grow?: boolean;
+                        shrink?: boolean;
+                        basis?: string;
+                        alignSelf?: string;
+                        justifySelf?: string;
+                        bgColor?: any;
+                        bgImage?: string;
+                        border?: string;
+                        borderRadius?: string;
+                    };
+                }, {}>;
+                lastData: Omit<_measured_puck.ComponentData<{
+                    layout?: {
+                        paddingTop?: string;
+                        paddingRight?: string;
+                        paddingBottom?: string;
+                        paddingLeft?: string;
+                        marginTop?: string;
+                        marginRight?: string;
+                        marginBottom?: string;
+                        marginLeft?: string;
+                        spanCol?: number;
+                        spanRow?: number;
+                        startCol?: number;
+                        startRow?: number;
+                        grow?: boolean;
+                        shrink?: boolean;
+                        basis?: string;
+                        alignSelf?: string;
+                        justifySelf?: string;
+                        bgColor?: any;
+                        bgImage?: string;
+                        border?: string;
+                        borderRadius?: string;
+                    };
+                }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 appState: _measured_puck.AppState;
                 parent: _measured_puck.ComponentData | null;
-            }) => _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | Promise<_measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>>) | undefined;
-            resolveData?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<string | number, boolean> & {
+            }) => _measured_puck.Fields<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, {}> | Promise<_measured_puck.Fields<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, {}>>) | undefined;
+            resolveData?: ((data: Omit<_measured_puck.ComponentData<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<"layout", boolean> & {
                     id: string;
                 }>;
-                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<{
+                    layout?: {
+                        paddingTop?: string;
+                        paddingRight?: string;
+                        paddingBottom?: string;
+                        paddingLeft?: string;
+                        marginTop?: string;
+                        marginRight?: string;
+                        marginBottom?: string;
+                        marginLeft?: string;
+                        spanCol?: number;
+                        spanRow?: number;
+                        startCol?: number;
+                        startRow?: number;
+                        grow?: boolean;
+                        shrink?: boolean;
+                        basis?: string;
+                        alignSelf?: string;
+                        justifySelf?: string;
+                        bgColor?: any;
+                        bgImage?: string;
+                        border?: string;
+                        borderRadius?: string;
+                    };
+                }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 metadata: _measured_puck.Metadata;
                 trigger: _measured_puck.ResolveDataTrigger;
-            }) => (Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
-            }) | Promise<Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
+            }) => (Omit<Omit<_measured_puck.ComponentData<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<{
+                    layout?: {
+                        paddingTop?: string;
+                        paddingRight?: string;
+                        paddingBottom?: string;
+                        paddingLeft?: string;
+                        marginTop?: string;
+                        marginRight?: string;
+                        marginBottom?: string;
+                        marginLeft?: string;
+                        spanCol?: number;
+                        spanRow?: number;
+                        startCol?: number;
+                        startRow?: number;
+                        grow?: boolean;
+                        shrink?: boolean;
+                        basis?: string;
+                        alignSelf?: string;
+                        justifySelf?: string;
+                        bgColor?: any;
+                        bgImage?: string;
+                        border?: string;
+                        borderRadius?: string;
+                    };
+                }> | undefined;
+            }) | Promise<Omit<Omit<_measured_puck.ComponentData<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<{
+                    layout?: {
+                        paddingTop?: string;
+                        paddingRight?: string;
+                        paddingBottom?: string;
+                        paddingLeft?: string;
+                        marginTop?: string;
+                        marginRight?: string;
+                        marginBottom?: string;
+                        marginLeft?: string;
+                        spanCol?: number;
+                        spanRow?: number;
+                        startCol?: number;
+                        startRow?: number;
+                        grow?: boolean;
+                        shrink?: boolean;
+                        basis?: string;
+                        alignSelf?: string;
+                        justifySelf?: string;
+                        bgColor?: any;
+                        bgImage?: string;
+                        border?: string;
+                        borderRadius?: string;
+                    };
+                }> | undefined;
             }>) | undefined;
-            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<string | number, boolean> & {
+            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<{
+                layout?: {
+                    paddingTop?: string;
+                    paddingRight?: string;
+                    paddingBottom?: string;
+                    paddingLeft?: string;
+                    marginTop?: string;
+                    marginRight?: string;
+                    marginBottom?: string;
+                    marginLeft?: string;
+                    spanCol?: number;
+                    spanRow?: number;
+                    startCol?: number;
+                    startRow?: number;
+                    grow?: boolean;
+                    shrink?: boolean;
+                    basis?: string;
+                    alignSelf?: string;
+                    justifySelf?: string;
+                    bgColor?: any;
+                    bgImage?: string;
+                    border?: string;
+                    borderRadius?: string;
+                };
+            }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<"layout", boolean> & {
                     id: string;
                 }>;
                 lastPermissions: Partial<_measured_puck.Permissions>;
                 permissions: Partial<_measured_puck.Permissions>;
                 appState: _measured_puck.AppState;
-                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<{
+                    layout?: {
+                        paddingTop?: string;
+                        paddingRight?: string;
+                        paddingBottom?: string;
+                        paddingLeft?: string;
+                        marginTop?: string;
+                        marginRight?: string;
+                        marginBottom?: string;
+                        marginLeft?: string;
+                        spanCol?: number;
+                        spanRow?: number;
+                        startCol?: number;
+                        startRow?: number;
+                        grow?: boolean;
+                        shrink?: boolean;
+                        basis?: string;
+                        alignSelf?: string;
+                        justifySelf?: string;
+                        bgColor?: any;
+                        bgImage?: string;
+                        border?: string;
+                        borderRadius?: string;
+                    };
+                }, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
             }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
             metadata?: _measured_puck.Metadata;
         };
@@ -353,42 +766,42 @@ declare const PuckConfig: {
             metadata?: _measured_puck.Metadata;
         };
         Button: {
-            render: _measured_puck.PuckComponent<_measured_puck.DefaultComponentProps>;
+            render: _measured_puck.PuckComponent<ButtonProps>;
             label?: string;
-            defaultProps?: _measured_puck.DefaultComponentProps | undefined;
-            fields?: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | undefined;
+            defaultProps?: ButtonProps | undefined;
+            fields?: _measured_puck.Fields<ButtonProps, {}> | undefined;
             permissions?: Partial<_measured_puck.Permissions>;
             inline?: boolean;
-            resolveFields?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<string | number, boolean> & {
+            resolveFields?: ((data: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<keyof ButtonProps, boolean> & {
                     id: string;
                 }>;
-                fields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
-                lastFields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
-                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                fields: _measured_puck.Fields<ButtonProps, {}>;
+                lastFields: _measured_puck.Fields<ButtonProps, {}>;
+                lastData: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 appState: _measured_puck.AppState;
                 parent: _measured_puck.ComponentData | null;
-            }) => _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | Promise<_measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>>) | undefined;
-            resolveData?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<string | number, boolean> & {
+            }) => _measured_puck.Fields<ButtonProps, {}> | Promise<_measured_puck.Fields<ButtonProps, {}>>) | undefined;
+            resolveData?: ((data: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<keyof ButtonProps, boolean> & {
                     id: string;
                 }>;
-                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 metadata: _measured_puck.Metadata;
                 trigger: _measured_puck.ResolveDataTrigger;
-            }) => (Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
-            }) | Promise<Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
+            }) => (Omit<Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<ButtonProps> | undefined;
+            }) | Promise<Omit<Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<ButtonProps> | undefined;
             }>) | undefined;
-            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<string | number, boolean> & {
+            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<keyof ButtonProps, boolean> & {
                     id: string;
                 }>;
                 lastPermissions: Partial<_measured_puck.Permissions>;
                 permissions: Partial<_measured_puck.Permissions>;
                 appState: _measured_puck.AppState;
-                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
             }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
             metadata?: _measured_puck.Metadata;
         };

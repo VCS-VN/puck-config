@@ -773,10 +773,10 @@ var HeadingInternal = {
   defaultProps: {
     align: "left",
     text: "Heading",
-    size: "m",
-    layout: {
-      // padding: "8px",
-    }
+    size: "m"
+    // layout: {
+    //   padding: "8px",
+    // },
   },
   render: ({ align, text, size, level }) => {
     const Tag = level ? `h${level}` : "span";
@@ -797,17 +797,17 @@ var Heading = withLayout(HeadingInternal);
 var import_jsx_runtime8 = require("react/jsx-runtime");
 var TextInner = {
   fields: {
-    text: {
-      label: "Content"
-      // ...InputRichText
-    },
-    maxWidth: { type: "text" }
+    // text: {
+    //   label: "Content",
+    //   ...InputRichText
+    // },
+    // maxWidth: { type: "text" },
   },
   defaultProps: {
-    text: "Text"
+    // text: "Text",
   },
-  render: ({ text, maxWidth }) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Section, { maxWidth, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("article", { className: "prose max-w-none lg:prose-xl", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { dangerouslySetInnerHTML: { __html: text } }) }) });
+  render: ({}) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Section, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("article", { className: "prose max-w-none lg:prose-xl" }) });
   }
 };
 var Text = withLayout(TextInner);
@@ -911,11 +911,11 @@ var Button = {
     // },
   },
   defaultProps: {
-    // label: "Button",
+    label: "Button"
     // variant: "solid",
     // size: "large",
   },
-  render: ({ href, variant, label, puck, size }) => {
+  render: ({ href, label, puck }) => {
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", {});
   }
 };
@@ -998,9 +998,24 @@ var getProducts = async (payload) => {
   });
   return response.data;
 };
+var getProductDetail = async (id, queries) => {
+  const httpClient = initHttpClient();
+  const response = await httpClient.get(`/api/v1/products/${id}`, {
+    params: queries
+  });
+  return response.data;
+};
 
 // src/hooks/products/useGetProductDetailQuery.tsx
 var import_react_query = require("@tanstack/react-query");
+var useGetProductDetailQuery = (productId, queries, props) => {
+  const data = (0, import_react_query.useQuery)({
+    ...props,
+    queryKey: ["product-detail", productId, queries],
+    queryFn: () => getProductDetail(productId, queries)
+  });
+  return data;
+};
 
 // src/hooks/products/useGetProductsQuery.tsx
 var import_react_query2 = require("@tanstack/react-query");
@@ -1041,23 +1056,25 @@ var ListModel = (props) => {
     models,
     productId,
     onChangeDataProduct,
-    onChangeQuantity
+    onChangeQuantity,
+    onSelectModel
   } = props;
   let styleConfig = {
     "--chakra-spacing-4": "4px"
   };
   const [value, setValue] = (0, import_react9.useState)("");
   const [quantity, setQuantity] = (0, import_react9.useState)(1);
-  (0, import_react9.useEffect)(() => {
-    setValue(productId);
-  }, [productId]);
-  const onChangeProduct = (modelId) => {
+  const onChangeModel = (modelId) => {
     setValue(modelId);
     let modelItem = models.find((model) => model.id === modelId);
     if (modelItem && onChangeDataProduct) {
-      onChangeDataProduct(modelItem);
+      onChangeDataProduct?.(modelItem);
+      onSelectModel?.(modelItem);
     }
   };
+  (0, import_react9.useEffect)(() => {
+    setValue(productId);
+  }, [productId]);
   return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
     /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
       import_react8.RadioCard.Root,
@@ -1070,29 +1087,11 @@ var ListModel = (props) => {
         defaultValue: productId,
         value,
         onValueChange: (e) => {
-          onChangeProduct(e.value);
+          onChangeModel(e.value);
         },
         children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.HStack, { align: "stretch", children: models && models.map((item) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_react8.RadioCard.Item, { value: item.id, children: [
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.RadioCard.ItemHiddenInput, {}),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-            import_react8.RadioCard.ItemControl,
-            {
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-                  import_react8.Image,
-                  {
-                    src: item.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
-                    alt: item.name,
-                    borderRadius: "md",
-                    h: "50px",
-                    w: "50px",
-                    fit: "contain"
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.RadioCard.ItemText, { ms: "-4", children: item.name })
-              ]
-            }
-          )
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.RadioCard.ItemControl, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.RadioCard.ItemText, { ms: "-4", children: item.name }) })
         ] }, item.id)) })
       }
     ),
@@ -1114,7 +1113,14 @@ var ListModel = (props) => {
           },
           children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_react8.HStack, { gap: "2", children: [
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.NumberInput.DecrementTrigger, { asChild: true, disabled: quantity === 0, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.IconButton, { variant: "outline", size: "sm", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_lu.LuMinus, {}) }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.NumberInput.ValueText, { textAlign: "center", fontSize: "lg", minW: "3ch" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              import_react8.NumberInput.ValueText,
+              {
+                textAlign: "center",
+                fontSize: "lg",
+                minW: "3ch"
+              }
+            ),
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.NumberInput.IncrementTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.IconButton, { variant: "outline", size: "sm", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_lu.LuPlus, {}) }) })
           ] })
         }
@@ -1128,16 +1134,28 @@ var ListModel_default = ListModel;
 var import_react11 = require("react");
 var import_jsx_runtime13 = require("react/jsx-runtime");
 var ButtonAddToCart = (props) => {
-  const { product, keyAddToCart, saveCartToStore } = props;
+  const {
+    product: data,
+    keyAddToCart,
+    openDrawer,
+    saveCartToStore,
+    onCloseDrawer
+  } = props;
+  const { data: product } = useGetProductDetailQuery(
+    data?.id,
+    {
+      storeId: data?.storeId,
+      isGettingModels: true,
+      isGettingDefaultModel: true
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!data?.id
+    }
+  );
   const [valueProduct, setValueProduct] = (0, import_react11.useState)(null);
-  const [openDrawer, setOpenDrawer] = (0, import_react11.useState)(false);
   const [quantity, setQuantity] = (0, import_react11.useState)(1);
-  (0, import_react11.useEffect)(() => {
-    setValueProduct({
-      ...product,
-      price: product?.defaultModel?.price ?? product.price ?? 0
-    });
-  }, [props?.product]);
+  const [selectedModel, setSelectedModel] = (0, import_react11.useState)(null);
   const onChangeDataProduct = (value) => {
     setValueProduct((prev) => {
       return {
@@ -1149,13 +1167,9 @@ var ButtonAddToCart = (props) => {
   const onChangeQuantity = (value) => {
     setQuantity(value);
   };
-  const defaultModel = (value) => {
-    return (0, import_lodash2.get)(
-      value,
-      "defaultModel",
-      (0, import_lodash2.get)(value, "models.0")
-    );
-  };
+  const selectedPrice = (0, import_react11.useMemo)(() => {
+    return selectedModel?.price || product?.defaultModel?.price || 0;
+  }, [selectedModel?.price, product?.defaultModel?.price]);
   function addToCart() {
     const cart = JSON.parse(localStorage.getItem(keyAddToCart)) || [];
     const existing = cart.find((item) => item.id === valueProduct.id);
@@ -1171,75 +1185,91 @@ var ButtonAddToCart = (props) => {
         models: null
       });
     }
-    console.log("cart", cart);
     if (saveCartToStore) {
       saveCartToStore(cart);
     }
     localStorage.setItem(keyAddToCart, JSON.stringify(cart));
-    setOpenDrawer(false);
+    onCloseDrawer?.();
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_jsx_runtime13.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+  (0, import_react11.useEffect)(() => {
+    setValueProduct({
+      ...product,
+      price: product?.defaultModel?.price ?? product?.price ?? 0
+    });
+    if (product?.models?.length === 1) {
+      setSelectedModel(product?.models?.[0]);
+    }
+  }, [props?.product]);
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_jsx_runtime13.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
     import_react10.Drawer.Root,
     {
       placement: "bottom",
       open: openDrawer,
-      onOpenChange: () => {
-        setOpenDrawer(!openDrawer);
+      onOpenChange: ({ open }) => {
+        if (!open) {
+          onCloseDrawer?.();
+        }
       },
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Trigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Button, { colorPalette: "orange", children: "Add to cart" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Portal, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Backdrop, {}),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Positioner, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-            import_react10.Drawer.Content,
-            {
-              roundedTop: "l3",
-              roundedBottom: void 0,
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Header, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Title, { children: valueProduct?.name }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Body, { children: valueProduct && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Card.Root, { variant: "outline", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.CardBody, { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-                    import_react10.Image,
-                    {
-                      border: "1px solid red",
-                      src: valueProduct?.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
-                      alt: valueProduct?.name,
-                      borderRadius: "md",
-                      h: "100px",
-                      w: "100px",
-                      fit: "contain"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Card.Title, { children: valueProduct?.name }),
-                  /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Text, { textStyle: "2xl", fontWeight: "medium", letterSpacing: "tight", mt: "2", children: [
-                    "$",
-                    `${(0, import_lodash2.round)(
-                      (defaultModel(valueProduct)?.price ?? valueProduct?.price ?? 0) / 100,
-                      0
-                    )}`
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-                    ListModel_default,
-                    {
-                      models: valueProduct?.models,
-                      productId: valueProduct?.defaultModelId,
-                      onChangeDataProduct,
-                      onChangeQuantity
-                    }
-                  )
-                ] }) }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Drawer.Footer, { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.ActionTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Button, { variant: "outline", children: "Cancel" }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Button, { colorPalette: "orange", onClick: () => {
-                    addToCart();
-                  }, children: "Add to cart" })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.CloseTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.CloseButton, { size: "sm" }) })
-              ]
-            }
-          ) })
-        ] })
-      ]
+      children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Portal, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Backdrop, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Positioner, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Drawer.Content, { roundedTop: "l3", roundedBottom: void 0, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Header, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Title, { children: valueProduct?.name }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Body, { children: valueProduct && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Card.Root, { variant: "outline", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.CardBody, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              import_react10.Image,
+              {
+                border: "1px solid red",
+                src: valueProduct?.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
+                alt: valueProduct?.name,
+                borderRadius: "md",
+                h: "100px",
+                w: "100px",
+                fit: "contain"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Card.Title, { children: valueProduct?.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "mb-2", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+              import_react10.Text,
+              {
+                textStyle: "2xl",
+                fontWeight: "medium",
+                letterSpacing: "tight",
+                mt: "2",
+                children: [
+                  "$",
+                  `${(0, import_lodash2.round)(selectedPrice / 100, 0)}`
+                ]
+              }
+            ) }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              ListModel_default,
+              {
+                models: valueProduct?.models,
+                productId: valueProduct?.defaultModelId,
+                onChangeDataProduct,
+                onChangeQuantity,
+                onSelectModel: (e) => {
+                  setSelectedModel(e);
+                }
+              }
+            )
+          ] }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Drawer.Footer, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.ActionTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Button, { variant: "outline", children: "Cancel" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              import_react10.Button,
+              {
+                colorPalette: "orange",
+                onClick: () => {
+                  addToCart();
+                },
+                children: "Add to cart"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.CloseTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.CloseButton, { size: "sm" }) })
+        ] }) })
+      ] })
     }
   ) });
 };
@@ -1267,8 +1297,7 @@ var ProductsRender = ({
 }) => {
   const variables = (0, import_recoil4.useRecoilValue)(VariableState);
   const [productionState, setProductionState] = (0, import_recoil4.useRecoilState)(ProductionState);
-  console.log("\u{1F680} ~ ProductsRender ~ variables:", variables);
-  console.log("\u{1F680} ~ ProductsRender ~ productionState:", productionState);
+  const [selectedProduct, setSelectedProduct] = (0, import_react12.useState)(null);
   const keyAddToCart = "productCart";
   const valueOfSearchProductsVariable = (0, import_react12.useMemo)(() => {
     if (!variableName) {
@@ -1281,7 +1310,6 @@ var ProductsRender = ({
   );
   const debouncedSetValue = (0, import_react12.useMemo)(
     () => (0, import_lodash3.debounce)((value) => {
-      console.log("value", value);
       setDebouncedValue(value);
     }, 800),
     []
@@ -1317,12 +1345,13 @@ var ProductsRender = ({
   }, [debouncedValue]);
   const saveCartToStore = (carts) => {
     setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
+    setSelectedProduct(null);
   };
   if (!isLoading && !products?.total) {
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Box, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Text, { children: noResultsText || "No results found" }) });
   }
   return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.Box, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
       import_react13.SimpleGrid,
       {
         columns: {
@@ -1332,44 +1361,67 @@ var ProductsRender = ({
           lg: desktop
         },
         gap: 4,
-        children: isLoading ? Array.from({ length: limit }).map((_3, index) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Skeleton, { height: "300px", borderRadius: "md" }, index)) : products?.data?.map((product) => {
-          const defaultModel = (0, import_lodash3.get)(
-            product,
-            "defaultModel",
-            (0, import_lodash3.get)(product, "models.0")
-          );
-          return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.Card.Root, { variant: "outline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.CardBody, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-                import_react13.Image,
+        children: [
+          isLoading ? Array.from({ length: limit }).map((_3, index) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Skeleton, { height: "300px", borderRadius: "md" }, index)) : products?.data?.map((product) => {
+            const defaultModel = (0, import_lodash3.get)(
+              product,
+              "defaultModel",
+              (0, import_lodash3.get)(product, "models.0")
+            );
+            return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.Card.Root, { variant: "outline", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.CardBody, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                  import_react13.Image,
+                  {
+                    src: product.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
+                    alt: product.name,
+                    borderRadius: "md"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Card.Title, { children: product.name }),
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+                  import_react13.Text,
+                  {
+                    textStyle: "2xl",
+                    fontWeight: "medium",
+                    letterSpacing: "tight",
+                    mt: "2",
+                    children: [
+                      "$",
+                      `${(0, import_lodash3.round)(
+                        (defaultModel?.price ?? product.price ?? 0) / 100,
+                        0
+                      )}`
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.CardFooter, { gap: "2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                import_react13.Button,
                 {
-                  src: product.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
-                  alt: product.name,
-                  borderRadius: "md"
+                  colorPalette: "orange",
+                  onClick: () => {
+                    setSelectedProduct(product);
+                  },
+                  children: "Add to cart"
                 }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Card.Title, { children: product.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.Text, { textStyle: "2xl", fontWeight: "medium", letterSpacing: "tight", mt: "2", children: [
-                "$",
-                `${(0, import_lodash3.round)(
-                  (defaultModel?.price ?? product.price ?? 0) / 100,
-                  0
-                )}`
-              ] })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.CardFooter, { gap: "2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-              ButtonAddToCart_default,
-              {
-                product,
-                keyAddToCart,
-                saveCartToStore
-              }
-            ) })
-          ] }, product.id);
-        })
+              ) })
+            ] }, product.id);
+          }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            ButtonAddToCart_default,
+            {
+              openDrawer: !!selectedProduct,
+              product: selectedProduct,
+              keyAddToCart,
+              saveCartToStore,
+              onCloseDrawer: () => setSelectedProduct(null)
+            }
+          )
+        ]
       }
     ),
-    (0, import_lodash3.get)(products, "total", 0) > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+    (products?.total || 0) > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
       import_react13.Pagination.Root,
       {
         mt: "6",
@@ -1441,7 +1493,7 @@ var ProductsInternal = {
         categoryId,
         variableName,
         limit,
-        noResults: noResultsText,
+        noResultsText,
         storeId: puck?.metadata?.storeId
       }
     );
@@ -1481,7 +1533,6 @@ var CheckoutRender = ({
           saveCartToStore(cart);
         }
       } catch (e) {
-        console.log("e", e);
       }
     }
   };
@@ -1659,7 +1710,7 @@ var CheckoutInternal = {
         categoryId,
         variableName,
         limit,
-        noResults: noResultsText,
+        noResultsText,
         urlToProduct,
         storeId: puck?.metadata?.storeId
       }

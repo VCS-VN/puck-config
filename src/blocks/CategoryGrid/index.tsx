@@ -28,6 +28,7 @@ import {
   FiPackage,
 } from "react-icons/fi";
 import { useGetCategoriesQuery } from "../../hooks/category/useGetCategoriesQuery";
+import type { ICategory } from "../../services/sale/category/category.type";
 import { matchDataCondition } from "@/blocks/CommonFunction/function";
 
 export type CategoryGridProps = {
