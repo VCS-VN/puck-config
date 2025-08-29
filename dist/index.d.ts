@@ -1,21 +1,16 @@
-import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as _measured_puck from '@measured/puck';
 import { DefaultComponentProps } from '@measured/puck';
 import { FC } from 'react';
 
 type CategoryGridProps = {
-    limit: number;
-    depth: number;
-};
-
-type ProductCardProps = {
-    productId?: string;
-    showVariantSelector?: boolean;
-};
-
-type ButtonProps = {
-    label: string;
-    href?: string;
+    title?: string;
+    subtitle?: string;
+    storeId?: string;
+    urlRedirect?: string;
+    mobile?: number;
+    tablet?: number;
+    desktop?: number;
+    limit?: number;
 };
 
 type LayoutFieldProps = {
@@ -44,15 +39,6 @@ type LayoutFieldProps = {
 type WithLayout<Props extends DefaultComponentProps> = Props & {
     layout?: LayoutFieldProps;
 };
-
-type TextProps = WithLayout<{
-    align: "left" | "center" | "right";
-    text?: string;
-    padding?: string;
-    size?: "s" | "m";
-    color: "default" | "muted";
-    maxWidth?: string;
-}>;
 
 type HeadingProps = WithLayout<{
     align: "left" | "center" | "right";
@@ -287,42 +273,42 @@ declare const PuckConfig: {
             metadata?: _measured_puck.Metadata;
         };
         Text: {
-            render: _measured_puck.PuckComponent<TextProps>;
+            render: _measured_puck.PuckComponent<_measured_puck.DefaultComponentProps>;
             label?: string;
-            defaultProps?: TextProps | undefined;
-            fields?: _measured_puck.Fields<TextProps, {}> | undefined;
+            defaultProps?: _measured_puck.DefaultComponentProps | undefined;
+            fields?: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | undefined;
             permissions?: Partial<_measured_puck.Permissions>;
             inline?: boolean;
-            resolveFields?: ((data: Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<"color" | "text" | "layout" | "size" | "maxWidth" | "padding" | "align", boolean> & {
+            resolveFields?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
                     id: string;
                 }>;
-                fields: _measured_puck.Fields<TextProps, {}>;
-                lastFields: _measured_puck.Fields<TextProps, {}>;
-                lastData: Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                fields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
+                lastFields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 appState: _measured_puck.AppState;
                 parent: _measured_puck.ComponentData | null;
-            }) => _measured_puck.Fields<TextProps, {}> | Promise<_measured_puck.Fields<TextProps, {}>>) | undefined;
-            resolveData?: ((data: Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<"color" | "text" | "layout" | "size" | "maxWidth" | "padding" | "align", boolean> & {
+            }) => _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | Promise<_measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>>) | undefined;
+            resolveData?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
                     id: string;
                 }>;
-                lastData: Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 metadata: _measured_puck.Metadata;
                 trigger: _measured_puck.ResolveDataTrigger;
-            }) => (Omit<Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<TextProps> | undefined;
-            }) | Promise<Omit<Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<TextProps> | undefined;
+            }) => (Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
+            }) | Promise<Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
             }>) | undefined;
-            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<"color" | "text" | "layout" | "size" | "maxWidth" | "padding" | "align", boolean> & {
+            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
                     id: string;
                 }>;
                 lastPermissions: Partial<_measured_puck.Permissions>;
                 permissions: Partial<_measured_puck.Permissions>;
                 appState: _measured_puck.AppState;
-                lastData: Omit<_measured_puck.ComponentData<TextProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
             }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
             metadata?: _measured_puck.Metadata;
         };
@@ -367,42 +353,42 @@ declare const PuckConfig: {
             metadata?: _measured_puck.Metadata;
         };
         Button: {
-            render: _measured_puck.PuckComponent<ButtonProps>;
+            render: _measured_puck.PuckComponent<_measured_puck.DefaultComponentProps>;
             label?: string;
-            defaultProps?: ButtonProps | undefined;
-            fields?: _measured_puck.Fields<ButtonProps, {}> | undefined;
+            defaultProps?: _measured_puck.DefaultComponentProps | undefined;
+            fields?: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | undefined;
             permissions?: Partial<_measured_puck.Permissions>;
             inline?: boolean;
-            resolveFields?: ((data: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<keyof ButtonProps, boolean> & {
+            resolveFields?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
                     id: string;
                 }>;
-                fields: _measured_puck.Fields<ButtonProps, {}>;
-                lastFields: _measured_puck.Fields<ButtonProps, {}>;
-                lastData: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                fields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
+                lastFields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 appState: _measured_puck.AppState;
                 parent: _measured_puck.ComponentData | null;
-            }) => _measured_puck.Fields<ButtonProps, {}> | Promise<_measured_puck.Fields<ButtonProps, {}>>) | undefined;
-            resolveData?: ((data: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<keyof ButtonProps, boolean> & {
+            }) => _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | Promise<_measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>>) | undefined;
+            resolveData?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
                     id: string;
                 }>;
-                lastData: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
                 metadata: _measured_puck.Metadata;
                 trigger: _measured_puck.ResolveDataTrigger;
-            }) => (Omit<Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<ButtonProps> | undefined;
-            }) | Promise<Omit<Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<ButtonProps> | undefined;
+            }) => (Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
+            }) | Promise<Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
             }>) | undefined;
-            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<keyof ButtonProps, boolean> & {
+            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
                     id: string;
                 }>;
                 lastPermissions: Partial<_measured_puck.Permissions>;
                 permissions: Partial<_measured_puck.Permissions>;
                 appState: _measured_puck.AppState;
-                lastData: Omit<_measured_puck.ComponentData<ButtonProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
             }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
             metadata?: _measured_puck.Metadata;
         };
@@ -446,46 +432,6 @@ declare const PuckConfig: {
             }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
             metadata?: _measured_puck.Metadata;
         };
-        Product: {
-            render: _measured_puck.PuckComponent<ProductCardProps>;
-            label?: string;
-            defaultProps?: ProductCardProps | undefined;
-            fields?: _measured_puck.Fields<ProductCardProps, {}> | undefined;
-            permissions?: Partial<_measured_puck.Permissions>;
-            inline?: boolean;
-            resolveFields?: ((data: Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<keyof ProductCardProps, boolean> & {
-                    id: string;
-                }>;
-                fields: _measured_puck.Fields<ProductCardProps, {}>;
-                lastFields: _measured_puck.Fields<ProductCardProps, {}>;
-                lastData: Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
-                appState: _measured_puck.AppState;
-                parent: _measured_puck.ComponentData | null;
-            }) => _measured_puck.Fields<ProductCardProps, {}> | Promise<_measured_puck.Fields<ProductCardProps, {}>>) | undefined;
-            resolveData?: ((data: Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<keyof ProductCardProps, boolean> & {
-                    id: string;
-                }>;
-                lastData: Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
-                metadata: _measured_puck.Metadata;
-                trigger: _measured_puck.ResolveDataTrigger;
-            }) => (Omit<Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<ProductCardProps> | undefined;
-            }) | Promise<Omit<Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
-                props?: Partial<ProductCardProps> | undefined;
-            }>) | undefined;
-            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
-                changed: Partial<Record<keyof ProductCardProps, boolean> & {
-                    id: string;
-                }>;
-                lastPermissions: Partial<_measured_puck.Permissions>;
-                permissions: Partial<_measured_puck.Permissions>;
-                appState: _measured_puck.AppState;
-                lastData: Omit<_measured_puck.ComponentData<ProductCardProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
-            }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
-            metadata?: _measured_puck.Metadata;
-        };
         CategoryGrid: {
             render: _measured_puck.PuckComponent<CategoryGridProps>;
             label?: string;
@@ -526,27 +472,45 @@ declare const PuckConfig: {
             }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
             metadata?: _measured_puck.Metadata;
         };
-        RichText: {
-            fields: {
-                html: {
-                    type: string;
-                };
-            };
-            render: ({ html }: any) => react_jsx_runtime.JSX.Element;
-        };
-        SEO: {
-            fields: {
-                title: {
-                    type: string;
-                };
-                description: {
-                    type: string;
-                };
-            };
-            render: ({ title, description, }: {
-                title?: string;
-                description?: string;
-            }) => react_jsx_runtime.JSX.Element;
+        Checkout: {
+            render: _measured_puck.PuckComponent<_measured_puck.DefaultComponentProps>;
+            label?: string;
+            defaultProps?: _measured_puck.DefaultComponentProps | undefined;
+            fields?: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | undefined;
+            permissions?: Partial<_measured_puck.Permissions>;
+            inline?: boolean;
+            resolveFields?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
+                    id: string;
+                }>;
+                fields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
+                lastFields: _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                appState: _measured_puck.AppState;
+                parent: _measured_puck.ComponentData | null;
+            }) => _measured_puck.Fields<_measured_puck.DefaultComponentProps, {}> | Promise<_measured_puck.Fields<_measured_puck.DefaultComponentProps, {}>>) | undefined;
+            resolveData?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
+                    id: string;
+                }>;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+                metadata: _measured_puck.Metadata;
+                trigger: _measured_puck.ResolveDataTrigger;
+            }) => (Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
+            }) | Promise<Omit<Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, "props"> & {
+                props?: Partial<_measured_puck.DefaultComponentProps> | undefined;
+            }>) | undefined;
+            resolvePermissions?: ((data: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type">, params: {
+                changed: Partial<Record<string | number, boolean> & {
+                    id: string;
+                }>;
+                lastPermissions: Partial<_measured_puck.Permissions>;
+                permissions: Partial<_measured_puck.Permissions>;
+                appState: _measured_puck.AppState;
+                lastData: Omit<_measured_puck.ComponentData<_measured_puck.DefaultComponentProps, string, Record<string, _measured_puck.DefaultComponentProps>>, "type"> | null;
+            }) => Promise<Partial<_measured_puck.Permissions>> | Partial<_measured_puck.Permissions>) | undefined;
+            metadata?: _measured_puck.Metadata;
         };
     };
 };

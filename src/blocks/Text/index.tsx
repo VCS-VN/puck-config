@@ -2,77 +2,30 @@ import { ALargeSmall, AlignLeft } from "lucide-react";
 import { Section } from "../../components/Section";
 import { WithLayout, withLayout } from "../../components/Layout";
 import { ComponentConfig } from "@measured/puck";
-
+// import {InputRichText} from "@/components/InputRichText";
 export type TextProps = WithLayout<{
-  align: "left" | "center" | "right";
-  text?: string;
+  text?: any;
   padding?: string;
-  size?: "s" | "m";
-  color: "default" | "muted";
   maxWidth?: string;
 }>;
 
-const TextInner: ComponentConfig<TextProps> = {
+const TextInner: ComponentConfig = {
   fields: {
     text: {
-      type: "textarea",
-      contentEditable: true,
-    },
-    size: {
-      type: "select",
-      labelIcon: <ALargeSmall size={16} />,
-      options: [
-        { label: "S", value: "s" },
-        { label: "M", value: "m" },
-      ],
-    },
-    align: {
-      type: "radio",
-      labelIcon: <AlignLeft size={16} />,
-      options: [
-        { label: "Left", value: "left" },
-        { label: "Center", value: "center" },
-        { label: "Right", value: "right" },
-      ],
-    },
-    color: {
-      type: "radio",
-      options: [
-        { label: "Default", value: "default" },
-        { label: "Muted", value: "muted" },
-      ],
+      label: "Content",
+      // ...InputRichText
     },
     maxWidth: { type: "text" },
   },
   defaultProps: {
-    align: "left",
     text: "Text",
-    size: "m",
-    color: "default",
   },
-  render: ({ align, color, text, size, maxWidth }) => {
+  render: ({ text, maxWidth }) => {
     return (
       <Section maxWidth={maxWidth}>
-        <span
-          style={{
-            color:
-              color === "default" ? "inherit" : "var(--puck-color-grey-05)",
-            display: "flex",
-            textAlign: align,
-            width: "100%",
-            fontSize: size === "m" ? "20px" : "16px",
-            fontWeight: 300,
-            maxWidth,
-            justifyContent:
-              align === "center"
-                ? "center"
-                : align === "right"
-                  ? "flex-end"
-                  : "flex-start",
-          }}
-        >
-          {text}
-        </span>
+        <article className="prose max-w-none lg:prose-xl">
+          <div dangerouslySetInnerHTML={{ __html: text }} />
+        </article>
       </Section>
     );
   },

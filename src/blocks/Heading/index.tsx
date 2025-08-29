@@ -60,7 +60,9 @@ const HeadingInternal: ComponentConfig<HeadingProps> = {
     align: "left",
     text: "Heading",
     size: "m",
-    layout: {},
+    layout: {
+      // padding: "8px",
+    },
   },
   render: ({ align, text, size, level }: HeadingProps) => {
     const Tag: any = level ? `h${level}` : "span";

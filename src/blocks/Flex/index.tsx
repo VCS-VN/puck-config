@@ -2,7 +2,7 @@
 import { ComponentConfig } from "@measured/puck";
 import { Box, Flex as ChakraFlex } from "@chakra-ui/react";
 import { withLayout } from "@/components/Layout";
-
+import { Content } from "@measured/puck";
 const baseFlex: ComponentConfig = {
   fields: {
     flexItems: {
@@ -61,6 +61,14 @@ const baseFlex: ComponentConfig = {
       },
       min: 1,
       max: 6,
+      defaultItemProps: {
+        label: "Item ",
+        flexProps: {
+          width: { base: "100%" }, // Full on mobile, half on medium+
+          flex: { base: 1 }, // Optional: Grow to fill space
+        },
+        content: [],
+      },
     },
     flexOptions: {
       type: "object",
@@ -151,7 +159,7 @@ const baseFlex: ComponentConfig = {
       gap: 4,
     },
   },
-  render: ({ flexItems, flexOptions }) => {
+  render: ({ flexItems, flexOptions, }) => {
     return (
       <ChakraFlex
         direction={flexOptions.direction}
@@ -160,20 +168,21 @@ const baseFlex: ComponentConfig = {
         wrap={flexOptions.wrap ? "wrap" : "nowrap"}
         gap={flexOptions.gap}
       >
-        {flexItems.map((item, index) => (
-          <Box
-            key={index}
-            flex={item.flexProps.flex}
-            width={item.flexProps.width}
-            minHeight="100px"
-            {...item.layoutProps} // Spread the layout props directly
-            // If bg is set in layoutProps, it overrides the default bg="gray.100" below
-            bg={item.layoutProps?.bgColor} // Fallback for visibility
-            p={item.layoutProps?.p || 2}
+        {flexItems.map((item:any, index:number) =>  {
+          const {content: Content} = item
+          return <Box
+              key={index}
+              flex={item.flexProps?.flex}
+              width={item.flexProps?.width}
+              minHeight="100px"
+              {...item.layoutProps} // Spread the layout props directly
+              // If bg is set in layoutProps, it overrides the default bg="gray.100" below
+              bg={item.layoutProps?.bgColor} // Fallback for visibility
+              p={item.layoutProps?.p || 2}
           >
-            <item.content minEmptyHeight={100} />
+            <Content minEmptyHeight={100}></Content>
           </Box>
-        ))}
+        })}
       </ChakraFlex>
     );
   },

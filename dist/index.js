@@ -302,7 +302,7 @@ function withLayout(componentConfig) {
         ...componentConfig.defaultProps?.layout
       }
     },
-    resolveFields: (_, params) => {
+    resolveFields: (_3, params) => {
       const parentType = params.parent?.type;
       let adjustedObjectFields = baseFields;
       if (parentType === "Grid") {
@@ -520,7 +520,17 @@ var baseFlex = {
         }
       },
       min: 1,
-      max: 6
+      max: 6,
+      defaultItemProps: {
+        label: "Item ",
+        flexProps: {
+          width: { base: "100%" },
+          // Full on mobile, half on medium+
+          flex: { base: 1 }
+          // Optional: Grow to fill space
+        },
+        content: []
+      }
     },
     flexOptions: {
       type: "object",
@@ -622,19 +632,22 @@ var baseFlex = {
         align: flexOptions.align,
         wrap: flexOptions.wrap ? "wrap" : "nowrap",
         gap: flexOptions.gap,
-        children: flexItems.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          import_react4.Box,
-          {
-            flex: item.flexProps.flex,
-            width: item.flexProps.width,
-            minHeight: "100px",
-            ...item.layoutProps,
-            bg: item.layoutProps?.bgColor,
-            p: item.layoutProps?.p || 2,
-            children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(item.content, { minEmptyHeight: 100 })
-          },
-          index
-        ))
+        children: flexItems.map((item, index) => {
+          const { content: Content } = item;
+          return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            import_react4.Box,
+            {
+              flex: item.flexProps?.flex,
+              width: item.flexProps?.width,
+              minHeight: "100px",
+              ...item.layoutProps,
+              bg: item.layoutProps?.bgColor,
+              p: item.layoutProps?.p || 2,
+              children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Content, { minEmptyHeight: 100 })
+            },
+            index
+          );
+        })
       }
     );
   }
@@ -761,7 +774,9 @@ var HeadingInternal = {
     align: "left",
     text: "Heading",
     size: "m",
-    layout: {}
+    layout: {
+      // padding: "8px",
+    }
   },
   render: ({ align, text, size, level }) => {
     const Tag = level ? `h${level}` : "span";
@@ -779,63 +794,20 @@ var HeadingInternal = {
 var Heading = withLayout(HeadingInternal);
 
 // src/blocks/Text/index.tsx
-var import_lucide_react = require("lucide-react");
 var import_jsx_runtime8 = require("react/jsx-runtime");
 var TextInner = {
   fields: {
     text: {
-      type: "textarea",
-      contentEditable: true
-    },
-    size: {
-      type: "select",
-      labelIcon: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_lucide_react.ALargeSmall, { size: 16 }),
-      options: [
-        { label: "S", value: "s" },
-        { label: "M", value: "m" }
-      ]
-    },
-    align: {
-      type: "radio",
-      labelIcon: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_lucide_react.AlignLeft, { size: 16 }),
-      options: [
-        { label: "Left", value: "left" },
-        { label: "Center", value: "center" },
-        { label: "Right", value: "right" }
-      ]
-    },
-    color: {
-      type: "radio",
-      options: [
-        { label: "Default", value: "default" },
-        { label: "Muted", value: "muted" }
-      ]
+      label: "Content"
+      // ...InputRichText
     },
     maxWidth: { type: "text" }
   },
   defaultProps: {
-    align: "left",
-    text: "Text",
-    size: "m",
-    color: "default"
+    text: "Text"
   },
-  render: ({ align, color, text, size, maxWidth }) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Section, { maxWidth, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-      "span",
-      {
-        style: {
-          color: color === "default" ? "inherit" : "var(--puck-color-grey-05)",
-          display: "flex",
-          textAlign: align,
-          width: "100%",
-          fontSize: size === "m" ? "20px" : "16px",
-          fontWeight: 300,
-          maxWidth,
-          justifyContent: align === "center" ? "center" : align === "right" ? "flex-end" : "flex-start"
-        },
-        children: text
-      }
-    ) });
+  render: ({ text, maxWidth }) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Section, { maxWidth, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("article", { className: "prose max-w-none lg:prose-xl", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { dangerouslySetInnerHTML: { __html: text } }) }) });
   }
 };
 var Text = withLayout(TextInner);
@@ -939,16 +911,18 @@ var Button = {
     // },
   },
   defaultProps: {
-    label: "Button"
+    // label: "Button",
+    // variant: "solid",
+    // size: "large",
   },
-  render: ({ href, label, puck }) => {
+  render: ({ href, variant, label, puck, size }) => {
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", {});
   }
 };
 
-// src/blocks/Product/index.tsx
-var import_react_error_boundary = require("react-error-boundary");
-var import_react8 = require("react");
+// src/blocks/Products/index.tsx
+var import_react12 = require("react");
+var import_lodash3 = require("lodash");
 
 // src/client/httpClient.ts
 var import_axios = __toESM(require("axios"));
@@ -1024,24 +998,9 @@ var getProducts = async (payload) => {
   });
   return response.data;
 };
-var getProductDetail = async (id, queries) => {
-  const httpClient = initHttpClient();
-  const response = await httpClient.get(`/api/v1/products/${id}`, {
-    params: queries
-  });
-  return response.data;
-};
 
 // src/hooks/products/useGetProductDetailQuery.tsx
 var import_react_query = require("@tanstack/react-query");
-var useGetProductDetailQuery = (productId, queries, props) => {
-  const data = (0, import_react_query.useQuery)({
-    ...props,
-    queryKey: ["product-detail", productId, queries],
-    queryFn: () => getProductDetail(productId, queries)
-  });
-  return data;
-};
 
 // src/hooks/products/useGetProductsQuery.tsx
 var import_react_query2 = require("@tanstack/react-query");
@@ -1064,57 +1023,237 @@ var useGetProductsQuery = (queries, props) => {
   });
 };
 
-// src/blocks/Product/index.tsx
+// src/blocks/Products/index.tsx
+var import_react13 = require("@chakra-ui/react");
+var import_recoil4 = require("recoil");
+
+// src/blocks/Products/components/ButtonAddToCart.tsx
+var import_react10 = require("@chakra-ui/react");
+var import_lodash2 = require("lodash");
+
+// src/blocks/Products/components/ListModel.tsx
+var import_react8 = require("@chakra-ui/react");
+var import_lu = require("react-icons/lu");
+var import_react9 = require("react");
 var import_jsx_runtime12 = require("react/jsx-runtime");
-var ProductRender = ({
-  productId,
-  showVariantSelector
-}) => {
-  const { data: product, isLoading } = useGetProductDetailQuery(
-    productId || "",
-    {
-      // storeSlug: store?.slug,
-      isGettingModels: true,
-      isGettingDefaultModel: true
-    },
-    {
-      enabled: !!productId
+var ListModel = (props) => {
+  const {
+    models,
+    productId,
+    onChangeDataProduct,
+    onChangeQuantity
+  } = props;
+  let styleConfig = {
+    "--chakra-spacing-4": "4px"
+  };
+  const [value, setValue] = (0, import_react9.useState)("");
+  const [quantity, setQuantity] = (0, import_react9.useState)(1);
+  (0, import_react9.useEffect)(() => {
+    setValue(productId);
+  }, [productId]);
+  const onChangeProduct = (modelId) => {
+    setValue(modelId);
+    let modelItem = models.find((model) => model.id === modelId);
+    if (modelItem && onChangeDataProduct) {
+      onChangeDataProduct(modelItem);
     }
-  );
-  if (isLoading || !product) {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_jsx_runtime12.Fragment, {});
-  }
-  const defaultModel = product?.models?.find((m) => m.isDefault);
-  const [model, setModel] = (0, import_react8.useState)(defaultModel);
-  const price = model?.price ?? product.price ?? 0;
-  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_jsx_runtime12.Fragment, {});
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      import_react8.RadioCard.Root,
+      {
+        orientation: "horizontal",
+        align: "center",
+        justify: "center",
+        maxW: "sm",
+        style: styleConfig,
+        defaultValue: productId,
+        value,
+        onValueChange: (e) => {
+          onChangeProduct(e.value);
+        },
+        children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.HStack, { align: "stretch", children: models && models.map((item) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_react8.RadioCard.Item, { value: item.id, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.RadioCard.ItemHiddenInput, {}),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+            import_react8.RadioCard.ItemControl,
+            {
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                  import_react8.Image,
+                  {
+                    src: item.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
+                    alt: item.name,
+                    borderRadius: "md",
+                    h: "50px",
+                    w: "50px",
+                    fit: "contain"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.RadioCard.ItemText, { ms: "-4", children: item.name })
+              ]
+            }
+          )
+        ] }, item.id)) })
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "mt-2 flex justify-between items-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { children: "Quantity" }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        import_react8.NumberInput.Root,
+        {
+          defaultValue: "1",
+          unstyled: true,
+          spinOnPress: false,
+          onValueChange: (e) => {
+            if (e?.valueAsNumber >= 0) {
+              setQuantity(e?.valueAsNumber);
+              if (onChangeQuantity) {
+                onChangeQuantity(e?.valueAsNumber);
+              }
+            }
+          },
+          children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_react8.HStack, { gap: "2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.NumberInput.DecrementTrigger, { asChild: true, disabled: quantity === 0, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.IconButton, { variant: "outline", size: "sm", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_lu.LuMinus, {}) }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.NumberInput.ValueText, { textAlign: "center", fontSize: "lg", minW: "3ch" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.NumberInput.IncrementTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react8.IconButton, { variant: "outline", size: "sm", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_lu.LuPlus, {}) }) })
+          ] })
+        }
+      ) })
+    ] })
+  ] });
 };
-var ProductInternal = {
-  fields: {
-    productId: { type: "text", label: "Product ID" },
-    showVariantSelector: {
-      type: "radio",
-      label: "Show Variant Selector",
-      options: [
-        { label: "Yes", value: true },
-        { label: "No", value: false }
+var ListModel_default = ListModel;
+
+// src/blocks/Products/components/ButtonAddToCart.tsx
+var import_react11 = require("react");
+var import_jsx_runtime13 = require("react/jsx-runtime");
+var ButtonAddToCart = (props) => {
+  const { product, keyAddToCart, saveCartToStore } = props;
+  const [valueProduct, setValueProduct] = (0, import_react11.useState)(null);
+  const [openDrawer, setOpenDrawer] = (0, import_react11.useState)(false);
+  const [quantity, setQuantity] = (0, import_react11.useState)(1);
+  (0, import_react11.useEffect)(() => {
+    setValueProduct({
+      ...product,
+      price: product?.defaultModel?.price ?? product.price ?? 0
+    });
+  }, [props?.product]);
+  const onChangeDataProduct = (value) => {
+    setValueProduct((prev) => {
+      return {
+        ...prev,
+        ...value
+      };
+    });
+  };
+  const onChangeQuantity = (value) => {
+    setQuantity(value);
+  };
+  const defaultModel = (value) => {
+    return (0, import_lodash2.get)(
+      value,
+      "defaultModel",
+      (0, import_lodash2.get)(value, "models.0")
+    );
+  };
+  function addToCart() {
+    const cart = JSON.parse(localStorage.getItem(keyAddToCart)) || [];
+    const existing = cart.find((item) => item.id === valueProduct.id);
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      cart.push({
+        ...valueProduct,
+        quantity,
+        // an bot 1 so truong
+        defaultModel: null,
+        defaultModelId: null,
+        models: null
+      });
+    }
+    console.log("cart", cart);
+    if (saveCartToStore) {
+      saveCartToStore(cart);
+    }
+    localStorage.setItem(keyAddToCart, JSON.stringify(cart));
+    setOpenDrawer(false);
+  }
+  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_jsx_runtime13.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+    import_react10.Drawer.Root,
+    {
+      placement: "bottom",
+      open: openDrawer,
+      onOpenChange: () => {
+        setOpenDrawer(!openDrawer);
+      },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Trigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Button, { colorPalette: "orange", children: "Add to cart" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Portal, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Backdrop, {}),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Positioner, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+            import_react10.Drawer.Content,
+            {
+              roundedTop: "l3",
+              roundedBottom: void 0,
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Header, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Title, { children: valueProduct?.name }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.Body, { children: valueProduct && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Card.Root, { variant: "outline", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.CardBody, { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                    import_react10.Image,
+                    {
+                      border: "1px solid red",
+                      src: valueProduct?.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
+                      alt: valueProduct?.name,
+                      borderRadius: "md",
+                      h: "100px",
+                      w: "100px",
+                      fit: "contain"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Card.Title, { children: valueProduct?.name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Text, { textStyle: "2xl", fontWeight: "medium", letterSpacing: "tight", mt: "2", children: [
+                    "$",
+                    `${(0, import_lodash2.round)(
+                      (defaultModel(valueProduct)?.price ?? valueProduct?.price ?? 0) / 100,
+                      0
+                    )}`
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                    ListModel_default,
+                    {
+                      models: valueProduct?.models,
+                      productId: valueProduct?.defaultModelId,
+                      onChangeDataProduct,
+                      onChangeQuantity
+                    }
+                  )
+                ] }) }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Drawer.Footer, { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.ActionTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Button, { variant: "outline", children: "Cancel" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Button, { colorPalette: "orange", onClick: () => {
+                    addToCart();
+                  }, children: "Add to cart" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Drawer.CloseTrigger, { asChild: true, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.CloseButton, { size: "sm" }) })
+              ]
+            }
+          ) })
+        ] })
       ]
     }
-  },
-  defaultProps: {
-    productId: "",
-    showVariantSelector: false
-  },
-  render: (props) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Section, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react_error_boundary.ErrorBoundary, { fallbackRender: () => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { children: "Unable to load product." }), children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProductRender, { ...props }) }) })
+  ) });
 };
-var Product = withLayout(ProductInternal);
+var ButtonAddToCart_default = ButtonAddToCart;
+
+// src/services/common/production.state.ts
+var import_recoil3 = require("recoil");
+var ProductionState = (0, import_recoil3.atom)({
+  key: "ProductionState",
+  default: {}
+});
 
 // src/blocks/Products/index.tsx
-var import_react9 = require("react");
-var import_lodash2 = require("lodash");
-var import_react10 = require("@chakra-ui/react");
-var import_recoil3 = require("recoil");
-var import_jsx_runtime13 = require("react/jsx-runtime");
+var import_jsx_runtime14 = require("react/jsx-runtime");
 var ProductsRender = ({
   mobile,
   tablet,
@@ -1126,22 +1265,28 @@ var ProductsRender = ({
   variableName,
   noResultsText
 }) => {
-  const variables = (0, import_recoil3.useRecoilValue)(VariableState);
+  const variables = (0, import_recoil4.useRecoilValue)(VariableState);
+  const [productionState, setProductionState] = (0, import_recoil4.useRecoilState)(ProductionState);
   console.log("\u{1F680} ~ ProductsRender ~ variables:", variables);
-  const valueOfSearchProductsVariable = (0, import_react9.useMemo)(() => {
+  console.log("\u{1F680} ~ ProductsRender ~ productionState:", productionState);
+  const keyAddToCart = "productCart";
+  const valueOfSearchProductsVariable = (0, import_react12.useMemo)(() => {
     if (!variableName) {
       return null;
     }
-    return (0, import_lodash2.get)(variables, variableName);
+    return (0, import_lodash3.get)(variables, variableName);
   }, [variableName, variables]);
-  const [debouncedValue, setDebouncedValue] = (0, import_react9.useState)(
+  const [debouncedValue, setDebouncedValue] = (0, import_react12.useState)(
     valueOfSearchProductsVariable
   );
-  const debouncedSetValue = (0, import_react9.useMemo)(
-    () => (0, import_lodash2.debounce)((value) => setDebouncedValue(value), 800),
+  const debouncedSetValue = (0, import_react12.useMemo)(
+    () => (0, import_lodash3.debounce)((value) => {
+      console.log("value", value);
+      setDebouncedValue(value);
+    }, 800),
     []
   );
-  const [queries, setQueries] = (0, import_react9.useState)({
+  const [queries, setQueries] = (0, import_react12.useState)({
     search: debouncedValue,
     page: 1,
     limit
@@ -1159,23 +1304,26 @@ var ProductsRender = ({
     }
     // { enabled: !!store?.slug }
   );
-  (0, import_react9.useEffect)(() => {
+  (0, import_react12.useEffect)(() => {
     debouncedSetValue(valueOfSearchProductsVariable || "");
     return () => debouncedSetValue.cancel();
   }, [valueOfSearchProductsVariable, debouncedSetValue]);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react12.useEffect)(() => {
     setQueries((prev) => ({
       ...prev,
       search: debouncedValue,
       page: 1
     }));
   }, [debouncedValue]);
+  const saveCartToStore = (carts) => {
+    setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
+  };
   if (!isLoading && !products?.total) {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Box, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Text, { children: noResultsText || "No results found" }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Box, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Text, { children: noResultsText || "No results found" }) });
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Box, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-      import_react10.SimpleGrid,
+  return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.Box, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      import_react13.SimpleGrid,
       {
         columns: {
           base: mobile,
@@ -1184,40 +1332,48 @@ var ProductsRender = ({
           lg: desktop
         },
         gap: 4,
-        children: isLoading ? Array.from({ length: limit }).map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Skeleton, { height: "300px", borderRadius: "md" }, index)) : products?.data?.map((product) => {
-          const defaultModel = (0, import_lodash2.get)(
+        children: isLoading ? Array.from({ length: limit }).map((_3, index) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Skeleton, { height: "300px", borderRadius: "md" }, index)) : products?.data?.map((product) => {
+          const defaultModel = (0, import_lodash3.get)(
             product,
             "defaultModel",
-            (0, import_lodash2.get)(product, "models.0")
+            (0, import_lodash3.get)(product, "models.0")
           );
-          return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Card.Root, { variant: "outline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.CardBody, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-                import_react10.Image,
+          return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.Card.Root, { variant: "outline", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.CardBody, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+                import_react13.Image,
                 {
                   src: product.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
                   alt: product.name,
                   borderRadius: "md"
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Text, { mt: "2", fontWeight: "bold", children: product.name })
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Card.Title, { children: product.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_react13.Text, { textStyle: "2xl", fontWeight: "medium", letterSpacing: "tight", mt: "2", children: [
+                "$",
+                `${(0, import_lodash3.round)(
+                  (defaultModel?.price ?? product.price ?? 0) / 100,
+                  0
+                )}`
+              ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.CardFooter, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(import_react10.Text, { fontWeight: "bold", children: [
-              "$",
-              `${(0, import_lodash2.round)(
-                (defaultModel?.price ?? product.price ?? 0) / 100,
-                0
-              )}`
-            ] }) })
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.CardFooter, { gap: "2", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              ButtonAddToCart_default,
+              {
+                product,
+                keyAddToCart,
+                saveCartToStore
+              }
+            ) })
           ] }, product.id);
         })
       }
     ),
-    (0, import_lodash2.get)(products, "total", 0) > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-      import_react10.Pagination.Root,
+    (0, import_lodash3.get)(products, "total", 0) > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+      import_react13.Pagination.Root,
       {
         mt: "6",
-        count: (0, import_lodash2.get)(products, "total", 0),
+        count: (0, import_lodash3.get)(products, "total", 0),
         pageSize: queries.limit,
         page: queries.page,
         onPageChange: ({ page }) => setQueries((prev) => ({
@@ -1225,8 +1381,8 @@ var ProductsRender = ({
           page
         })),
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Pagination.PrevTrigger, {}),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react10.Pagination.NextTrigger, {})
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Pagination.PrevTrigger, {}),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react13.Pagination.NextTrigger, {})
         ]
       }
     )
@@ -1276,7 +1432,7 @@ var ProductsInternal = {
     categoryId,
     variableName
   }) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
       ProductsRender,
       {
         mobile,
@@ -1293,27 +1449,627 @@ var ProductsInternal = {
 };
 var Products = withLayout(ProductsInternal);
 
-// src/blocks/CategoryGrid/index.tsx
-var import_react_error_boundary2 = require("react-error-boundary");
-var import_jsx_runtime14 = require("react/jsx-runtime");
-var CategoryGridRender = ({ limit, depth }) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Section, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_jsx_runtime14.Fragment, {}) });
+// src/blocks/Checkout/index.tsx
+var import_react14 = require("react");
+var import_lodash4 = require("lodash");
+var import_react15 = require("@chakra-ui/react");
+var import_recoil5 = require("recoil");
+var import_lodash5 = __toESM(require("lodash"));
+var import_lu2 = require("react-icons/lu");
+var import_jsx_runtime15 = require("react/jsx-runtime");
+var CheckoutRender = ({
+  limit,
+  categoryId,
+  // searchSize,
+  storeId,
+  variableName,
+  noResultsText,
+  urlToProduct
+}) => {
+  const [productionState, setProductionState] = (0, import_recoil5.useRecoilState)(ProductionState);
+  const [listProduct, setListProduct] = (0, import_react14.useState)([]);
+  const keyAddToCart = "productCart";
+  const getProductionCart = () => {
+    if (productionState && productionState?.[keyAddToCart]?.length > 0) {
+      setListProduct(productionState?.[keyAddToCart]);
+      return;
+    }
+    if (!productionState?.[keyAddToCart]) {
+      try {
+        const cart = JSON.parse(localStorage.getItem(keyAddToCart)) || [];
+        if (cart?.length > 0) {
+          saveCartToStore(cart);
+        }
+      } catch (e) {
+        console.log("e", e);
+      }
+    }
+  };
+  (0, import_react14.useEffect)(() => {
+    getProductionCart();
+  }, [productionState]);
+  const saveCartToStore = (carts) => {
+    localStorage.setItem(keyAddToCart, JSON.stringify(carts || []));
+    setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
+  };
+  const onChangeQuantity = (value, index) => {
+    if (value >= 0) {
+      let newListProducts = import_lodash5.default.cloneDeep(listProduct);
+      newListProducts[index].quantity = value;
+      setListProduct(newListProducts);
+    }
+  };
+  const subTotal = () => {
+    let total = 0;
+    listProduct.forEach((item) => {
+      let subTotalItem = (0, import_lodash4.round)(
+        Number((item.price ?? 0) / 100) * Number(item.quantity),
+        0
+      );
+      total += subTotalItem;
+    });
+    return total;
+  };
+  if (!listProduct?.length) {
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Box, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "w-full flex flex-col justify-center items-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Text, { children: noResultsText || "No results found" }),
+      urlToProduct && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Link, { variant: "underline", colorPalette: "blue", href: `${urlToProduct}`, children: [
+        "Visit products now",
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_lu2.LuExternalLink, {})
+      ] })
+    ] }) });
+  }
+  return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Table.Root, { size: "sm", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.Header, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Table.Row, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.ColumnHeader, { children: "Product" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.ColumnHeader, { children: "Price" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.ColumnHeader, { children: "Quantity" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.ColumnHeader, { children: "Subtotal" })
+      ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.Body, { children: listProduct.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Table.Row, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.Cell, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-1 w-full", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            import_react15.Image,
+            {
+              src: item.image || "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg",
+              width: "50px",
+              height: "50px",
+              alt: item.name,
+              borderRadius: "md"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: item.name })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Table.Cell, { children: [
+          "$",
+          `${(0, import_lodash4.round)(
+            (item.price ?? 0) / 100,
+            0
+          )}`
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Table.Cell, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+          import_react15.NumberInput.Root,
+          {
+            style: {
+              width: "72px"
+            },
+            value: item.quantity,
+            onValueChange: (e) => {
+              onChangeQuantity(e?.valueAsNumber, index);
+            },
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.NumberInput.Control, {}),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.NumberInput.Input, {})
+            ]
+          }
+        ) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Table.Cell, { children: [
+          "$",
+          `${(0, import_lodash4.round)(
+            Number((item.price ?? 0) / 100) * Number(item.quantity),
+            0
+          )}`
+        ] })
+      ] }, item.id)) })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex justify-between mt-4", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Button, { variant: "outline", children: "Return To Shop" }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between mt-10 mb-2", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Input, { placeholder: "Coupon Code", variant: "outline" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Button, { colorPalette: "red", children: "Apply Coupon" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Card.Root, { width: "320px", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.Card.Body, { gap: "2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Card.Title, { mt: "2", children: "Cart total" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Card.Description, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.DataList.Root, { orientation: "horizontal", divideY: "1px", maxW: "md", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.DataList.Item, { pt: "4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.DataList.ItemLabel, { children: "SubTotal" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.DataList.ItemValue, { className: "justify-end", children: [
+                "$",
+                subTotal()
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.DataList.Item, { pt: "4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.DataList.ItemLabel, { children: "Shipping" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.DataList.ItemValue, { className: "justify-end", children: "Free" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.DataList.Item, { pt: "4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.DataList.ItemLabel, { children: "Total" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_react15.DataList.ItemValue, { className: "justify-end", children: [
+                "$",
+                subTotal()
+              ] })
+            ] })
+          ] }) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Card.Footer, { justifyContent: "center", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react15.Button, { colorPalette: "red", children: "Process to checkout" }) })
+      ] }) })
+    ] })
+  ] });
 };
-var CategoryGridInternal = {
+var CheckoutInternal = {
+  label: "Cart",
   fields: {
-    limit: { type: "number", label: "Limit", min: 1, max: 20 },
-    depth: { type: "number", label: "Depth", min: 1, max: 5 }
+    // mobile: {type: "number", label: "Mobile (base)", min: 1, max: 2},
+    // tablet: {type: "number", label: "Tablet", min: 1, max: 4},
+    // desktop: {type: "number", label: "Desktop", min: 1, max: 6},
+    // limit: {type: "number", label: "Limit", min: 1, max: 20},
+    variableName: {
+      type: "text",
+      label: "Variable Name to Use"
+    },
+    noResultsText: { type: "text", label: "No Results Message" },
+    urlToProduct: { type: "text", label: "Url to product" }
+    // searchSize: {
+    //   type: "select",
+    //   label: "Search Size",
+    //   options: [
+    //     { value: "middle", label: "Middle" },
+    //     { value: "large", label: "Large" },
+    //   ],
+    // },
+    // categoryId: {
+    //   type: "custom",
+    //   label: "Category",
+    //   render: (props) => <CategoryField {...props} />,
+    // },
   },
   defaultProps: {
-    limit: 6,
-    depth: 1
+    // mobile: 2,
+    // tablet: 4,
+    // desktop: 4,
+    // limit: 10,
+    categoryId: void 0,
+    noResultsText: "No Results",
+    variableName: void 0,
+    urlToProduct: void 0
   },
-  render: (props) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_react_error_boundary2.ErrorBoundary, { fallbackRender: () => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { children: "Unable to load categories." }), children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CategoryGridRender, { ...props }) })
+  render: ({
+    puck,
+    limit,
+    noResultsText,
+    urlToProduct,
+    categoryId,
+    variableName
+  }) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      CheckoutRender,
+      {
+        categoryId,
+        variableName,
+        limit,
+        noResults: noResultsText,
+        urlToProduct,
+        storeId: puck?.metadata?.storeId
+      }
+    );
+  }
+};
+var Checkout = withLayout(CheckoutInternal);
+
+// src/blocks/CategoryGrid/index.tsx
+var import_react_error_boundary = require("react-error-boundary");
+var import_react16 = require("react");
+var import_react17 = require("@chakra-ui/react");
+var import_fi = require("react-icons/fi");
+
+// src/services/sale/category/category.api.ts
+var getCategories = async (payload) => {
+  const httpClient = initHttpClient();
+  const response = await httpClient.get(`/api/v1/categories`, {
+    params: payload
+  });
+  return response.data;
+};
+
+// src/hooks/category/useGetCategoriesQuery.tsx
+var import_react_query3 = require("@tanstack/react-query");
+var useGetCategoriesQuery = (queries, props) => {
+  return (0, import_react_query3.useQuery)({
+    ...props,
+    queryKey: ["categories", queries],
+    queryFn: () => getCategories(queries)
+  });
+};
+
+// src/blocks/CommonFunction/function.ts
+var import_lodash6 = __toESM(require("lodash"));
+var matchDataCondition = (source, data) => {
+  if (!source) return "";
+  let formatData = source;
+  formatData?.match(/\${(.*?)(?=})}/g)?.map((str) => {
+    const key = str.slice(2, str.length - 1);
+    const value = import_lodash6.default.get(data, key, "");
+    formatData = formatData.replace(str, value);
+    return formatData;
+  });
+  return formatData;
+};
+
+// src/blocks/CategoryGrid/index.tsx
+var import_jsx_runtime16 = require("react/jsx-runtime");
+var import_meta3 = {};
+var iconMap = {
+  FiSmartphone: import_fi.FiSmartphone,
+  FiMonitor: import_fi.FiMonitor,
+  FiWatch: import_fi.FiWatch,
+  FiCamera: import_fi.FiCamera,
+  FiHeadphones: import_fi.FiHeadphones,
+  FiZap: import_fi.FiZap,
+  FiPackage: import_fi.FiPackage
+};
+var getCategoryIcon = (categoryName) => {
+  const name = categoryName.toLowerCase();
+  if (name.includes("phone") || name.includes("mobile")) return "FiSmartphone";
+  if (name.includes("computer") || name.includes("laptop") || name.includes("pc"))
+    return "FiMonitor";
+  if (name.includes("watch") || name.includes("smartwatch")) return "FiWatch";
+  if (name.includes("camera") || name.includes("photo")) return "FiCamera";
+  if (name.includes("headphone") || name.includes("audio") || name.includes("sound"))
+    return "FiHeadphones";
+  if (name.includes("game") || name.includes("gaming")) return "FiZap";
+  return "FiPackage";
+};
+var CategoryGridRender = ({
+  title = "Browse By Category",
+  subtitle = "Categories",
+  urlRedirect,
+  storeId = import_meta3.env.VITE_ENTITY_ID || "",
+  mobile = 2,
+  tablet = 4,
+  desktop = 6,
+  limit = 6
+}) => {
+  const [selectedCategory, setSelectedCategory] = (0, import_react16.useState)("");
+  const scrollRef = (0, import_react16.useRef)(null);
+  const redColor = "red.500";
+  const entityId = import_meta3.env.VITE_ENTITY_ID || storeId || "";
+  const {
+    data: categoriesData,
+    isLoading,
+    error
+  } = useGetCategoriesQuery(
+    { storeId: entityId },
+    { enabled: true }
+    // Always enable the query
+  );
+  const defaultCategories = [
+    { id: "1", name: "Phones", icon: "FiSmartphone" },
+    { id: "2", name: "Computers", icon: "FiMonitor" },
+    { id: "3", name: "SmartWatch", icon: "FiWatch" },
+    { id: "4", name: "Camera", icon: "FiCamera" },
+    { id: "5", name: "HeadPhones", icon: "FiHeadphones" },
+    { id: "6", name: "Gaming", icon: "FiZap" }
+  ];
+  const apiCategories = categoriesData?.data || [];
+  const shouldUseDefault = false;
+  const displayCategories = shouldUseDefault ? defaultCategories.slice(0, limit) : apiCategories.slice(0, limit);
+  const getVisibleCategories = () => {
+    return displayCategories;
+  };
+  const visibleCategories = getVisibleCategories();
+  const getResponsiveSizing = () => {
+    return {
+      cardSize: {
+        base: `${100 / mobile}%`,
+        // Mobile: divide by mobile columns
+        md: `${100 / tablet}%`,
+        // Tablet: divide by tablet columns
+        lg: `${100 / desktop}%`
+        // Desktop: divide by desktop columns
+      },
+      gap: {
+        base: 2,
+        md: 3,
+        lg: 4
+      },
+      fontSize: {
+        base: "xs",
+        md: "sm",
+        lg: "sm"
+      },
+      iconSize: {
+        base: 5,
+        md: 5,
+        lg: 6
+      }
+    };
+  };
+  const responsiveSizing = getResponsiveSizing();
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+  const onClickCategory = (item) => {
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Section, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_react17.Box, { py: 8, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_react17.Flex, { justify: "space-between", align: "center", mb: 6, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_react17.Stack, { align: "start", gap: 1, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_react17.Flex, { align: "center", gap: 2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Box, { w: 2, h: 6, bg: redColor, borderRadius: "sm" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Text, { color: redColor, fontSize: "sm", fontWeight: "medium", children: subtitle })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Text, { fontSize: "2xl", fontWeight: "bold", color: "gray.800", children: title })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_react17.Stack, { direction: "row", gap: 2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          import_react17.IconButton,
+          {
+            "aria-label": "Previous categories",
+            variant: "outline",
+            size: "sm",
+            onClick: scrollLeft,
+            colorScheme: "gray",
+            children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Icon, { as: import_fi.FiChevronLeft })
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          import_react17.IconButton,
+          {
+            "aria-label": "Next categories",
+            variant: "outline",
+            size: "sm",
+            onClick: scrollRight,
+            colorScheme: "gray",
+            children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Icon, { as: import_fi.FiChevronRight })
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_react17.Box, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+        import_react17.Box,
+        {
+          ref: scrollRef,
+          overflowX: "auto",
+          overflowY: "hidden",
+          css: {
+            "&::-webkit-scrollbar": {
+              display: "none"
+            },
+            scrollbarWidth: "none",
+            msOverflowStyle: "none"
+          },
+          display: { base: "block", md: "block", lg: "none" },
+          children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            import_react17.Stack,
+            {
+              direction: "row",
+              gap: responsiveSizing.gap,
+              minW: "max-content",
+              pb: 2,
+              display: "flex",
+              flexWrap: "nowrap",
+              overflowX: "auto",
+              css: {
+                "&::-webkit-scrollbar": { display: "none" },
+                scrollbarWidth: "none",
+                msOverflowStyle: "none"
+              },
+              children: isLoading ? (
+                // Loading skeleton
+                Array.from({ length: limit }).map((_3, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                  import_react17.Skeleton,
+                  {
+                    h: { base: "100px", md: "110px" },
+                    w: { base: "100px", md: "110px" },
+                    borderRadius: "md"
+                  },
+                  `skeleton-${index}`
+                ))
+              ) : error ? (
+                // Error state
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Text, { color: "red.500", fontSize: "sm", children: "Failed to load categories" })
+              ) : visibleCategories.map((category) => {
+                const categoryName = category.name || "";
+                const categoryId = category.id || "";
+                const iconKey = category.icon || getCategoryIcon(categoryName);
+                const IconComponent = iconMap[iconKey];
+                const isSelected = selectedCategory === categoryId;
+                return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Link, { href: matchDataCondition(urlRedirect, category), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+                  import_react17.Button,
+                  {
+                    variant: "outline",
+                    size: "lg",
+                    h: { base: "100px", md: "110px" },
+                    w: { base: "100px", md: "110px" },
+                    minW: { base: "100px", md: "110px" },
+                    flexDirection: "column",
+                    gap: { base: 2, md: 2 },
+                    bg: isSelected ? redColor : "white",
+                    borderColor: isSelected ? redColor : "gray.200",
+                    color: isSelected ? "white" : "gray.800",
+                    _hover: {
+                      bg: isSelected ? redColor : "gray.50",
+                      borderColor: isSelected ? redColor : "gray.300"
+                    },
+                    onClick: () => onClickCategory(category),
+                    transition: "all 0.2s",
+                    flexShrink: 0,
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                        import_react17.Icon,
+                        {
+                          as: IconComponent,
+                          boxSize: responsiveSizing.iconSize,
+                          color: isSelected ? "white" : "gray.800"
+                        }
+                      ),
+                      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                        import_react17.Text,
+                        {
+                          fontSize: responsiveSizing.fontSize,
+                          fontWeight: "medium",
+                          children: categoryName
+                        }
+                      )
+                    ]
+                  },
+                  categoryId
+                ) });
+              })
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+        import_react17.SimpleGrid,
+        {
+          columns: {
+            base: mobile,
+            md: tablet,
+            lg: desktop
+          },
+          gap: responsiveSizing.gap,
+          display: {
+            base: "none",
+            md: "none",
+            lg: "grid"
+          },
+          children: isLoading ? (
+            // Loading skeleton for desktop
+            Array.from({ length: limit }).map((_3, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+              import_react17.Skeleton,
+              {
+                h: "120px",
+                w: "100%",
+                borderRadius: "md"
+              },
+              `skeleton-desktop-${index}`
+            ))
+          ) : error ? (
+            // Error state
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Text, { color: "red.500", fontSize: "sm", children: "Failed to load categories" })
+          ) : visibleCategories.map((category) => {
+            const categoryName = category.name || "";
+            const categoryId = category.id || "";
+            const iconKey = category.icon || getCategoryIcon(categoryName);
+            const IconComponent = iconMap[iconKey];
+            const isSelected = selectedCategory === categoryId;
+            return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Link, { href: matchDataCondition(urlRedirect, category), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+              import_react17.Button,
+              {
+                variant: "outline",
+                size: "lg",
+                h: "120px",
+                w: "100%",
+                flexDirection: "column",
+                gap: 3,
+                bg: isSelected ? redColor : "white",
+                borderColor: isSelected ? redColor : "gray.200",
+                color: isSelected ? "white" : "gray.800",
+                _hover: {
+                  bg: isSelected ? redColor : "gray.50",
+                  borderColor: isSelected ? redColor : "gray.300"
+                },
+                onClick: () => onClickCategory(category),
+                transition: "all 0.2s",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                    import_react17.Icon,
+                    {
+                      as: IconComponent,
+                      boxSize: 6,
+                      color: isSelected ? "white" : "gray.800"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react17.Text, { fontSize: "sm", fontWeight: "medium", children: categoryName })
+                ]
+              },
+              categoryId
+            ) });
+          })
+        }
+      )
+    ] })
+  ] }) });
+};
+var CategoryGridInternal = {
+  label: "Categories",
+  fields: {
+    title: {
+      type: "text",
+      label: "Title"
+    },
+    subtitle: {
+      type: "text",
+      label: "Subtitle"
+    },
+    storeId: {
+      type: "text",
+      label: "Store ID"
+    },
+    urlRedirect: {
+      type: "text",
+      label: "Url"
+    },
+    mobile: {
+      type: "number",
+      label: "Mobile Columns",
+      min: 1,
+      max: 4
+    },
+    tablet: {
+      type: "number",
+      label: "Tablet Columns",
+      min: 2,
+      max: 6
+    },
+    desktop: {
+      type: "number",
+      label: "Desktop Columns",
+      min: 3,
+      max: 8
+    },
+    limit: {
+      type: "number",
+      label: "Total Categories Limit",
+      min: 1,
+      max: 20
+    }
+  },
+  defaultProps: {
+    title: "Browse By Category",
+    subtitle: "Categories",
+    storeId: import_meta3.env.VITE_ENTITY_ID || "",
+    urlRedirect: "",
+    mobile: 2,
+    tablet: 4,
+    desktop: 6,
+    limit: 6
+  },
+  render: (props) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react_error_boundary.ErrorBoundary, { fallbackRender: () => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { children: "Unable to load categories." }), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CategoryGridRender, { ...props }) })
 };
 var CategoryGrid = withLayout(CategoryGridInternal);
 
 // src/blocks/puck.config.tsx
-var import_jsx_runtime15 = require("react/jsx-runtime");
 var PuckConfig = {
   root: root_default,
   categories: {
@@ -1332,7 +2088,7 @@ var PuckConfig = {
     },
     storefront: {
       title: "Product",
-      components: ["Products"],
+      components: ["Products", "Checkout", "CategoryGrid"],
       defaultExpanded: false
     }
   },
@@ -1340,17 +2096,25 @@ var PuckConfig = {
     Container,
     Grid,
     Flex,
+    // Space,
     Heading,
     Text,
     Input,
     Button,
     Products,
-    Product,
+    // Product,
     CategoryGrid,
-    RichText: {
-      fields: { html: { type: "textarea" } },
-      render: ({ html }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { dangerouslySetInnerHTML: { __html: html } })
-    },
+    Checkout
+    // Divider: { fields: {}, render: () => <AntDivider /> },
+    // Typography
+    // RichText: {
+    //   label: "RichText",
+    //   fields: { html: { ...InputRichText } },
+    //   ...InputRichText,
+    //   // render: ({ html }: any) => (
+    //   //   <div dangerouslySetInnerHTML={{ __html: html }} />
+    //   // ),
+    // },
     // Media
     // Image: {
     //   fields: { src: { type: "text" }, alt: { type: "text" } },
@@ -1462,27 +2226,30 @@ var PuckConfig = {
     //   render: () => <AntdInput.Search placeholder="Tìm kiếm..." />,
     // },
     // Utility
-    SEO: {
-      fields: { title: { type: "text" }, description: { type: "text" } },
-      render: ({
-        title,
-        description
-      }) => {
-        document.title = title || "";
-        return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("meta", { name: "description", content: description });
-      }
-    }
+    // SEO: {
+    //   fields: { title: { type: "text" }, description: { type: "text" } },
+    //   render: ({
+    //     title,
+    //     description,
+    //   }: {
+    //     title?: string;
+    //     description?: string;
+    //   }) => {
+    //     document.title = title || "";
+    //     return <meta name="description" content={description} />;
+    //   },
+    // },
   }
 };
 
 // src/query-provider.tsx
-var import_react11 = require("@chakra-ui/react");
-var import_react_query3 = require("@tanstack/react-query");
-var import_recoil4 = require("recoil");
-var import_jsx_runtime16 = require("react/jsx-runtime");
-var queryClient = new import_react_query3.QueryClient();
+var import_react18 = require("@chakra-ui/react");
+var import_react_query4 = require("@tanstack/react-query");
+var import_recoil6 = require("recoil");
+var import_jsx_runtime17 = require("react/jsx-runtime");
+var queryClient = new import_react_query4.QueryClient();
 var PuckProvider = ({ children }) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_recoil4.RecoilRoot, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react11.ChakraProvider, { value: import_react11.defaultSystem, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react_query3.QueryClientProvider, { client: queryClient, children }) }) });
+  return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_recoil6.RecoilRoot, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_react18.ChakraProvider, { value: import_react18.defaultSystem, children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_react_query4.QueryClientProvider, { client: queryClient, children }) }) });
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

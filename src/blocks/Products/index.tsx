@@ -13,9 +13,12 @@ import {
   Skeleton,
   Text,
   Box,
+  Button
 } from "@chakra-ui/react";
 import { VariableState } from "@/services/common/variable.state";
-import { useRecoilValue } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
+import ButtonAddToCart from "./components/ButtonAddToCart";
+import {ProductionState} from "@/services/common/production.state.ts";
 
 export type ProductsProps = {
   mobile: number;
@@ -27,6 +30,7 @@ export type ProductsProps = {
   storeId?: string;
   variableName?: string;
   noResults?: string;
+  noResultsText?: string;
 };
 
 const ProductsRender: FC<ProductsProps> = ({
@@ -42,7 +46,11 @@ const ProductsRender: FC<ProductsProps> = ({
 }) => {
   // const store = useRecoilValue(CurrentStoreState);
   const variables = useRecoilValue(VariableState);
+  const [productionState, setProductionState] = useRecoilState(ProductionState);
+
   console.log("🚀 ~ ProductsRender ~ variables:", variables);
+  console.log("🚀 ~ ProductsRender ~ productionState:", productionState);
+  const keyAddToCart: string = 'productCart'
   const valueOfSearchProductsVariable = useMemo(() => {
     if (!variableName) {
       return null;
@@ -56,7 +64,10 @@ const ProductsRender: FC<ProductsProps> = ({
   );
 
   const debouncedSetValue = useMemo(
-    () => debounce((value: string) => setDebouncedValue(value), 800),
+    () => debounce((value: string) => {
+      console.log("value",value)
+      setDebouncedValue(value)
+    }, 800),
     []
   );
 
@@ -80,7 +91,11 @@ const ProductsRender: FC<ProductsProps> = ({
     // { enabled: !!store?.slug }
   );
 
+  // watch + mounted
+
   useEffect(() => {
+    // có dom
+    // giá trị biến thay đổi
     debouncedSetValue(valueOfSearchProductsVariable || "");
 
     return () => debouncedSetValue.cancel();
@@ -94,6 +109,9 @@ const ProductsRender: FC<ProductsProps> = ({
     }));
   }, [debouncedValue]);
 
+  const saveCartToStore = (carts:any[]) => {
+    setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
+  }
   if (!isLoading && !products?.total) {
     return (
       <Box>
@@ -135,26 +153,21 @@ const ProductsRender: FC<ProductsProps> = ({
                       alt={product.name}
                       borderRadius="md"
                     />
-                    <Text mt="2" fontWeight="bold">
-                      {product.name}
-                    </Text>
-
-                    {/* <Prose>
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: product.descriptions,
-                        }}
-                      />
-                    </Prose> */}
-                  </CardBody>
-                  <CardFooter>
-                    <Text fontWeight="bold">
+                    <Card.Title>{product.name}</Card.Title>
+                    <Text textStyle="2xl" fontWeight="medium" letterSpacing="tight" mt="2">
                       $
                       {`${round(
-                        (defaultModel?.price ?? product.price ?? 0) / 100,
-                        0
+                          (defaultModel?.price ?? product.price ?? 0) / 100,
+                          0
                       )}`}
                     </Text>
+                  </CardBody>
+                  <CardFooter gap="2" >
+                    <ButtonAddToCart
+                        product={product}
+                        keyAddToCart={keyAddToCart}
+                        saveCartToStore={saveCartToStore}
+                    ></ButtonAddToCart>
                   </CardFooter>
                 </Card.Root>
               );

@@ -6,9 +6,10 @@ import { Text } from "./Text";
 import Root from "./root";
 import { Input } from "./Input";
 import { Button } from "./Button";
-import { Product } from "./Product";
 import { Products } from "./Products";
+import { Checkout } from "./Checkout";
 import { CategoryGrid } from "./CategoryGrid";
+// import {InputRichText} from "@/components/InputRichText";
 
 export const PuckConfig = {
   root: Root,
@@ -28,7 +29,7 @@ export const PuckConfig = {
     },
     storefront: {
       title: "Product",
-      components: ["Products"],
+      components: ["Products", "Checkout", "CategoryGrid"],
       defaultExpanded: false,
     },
   },
@@ -37,6 +38,7 @@ export const PuckConfig = {
     Container,
     Grid,
     Flex,
+    // Space,
 
     Heading,
     Text,
@@ -45,15 +47,22 @@ export const PuckConfig = {
     Button,
 
     Products,
-    Product,
+    // Product,
     CategoryGrid,
+    Checkout,
 
-    RichText: {
-      fields: { html: { type: "textarea" } },
-      render: ({ html }: any) => (
-        <div dangerouslySetInnerHTML={{ __html: html }} />
-      ),
-    },
+    // Divider: { fields: {}, render: () => <AntDivider /> },
+
+    // Typography
+
+    // RichText: {
+    //   label: "RichText",
+    //   fields: { html: { ...InputRichText } },
+    //   ...InputRichText,
+    //   // render: ({ html }: any) => (
+    //   //   <div dangerouslySetInnerHTML={{ __html: html }} />
+    //   // ),
+    // },
 
     // Media
     // Image: {
@@ -172,19 +181,19 @@ export const PuckConfig = {
     // },
 
     // Utility
-    SEO: {
-      fields: { title: { type: "text" }, description: { type: "text" } },
-      render: ({
-        title,
-        description,
-      }: {
-        title?: string;
-        description?: string;
-      }) => {
-        document.title = title || "";
-        return <meta name="description" content={description} />;
-      },
-    },
+    // SEO: {
+    //   fields: { title: { type: "text" }, description: { type: "text" } },
+    //   render: ({
+    //     title,
+    //     description,
+    //   }: {
+    //     title?: string;
+    //     description?: string;
+    //   }) => {
+    //     document.title = title || "";
+    //     return <meta name="description" content={description} />;
+    //   },
+    // },
   },
 };
 
