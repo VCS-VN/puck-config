@@ -1,31 +1,39 @@
 import { Section } from "../../components/Section";
 import { WithLayout, withLayout } from "../../components/Layout";
 import { ComponentConfig } from "@measured/puck";
-// import {InputRichText} from "@/components/InputRichText";
+import {InputRichText} from "@/components/InputRichText";
 export type TextProps = WithLayout<{
-  // text?: any;
-  // padding?: string;
-  // maxWidth?: string;
+  text?: any;
+  maxWidth?: string;
+  href?: string;
 }>;
 
 const TextInner: ComponentConfig<TextProps> = {
   fields: {
-    // text: {
-    //   label: "Content",
-    //   ...InputRichText
-    // },
-    // maxWidth: { type: "text" },
+    text: {
+      label: "Content",
+      ...InputRichText
+    },
+    maxWidth: { type: "text" },
+    href: {
+      label: 'Link',
+      type: "text"
+    },
   },
   defaultProps: {
-    // text: "Text",
+    text: "Text",
+    href: ''
   },
-  render: ({}) => {
+  render: ({ text, maxWidth,href }) => {
     return (
-      <Section>
-        <article className="prose max-w-none lg:prose-xl">
-          {/* <div dangerouslySetInnerHTML={{ __html: text }} /> */}
-        </article>
-      </Section>
+        <Section maxWidth={maxWidth}>
+          <a href={href}>
+            <article className="prose max-w-none lg:prose-xl">
+              <div dangerouslySetInnerHTML={{__html: text}}/>
+            </article>
+          </a>
+
+        </Section>
     );
   },
 };

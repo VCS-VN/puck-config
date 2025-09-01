@@ -1,18 +1,20 @@
 import { initHttpClient } from "@/client/httpClient";
 
-export const getCategories = async (payload?: any) => {
+export const getCategories = async (payload?: any, signal?: AbortSignal) => {
   const httpClient = initHttpClient();
   const response = await httpClient.get(`/api/v1/categories`, {
     params: payload,
+    signal,
   });
 
   return response.data;
 };
 
-export const getCategoryTree = async (payload?: any) => {
+export const getCategoryTree = async (payload?: any, signal?: AbortSignal) => {
   const httpClient = initHttpClient();
   const response = await httpClient.get(`/api/v1/categories/tree`, {
     params: payload,
+    signal,
   });
 
   return response.data;

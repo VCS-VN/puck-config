@@ -3,10 +3,11 @@
 import { initHttpClient } from "@/client/httpClient";
 import { IProduct } from "./product.type";
 
-export const getProducts = async (payload?: any) => {
+export const getProducts = async (payload?: any, signal?: AbortSignal) => {
   const httpClient = initHttpClient();
   const response = await httpClient.get(`/api/v1/products`, {
     params: payload,
+    signal,
   });
 
   return response.data;

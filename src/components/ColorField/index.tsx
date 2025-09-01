@@ -1,17 +1,20 @@
-import { FieldLabel } from "@measured/puck";
+import {FieldLabel} from "@measured/puck";
 
 export const colorField = {
   type: "custom" as const,
   render: ({
-    name,
-    onChange,
-    value,
-  }: {
+             name,
+             onChange,
+             value,
+             label
+           }: {
     name: string;
     onChange: (value: string) => void;
     value: string;
-  }) => (
-    <FieldLabel label="Background Color">
+    label: string;
+  }) => {
+    console.log("label", label)
+    return <FieldLabel label={label || "Background Color"}>
       <input
         type="color"
         name={name}
@@ -19,5 +22,5 @@ export const colorField = {
         onChange={(e) => onChange(e.target.value)}
       />
     </FieldLabel>
-  ),
+  },
 };

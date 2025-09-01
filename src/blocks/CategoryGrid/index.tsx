@@ -15,6 +15,7 @@ import {
   Skeleton,
   // SkeletonText,
   Link,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import {
   FiChevronLeft,
@@ -30,6 +31,12 @@ import {
 import { useGetCategoriesQuery } from "../../hooks/category/useGetCategoriesQuery";
 import type { ICategory } from "../../services/sale/category/category.type";
 import { matchDataCondition } from "@/blocks/CommonFunction/function";
+import { CategoryMultiSelect } from "@/components/CategoryMultiSelect";
+import { CategorySingleSelect } from "@/components/CategorySingleSelect";
+import { getCategoryTree } from "@/services/sale/category/category.api";
+import { useRecoilState } from "recoil";
+import { VariableState } from "@/services/common/variable.state";
+import { pushUrlState } from "@/utils/url";
 
 export type CategoryGridProps = {
   title?: string;
@@ -40,6 +47,16 @@ export type CategoryGridProps = {
   tablet?: number;
   desktop?: number;
   limit?: number;
+  // Optional slots to allow drag-and-drop content before/after the grid
+  header?: any;
+  footer?: any;
+  // Show all categories or only a limited number
+  showAll?: boolean;
+  selectionMode?: "limit" | "select" | "ids";
+  selectedCategories?: Array<{ id: string; name: string; icon?: string }>;
+  categoryIds?: string; // comma-separated ids for manual input mode
+  parentCategoryId?: string; // filter by parent category
+  bindSelectedCategoryVariableName?: string; // write selected category id to variable state
 };
 
 // Icon mapping for categories
@@ -75,7 +92,7 @@ const getCategoryIcon = (categoryName: string) => {
   return "FiPackage"; // default icon
 };
 
-const CategoryGridRender: React.FC<CategoryGridProps> = ({
+const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
   title = "Browse By Category",
   subtitle = "Categories",
   urlRedirect,
@@ -84,8 +101,20 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
   tablet = 4,
   desktop = 6,
   limit = 6,
+  header: HeaderSlot,
+  footer: FooterSlot,
+  puck,
+  showAll = false,
+  selectionMode = "limit",
+  selectedCategories = [],
+  categoryIds,
+  parentCategoryId,
+  bindSelectedCategoryVariableName,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [vars, setVars] = useRecoilState(VariableState);
+  const selectedCategory = bindSelectedCategoryVariableName
+    ? (vars as any)[bindSelectedCategoryVariableName]
+    : "";
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const redColor = "red.500";
@@ -93,14 +122,32 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
   // Get storeId from environment variable
   const entityId = import.meta.env.VITE_ENTITY_ID || storeId || "";
 
+  // Determine effective mode: if user already picked categories, honor that for rendering
+  const effectiveMode =
+    (selectedCategories?.length || 0) > 0 && selectionMode !== "ids"
+      ? "select"
+      : selectionMode;
+
   // Fetch categories from API
   const {
     data: categoriesData,
     isLoading,
     error,
   } = useGetCategoriesQuery(
-    { storeId: entityId },
-    { enabled: true } // Always enable the query
+    {
+      storeId: entityId,
+      limit: showAll || effectiveMode !== "limit" ? undefined : limit,
+    },
+    {
+      enabled: !!entityId,
+      // In editor we want to see a call when dropped; avoid cache reuse
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: false,
+      gcTime: 300_000,
+      placeholderData: undefined,
+      retry: 1,
+    }
   );
 
   // Default categories data
@@ -116,12 +163,85 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
   // Transform API data to display format
   // If API returns less than 4 items, use defaultCategories
   const apiCategories = categoriesData?.data || [];
-  // const shouldUseDefault = apiCategories.length < 4;
-  const shouldUseDefault = false;
+  const [tree, setTree] = React.useState<any[] | null>(null);
+  React.useEffect(() => {
+    let active = true;
+    const ctl = new AbortController();
+    if (parentCategoryId) {
+      (async () => {
+        try {
+          const res = await getCategoryTree({ storeId: entityId }, ctl.signal);
+          if (active) setTree(res?.data || []);
+        } catch (e) {
+          if (active) setTree([]);
+        }
+      })();
+    }
+    return () => {
+      active = false;
+      ctl.abort();
+    };
+  }, [parentCategoryId, entityId]);
+  const shouldUseDefault = !!error || apiCategories.length < 4;
 
-  const displayCategories = shouldUseDefault
-    ? defaultCategories.slice(0, limit)
-    : apiCategories.slice(0, limit);
+  let displayCategories: any[] = [];
+  if (effectiveMode === "select" && selectedCategories?.length) {
+    displayCategories = selectedCategories;
+  } else if (effectiveMode === "ids" && categoryIds) {
+    const ids = categoryIds
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean);
+    displayCategories = ids.map((id) => {
+      const match = apiCategories.find(
+        (c: any) => String(c.id ?? c.entityId ?? c.value) === String(id)
+      );
+      return {
+        id,
+        name: match?.name || id,
+        // icon: match?.icon
+      };
+    });
+  } else if (parentCategoryId && Array.isArray(tree)) {
+    const findNode = (nodes: any[]): any => {
+      for (const n of nodes) {
+        if (String(n.id) === String(parentCategoryId)) return n;
+        const f = n.children && findNode(n.children);
+        if (f) return f;
+      }
+      return null;
+    };
+    const node = findNode(tree) || {};
+    const children = Array.isArray(node.children) ? node.children : [];
+    displayCategories = showAll ? children : children.slice(0, limit);
+  } else {
+    const normalizedApi = (apiCategories || [])
+      .map((c: any) => {
+        const id =
+          c?.id ?? c?.entityId ?? c?.value ?? c?._id ?? c?.code ?? c?.slug;
+        const name =
+          c?.name ??
+          c?.label ??
+          c?.title ??
+          c?.slug ??
+          c?.code ??
+          c?.displayName ??
+          c?.text;
+        return {
+          id: id != null ? String(id) : "",
+          name: name ? String(name) : id != null ? String(id) : "",
+          icon: c?.icon,
+        };
+      })
+      .filter((c: any) => c.id !== "");
+    displayCategories = shouldUseDefault
+      ? showAll
+        ? defaultCategories
+        : defaultCategories.slice(0, limit)
+      : showAll
+      ? normalizedApi
+      : normalizedApi.slice(0, limit);
+  }
 
   // console.log('CategoryGrid API Call:', {
   //   entityId,
@@ -134,15 +254,30 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
   //   finalCategoriesCount: displayCategories.length
   // });
 
-  // Calculate visible categories based on responsive props
-  const getVisibleCategories = () => {
-    // For now, we'll show all categories but use responsive sizing
-    // In a real implementation, you might want to show different numbers
-    // based on screen size using useBreakpointValue or similar
-    return displayCategories;
-  };
+  // Pagination for desktop grid; horizontal scroll for mobile/tablet
+  const perPageCols =
+    useBreakpointValue({ base: mobile, md: tablet, lg: desktop }) || desktop;
+  const isDesktop =
+    useBreakpointValue({ base: false, md: false, lg: true }) || false;
+  const [page, setPage] = React.useState(0);
+  const perPage = Math.max(1, Number(perPageCols || desktop));
+  const totalPages = Math.max(
+    1,
+    Math.ceil((displayCategories?.length || 0) / perPage)
+  );
 
-  const visibleCategories = getVisibleCategories();
+  React.useEffect(() => {
+    // Clamp current page when data or layout changes
+    setPage((p) => Math.min(Math.max(0, p), Math.max(0, totalPages - 1)));
+  }, [perPage, displayCategories?.length, totalPages]);
+
+  const visibleCategories = React.useMemo(() => {
+    if (isDesktop) {
+      const start = page * perPage;
+      return (displayCategories || []).slice(start, start + perPage);
+    }
+    return displayCategories;
+  }, [isDesktop, page, perPage, displayCategories]);
 
   // Responsive sizing based on props
   const getResponsiveSizing = () => {
@@ -173,24 +308,38 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
   const responsiveSizing = getResponsiveSizing();
 
   const scrollLeft = () => {
+    if (isDesktop) {
+      setPage((p) => Math.max(0, p - 1));
+      return;
+    }
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
+    if (isDesktop) {
+      setPage((p) => Math.min(totalPages - 1, p + 1));
+      return;
+    }
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
     }
   };
 
   const onClickCategory = (item: any) => {
-    // setSelectedCategory(item?.id)
+    if (!bindSelectedCategoryVariableName) return;
+    setVars((prev) => ({
+      ...prev,
+      [bindSelectedCategoryVariableName]: item?.id,
+    }));
+    pushUrlState({ categoryId: item?.id, page: 1 });
   };
   // const render
 
   return (
     <Section>
+      {HeaderSlot ? <HeaderSlot minEmptyHeight={40} /> : null}
       <Box py={8}>
         {/* Header Section */}
         <Flex justify="space-between" align="center" mb={6}>
@@ -201,9 +350,16 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
                 {subtitle}
               </Text>
             </Flex>
-            <Text fontSize="2xl" fontWeight="bold" color="gray.800">
-              {title}
-            </Text>
+            <Flex align="baseline" gap={3}>
+              <Text fontSize="2xl" fontWeight="bold" color="gray.800">
+                {title}
+              </Text>
+              {isDesktop && totalPages > 1 ? (
+                <Text fontSize="sm" color="gray.500">
+                  Page {page + 1} / {totalPages}
+                </Text>
+              ) : null}
+            </Flex>
           </Stack>
 
           {/* Navigation Buttons */}
@@ -214,6 +370,7 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
               size="sm"
               onClick={scrollLeft}
               colorScheme="gray"
+              disabled={isDesktop && page <= 0}
             >
               <Icon as={FiChevronLeft} />
             </IconButton>
@@ -223,6 +380,7 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
               size="sm"
               onClick={scrollRight}
               colorScheme="gray"
+              disabled={isDesktop && page >= totalPages - 1}
             >
               <Icon as={FiChevronRight} />
             </IconButton>
@@ -261,7 +419,12 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
             >
               {isLoading ? (
                 // Loading skeleton
-                Array.from({ length: limit }).map((_, index) => (
+                Array.from({
+                  length:
+                    showAll || selectionMode !== "limit"
+                      ? Math.min(visibleCategories.length || 8, 8)
+                      : limit,
+                }).map((_, index) => (
                   <Skeleton
                     key={`skeleton-${index}`}
                     h={{ base: "100px", md: "110px" }}
@@ -286,9 +449,18 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
                   const isSelected = selectedCategory === categoryId;
 
                   return (
-                    <Link href={matchDataCondition(urlRedirect, category)}>
+                    <Link
+                      key={String(categoryId)}
+                      href={
+                        !puck?.isEditing && urlRedirect
+                          ? matchDataCondition(urlRedirect, category)
+                          : undefined
+                      }
+                      onClick={(e) => {
+                        if (puck?.isEditing) e.preventDefault();
+                      }}
+                    >
                       <Button
-                        key={categoryId}
                         variant="outline"
                         size="lg"
                         h={{ base: "100px", md: "110px" }}
@@ -326,7 +498,7 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
             </Stack>
           </Box>
 
-          {/* Desktop: Grid Layout */}
+          {/* Desktop: Grid Layout (paged by arrows) */}
           <SimpleGrid
             columns={{
               base: mobile,
@@ -342,7 +514,13 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
           >
             {isLoading ? (
               // Loading skeleton for desktop
-              Array.from({ length: limit }).map((_, index) => (
+              Array.from({
+                length: isDesktop
+                  ? perPage
+                  : showAll || selectionMode !== "limit"
+                  ? 12
+                  : limit,
+              }).map((_, index) => (
                 <Skeleton
                   key={`skeleton-desktop-${index}`}
                   h="120px"
@@ -365,9 +543,18 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
                 const isSelected = selectedCategory === categoryId;
 
                 return (
-                  <Link href={matchDataCondition(urlRedirect, category)}>
+                  <Link
+                    key={String(categoryId)}
+                    href={
+                      !puck?.isEditing && urlRedirect
+                        ? matchDataCondition(urlRedirect, category)
+                        : undefined
+                    }
+                    onClick={(e) => {
+                      if (puck?.isEditing) e.preventDefault();
+                    }}
+                  >
                     <Button
-                      key={categoryId}
                       variant="outline"
                       size="lg"
                       h="120px"
@@ -400,67 +587,157 @@ const CategoryGridRender: React.FC<CategoryGridProps> = ({
           </SimpleGrid>
         </Box>
       </Box>
+      {FooterSlot ? <FooterSlot minEmptyHeight={40} /> : null}
     </Section>
   );
 };
 
+const CategoryGridFields = {
+  header: {
+    type: "slot",
+    label: "Header Slot",
+  },
+  bindSelectedCategoryVariableName: {
+    type: "text",
+    label: "Bind Selected Category Var",
+    placeholder: "products.categoryId",
+  },
+  showAll: {
+    type: "radio",
+    label: "Show All Categories",
+    options: [
+      { label: "Yes", value: true },
+      { label: "No", value: false },
+    ],
+  },
+  selectionMode: {
+    type: "radio",
+    label: "Selection Mode",
+    options: [
+      { label: "By Limit", value: "limit" },
+      { label: "Pick Categories", value: "select" },
+      { label: "Enter IDs", value: "ids" },
+    ],
+  },
+  selectedCategories: {
+    type: "custom",
+    label: "Choose Categories",
+    render: CategoryMultiSelect,
+  },
+  parentCategoryId: {
+    type: "custom",
+    label: "Parent Category",
+    render: CategorySingleSelect,
+  },
+  categoryIds: {
+    type: "text",
+    label: "Category IDs (comma-separated)",
+    placeholder: "id1,id2,id3",
+  },
+  title: {
+    type: "text",
+    label: "Title",
+  },
+  subtitle: {
+    type: "text",
+    label: "Subtitle",
+  },
+  storeId: {
+    type: "text",
+    label: "Store ID",
+  },
+  urlRedirect: {
+    type: "text",
+    label: "Url",
+  },
+  mobile: {
+    type: "number",
+    label: "Mobile Columns",
+    min: 1,
+    max: 4,
+  },
+  tablet: {
+    type: "number",
+    label: "Tablet Columns",
+    min: 2,
+    max: 6,
+  },
+  desktop: {
+    type: "number",
+    label: "Desktop Columns",
+    min: 3,
+    max: 8,
+  },
+  limit: {
+    type: "number",
+    label: "Total Categories Limit",
+    min: 1,
+    max: 20,
+  },
+  footer: {
+    type: "slot",
+    label: "Footer Slot",
+  },
+} as const;
+
 const CategoryGridInternal: ComponentConfig<CategoryGridProps> = {
   label: "Categories",
-  fields: {
-    title: {
-      type: "text",
-      label: "Title",
-    },
-    subtitle: {
-      type: "text",
-      label: "Subtitle",
-    },
-    storeId: {
-      type: "text",
-      label: "Store ID",
-    },
-    urlRedirect: {
-      type: "text",
-      label: "Url",
-    },
-    mobile: {
-      type: "number",
-      label: "Mobile Columns",
-      min: 1,
-      max: 4,
-    },
-    tablet: {
-      type: "number",
-      label: "Tablet Columns",
-      min: 2,
-      max: 6,
-    },
-    desktop: {
-      type: "number",
-      label: "Desktop Columns",
-      min: 3,
-      max: 8,
-    },
-    limit: {
-      type: "number",
-      label: "Total Categories Limit",
-      min: 1,
-      max: 20,
-    },
-  },
+  fields: CategoryGridFields as any,
   defaultProps: {
     title: "Browse By Category",
     subtitle: "Categories",
     storeId: import.meta.env.VITE_ENTITY_ID || "",
     urlRedirect: "",
+    bindSelectedCategoryVariableName: "products.categoryId",
     mobile: 2,
     tablet: 4,
     desktop: 6,
     limit: 6,
+    header: [],
+    footer: [],
+    showAll: false,
+    selectionMode: "limit",
+    selectedCategories: [],
+    categoryIds: "",
+    parentCategoryId: "",
+  },
+  resolveFields: (data) => {
+    const base = CategoryGridFields as any;
+    const fields: any = {
+      header: base.header,
+      bindSelectedCategoryVariableName: base.bindSelectedCategoryVariableName,
+      showAll: base.showAll,
+      title: base.title,
+      subtitle: base.subtitle,
+      storeId: base.storeId,
+      urlRedirect: base.urlRedirect,
+      mobile: base.mobile,
+      tablet: base.tablet,
+      desktop: base.desktop,
+      footer: base.footer,
+    };
+
+    // Always show parentCategoryId selector if set or not showing all
+    fields.parentCategoryId = base.parentCategoryId;
+
+    if (!data?.props?.showAll) {
+      fields.selectionMode = base.selectionMode;
+      if (data?.props?.selectionMode === "select") {
+        fields.selectedCategories = base.selectedCategories;
+      } else if (data?.props?.selectionMode === "ids") {
+        fields.categoryIds = base.categoryIds;
+      } else {
+        fields.limit = base.limit;
+      }
+    } else {
+      fields.limit = base.limit; // optional to tune skeleton/desktop grid columns
+    }
+
+    return fields;
   },
   render: (props) => (
     <ErrorBoundary fallbackRender={() => <div>Unable to load categories.</div>}>
-      <CategoryGridRender {...props} />
+      <CategoryGridRender {...props} puck={(props as any).puck} />
     </ErrorBoundary>
   ),
 };

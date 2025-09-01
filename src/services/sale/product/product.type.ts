@@ -21,6 +21,7 @@ export interface IProduct {
     url: string;
   }[];
   hsCodeId: string;
+  hsCode: string;
   width: number;
   height: number;
   length: number;
@@ -30,6 +31,8 @@ export interface IProduct {
   descriptions: string;
   status: number;
   defaultModel: any;
+  models: any[];
+  remainedQuantity: number;
 }
 
 export interface IProductOption {

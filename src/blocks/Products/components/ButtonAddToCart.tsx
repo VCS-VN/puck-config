@@ -13,6 +13,8 @@ import { get, round } from "lodash";
 import ListModel from "@/blocks/Products/components/ListModel.tsx";
 import { useEffect, useMemo, useState } from "react";
 import { useGetProductDetailQuery } from "../../../hooks/products";
+import { useRecoilState } from "recoil";
+import { ProductionState } from "@/services/common/production.state";
 // import {toaster} from "@/components/ui/toaster"
 
 interface IProps {
@@ -48,6 +50,7 @@ const ButtonAddToCart = (props: IProps) => {
   const [valueProduct, setValueProduct] = useState<any>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedModel, setSelectedModel] = useState<any>(null);
+  const [productionState, setProductionState] = useRecoilState(ProductionState);
 
   const onChangeDataProduct = (value: any) => {
     setValueProduct((prev: any) => {
@@ -69,24 +72,42 @@ const ButtonAddToCart = (props: IProps) => {
   function addToCart() {
     const cart = JSON.parse(localStorage.getItem(keyAddToCart)) || [];
 
-    const existing = cart.find((item: any) => item.id === valueProduct.id);
+    const existing = cart.find((item: any) => item.id === product.id && item?.model?.id === valueProduct?.id);
     if (existing) {
       existing.quantity += quantity;
     } else {
       cart.push({
-        ...valueProduct,
         quantity,
-        // an bot 1 so truong
-        defaultModel: null,
-        defaultModelId: null,
-        models: null,
+        "id": product?.id,
+        "name": product?.name,
+        "image": product?.image,
+        "storeId": product?.storeId,
+        "descriptions":product?.descriptions,
+        "price": product?.price,
+        "onlinePrice": product?.onlinePrice,
+        "weight": product?.weight,
+        "remainedQuantity": product?.remainedQuantity,
+        "hsCodeId": product?.hsCodeId,
+        "hsCode": product?.hsCode,
+        "model": {
+          "id": valueProduct?.id,
+          "name": valueProduct?.name,
+          "storeId": valueProduct?.storeId,
+          "price": valueProduct?.price,
+          "onlinePrice": valueProduct?.onlinePrice,
+          "weight": valueProduct?.weight,
+          "isDefault": valueProduct?.isDefault
+        },
       });
     }
-    // console.log("cart", cart)
     if (saveCartToStore) {
       saveCartToStore(cart);
     }
     localStorage.setItem(keyAddToCart, JSON.stringify(cart));
+    // Ensure Header badge updates by syncing global ProductionState
+    try {
+      setProductionState((prev) => ({ ...prev, [keyAddToCart]: cart }));
+    } catch {}
     onCloseDrawer?.();
     // toaster.create({
     //     title: `Add to cart success`,
@@ -94,10 +115,6 @@ const ButtonAddToCart = (props: IProps) => {
     //     overlap: true,
     // })
   }
-
-  // useEffect(()=>{
-  //   if()
-  // },[])
 
   useEffect(() => {
     setValueProduct({
@@ -107,7 +124,7 @@ const ButtonAddToCart = (props: IProps) => {
     if (product?.models?.length === 1) {
       setSelectedModel(product?.models?.[0]);
     }
-  }, [props?.product]);
+  }, [product]);
 
   return (
     <>

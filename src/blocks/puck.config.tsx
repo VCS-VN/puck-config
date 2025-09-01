@@ -12,30 +12,65 @@ import { Heading } from "./Heading";
 import { Text } from "./Text";
 import Root from "./root";
 import { Input } from "./Input";
-import { Button } from "./Button";
+import { ButtonPlugins } from "./Button";
+import { Product } from "./Product";
 import { Products } from "./Products";
-import { Checkout } from "./Checkout";
+import { Cart } from "./Cart";
 import { CategoryGrid } from "./CategoryGrid";
+import { InputRichText } from "@/components/InputRichText";
+import { IconPlugins } from "./Icon";
+import { Banner } from "./Banner";
+import { HeroTwoColumn } from "./HeroTwoColumn";
+import { CategoryList } from "./CategoryList";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+import { ProductDetail } from "./ProductDetail";
+import { FacetControls } from "./FacetControls";
+import { QrCodePlugins } from "./QrCode";
+import { MiniCartBlock } from "./MiniCart";
 
 export const PuckConfig = {
   root: Root,
   categories: {
     layout: {
-      components: ["Container", "Grid", "Flex"],
+      components: ["Container", "Grid", "Flex", "HeroTwoColumn"],
+      defaultExpanded: true,
+    },
+    navigation: {
+      title: "Navigation",
+      components: ["Header"],
+      defaultExpanded: true,
+    },
+    marketing: {
+      title: "Marketing",
+      components: ["Banner"],
+      defaultExpanded: true,
+    },
+    footer: {
+      title: "Footer",
+      components: ["Footer"],
       defaultExpanded: true,
     },
     typography: {
-      components: ["Heading", "Text"],
-      defaultExpanded: false,
+      components: ["Heading", "Text", "QrCodePlugins"],
+      defaultExpanded: true,
     },
     interactive: {
       title: "Actions",
-      components: ["Button", "Input"],
+      components: ["ButtonPlugins", "Input", "IconPlugins"],
       defaultExpanded: false,
     },
     storefront: {
       title: "Product",
-      components: ["Products", "Checkout", "CategoryGrid"],
+      components: [
+        "Products",
+        "Cart",
+        "CategoryGrid",
+        "CategoryList",
+        "ProductDetail",
+        "FacetControls",
+        "MiniCartBlock",
+      ],
       defaultExpanded: false,
     },
   },
@@ -50,12 +85,22 @@ export const PuckConfig = {
     Text,
 
     Input,
-    Button,
+    ButtonPlugins,
+    IconPlugins,
+    QrCodePlugins,
 
     Products,
     // Product,
     CategoryGrid,
-    Checkout,
+    CategoryList,
+    Cart,
+    Banner,
+    HeroTwoColumn,
+    Header,
+    Footer,
+    ProductDetail,
+    FacetControls,
+    MiniCartBlock,
 
     // Divider: { fields: {}, render: () => <AntDivider /> },
 

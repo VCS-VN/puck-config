@@ -27,7 +27,7 @@ type LayoutFieldProps = {
   basis?: string;
   alignSelf?: string;
   justifySelf?: string;
-  bgColor?: any;
+  bgColor?: string;
   bgImage?: string;
   border?: string;
   borderRadius?: string;
@@ -178,7 +178,7 @@ export const layoutField: ObjectField<LayoutFieldProps> = {
     bgColor: {
       label: "Background Color",
       ...colorField,
-    },
+    } as any,
     bgImage: {
       label: "Background Image",
       type: "text",
@@ -252,7 +252,7 @@ export { Layout };
 export function withLayout<
   ThisComponentConfig extends ComponentConfig<any> = ComponentConfig
 >(componentConfig: ThisComponentConfig): ThisComponentConfig {
-  const baseFields: any = {
+  const baseFields = {
     paddingTop: layoutField.objectFields.paddingTop,
     paddingRight: layoutField.objectFields.paddingRight,
     paddingBottom: layoutField.objectFields.paddingBottom,
@@ -312,7 +312,7 @@ export function withLayout<
           startRow: layoutField.objectFields.startRow,
           justifySelf: layoutField.objectFields.justifySelf,
           alignSelf: layoutField.objectFields.alignSelf,
-        };
+        } as any;
       } else if (parentType === "Flex") {
         adjustedObjectFields = {
           ...baseFields,
@@ -320,13 +320,13 @@ export function withLayout<
           shrink: layoutField.objectFields.shrink,
           basis: layoutField.objectFields.basis,
           alignSelf: layoutField.objectFields.alignSelf,
-        };
+        } as any;
       }
 
-      const adjustedLayout = {
+      const adjustedLayout: ObjectField = {
         ...layoutField,
         objectFields: adjustedObjectFields,
-      };
+      } as any;
 
       return {
         ...componentConfig.fields,
@@ -339,8 +339,35 @@ export function withLayout<
         className={props.className}
         layout={props.layout as LayoutFieldProps}
         ref={props.puck?.dragRef}
-        style={props.style}
+        style={{
+          ...(props.style || {}),
+          position: props.puck?.isEditing
+            ? (props.style?.position as any) ?? "relative"
+            : props.style?.position,
+          cursor: props.puck?.isEditing ? "grab" : props.style?.cursor,
+          outline: props.puck?.isEditing
+            ? "1px dashed rgba(0,0,0,0.15)"
+            : undefined,
+        }}
       >
+        {props.puck?.isEditing ? (
+          <div
+            style={{
+              position: "absolute",
+              top: 4,
+              right: 4,
+              fontSize: 10,
+              background: "rgba(0,0,0,0.5)",
+              color: "#fff",
+              borderRadius: 4,
+              padding: "2px 6px",
+              pointerEvents: "none",
+              userSelect: "none",
+            }}
+          >
+            Drag
+          </div>
+        ) : null}
         {componentConfig.render(props)}
       </Layout>
     ),
