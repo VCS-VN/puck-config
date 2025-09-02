@@ -18,6 +18,7 @@ import { VariableState } from "@/services/common/variable.state";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ProductionState } from "@/services/common/production.state";
 import { CheckoutRender } from "../Cart";
+import { CartDrawerOpenState } from "@/state/cartDrawer.state";
 
 export type HeaderProps = {
   logoType?: "text" | "image";
@@ -144,7 +145,7 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
       return (memory?.length || local?.length || 0) as number;
     }, [productionState]);
 
-    const [cartOpen, setCartOpen] = useState(false);
+    const [cartOpen, setCartOpen] = useRecoilState(CartDrawerOpenState);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [elevated, setElevated] = useState(false);
 
@@ -192,10 +193,10 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
         borderBottom="1px solid"
         borderColor="gray.200"
         boxShadow={elevated ? "sm" : "none"}
-        // sx={{
-        //   contain: "layout paint style",
-        //   backdropFilter: elevated ? "blur(6px)" : undefined,
-        // }}
+        style={{
+          contain: "layout paint style",
+          backdropFilter: elevated ? "blur(6px)" : undefined,
+        }}
       >
         <Flex
           align="center"
@@ -266,11 +267,11 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
                 borderRadius="md"
                 gap={1}
                 minW={{ base: "auto", md: "280px" }}
-                // sx={{ transition: "width 120ms ease", willChange: "width" }}
+                style={{ transition: "width 120ms ease", willChange: "width" }}
               >
                 <CInput
                   size="sm"
-                  // variant="unstyled"
+                  variant="subtle"
                   placeholder={searchPlaceholder || "Search"}
                   value={searchLocal}
                   onChange={(e) => {
@@ -327,7 +328,7 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
 
         {/* Cart Drawer (Chakra v3) */}
         <Drawer.Root
-          // placement="right"
+          placement="end"
           size="md"
           open={cartOpen}
           onOpenChange={(e: any) => {
@@ -354,7 +355,7 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
 
         {/* Mobile Nav Drawer */}
         <Drawer.Root
-          // placement="left"
+          placement="start"
           size="xs"
           open={mobileOpen}
           onOpenChange={(e: any) =>
@@ -379,7 +380,7 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
                     >
                       <CInput
                         size="sm"
-                        // variant="unstyled"
+                        variant="subtle"
                         placeholder={searchPlaceholder || "Search"}
                         value={searchLocal}
                         onChange={(e) => {

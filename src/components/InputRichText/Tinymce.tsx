@@ -1,46 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-// Import TinyMCE
-// @ts-ignore
-import tinymce from "tinymce/tinymce";
-
-// A theme is also required
-import "tinymce/icons/default/index";
-import "tinymce/themes/silver";
-
-import "tinymce/models/dom/model";
-import "tinymce/skins/ui/oxide/skin.css";
-
-// Any plugins you want to use has to be imported
-import "tinymce/plugins/advlist";
-import "tinymce/plugins/autolink";
-import "tinymce/plugins/autoresize";
-import "tinymce/plugins/lists";
-import "tinymce/plugins/link";
-import "tinymce/plugins/image";
-import "tinymce/plugins/charmap";
-import "tinymce/plugins/preview";
-import "tinymce/plugins/anchor";
-import "tinymce/plugins/searchreplace";
-import "tinymce/plugins/visualblocks";
-import "tinymce/plugins/code";
-import "tinymce/plugins/fullscreen";
-import "tinymce/plugins/insertdatetime";
-import "tinymce/plugins/media";
-import "tinymce/plugins/table";
-import "tinymce/plugins/help";
-import "tinymce/plugins/wordcount";
-import "tinymce/plugins/pagebreak";
-import "tinymce/plugins/visualchars";
-import "tinymce/plugins/template";
-import "tinymce/plugins/nonbreaking";
-import "tinymce/plugins/emoticons";
-import "tinymce/plugins/emoticons/js/emojis";
-import "tinymce/plugins/quickbars/plugin";
-
-import "tinymce/plugins/help/js/i18n/keynav/zh_CN";
-import "tinymce/plugins/help/js/i18n/keynav/en";
-import "tinymce/plugins/help/js/i18n/keynav/de";
-import './tinyMceStyle.css'
+// TinyMCE is heavy and browser-only. Load it dynamically when mounted.
+// This keeps SSR/build-library safe and avoids bundling it into the package.
+import "./tinyMceStyle.css";
 
 const TinymceRender: React.FC<any> = ({
   model,
@@ -60,6 +21,50 @@ const TinymceRender: React.FC<any> = ({
   const [editorInitialized, setEditorInitialized] = useState(false);
 
   const initTiny = async () => {
+    // Only run in browser
+    if (typeof window === "undefined") return;
+
+    // Dynamically import TinyMCE core and required modules
+    const tinymceModule = await import("tinymce/tinymce");
+    const tinymce: any = (tinymceModule as any).default ?? tinymceModule;
+
+    await Promise.all([
+      import("tinymce/icons/default/index"),
+      import("tinymce/themes/silver"),
+      import("tinymce/models/dom/model"),
+      // Plugins
+      import("tinymce/plugins/advlist"),
+      import("tinymce/plugins/autolink"),
+      import("tinymce/plugins/autoresize"),
+      import("tinymce/plugins/lists"),
+      import("tinymce/plugins/link"),
+      import("tinymce/plugins/image"),
+      import("tinymce/plugins/charmap"),
+      import("tinymce/plugins/preview"),
+      import("tinymce/plugins/anchor"),
+      import("tinymce/plugins/searchreplace"),
+      import("tinymce/plugins/visualblocks"),
+      import("tinymce/plugins/code"),
+      import("tinymce/plugins/fullscreen"),
+      import("tinymce/plugins/insertdatetime"),
+      import("tinymce/plugins/media"),
+      import("tinymce/plugins/table"),
+      import("tinymce/plugins/help"),
+      import("tinymce/plugins/wordcount"),
+      import("tinymce/plugins/pagebreak"),
+      import("tinymce/plugins/visualchars"),
+      import("tinymce/plugins/template"),
+      import("tinymce/plugins/nonbreaking"),
+      import("tinymce/plugins/emoticons"),
+      import("tinymce/plugins/emoticons/js/emojis"),
+      import("tinymce/plugins/quickbars/plugin"),
+      // i18n for help plugin (optional)
+      import("tinymce/plugins/help/js/i18n/keynav/zh_CN"),
+      import("tinymce/plugins/help/js/i18n/keynav/en"),
+      import("tinymce/plugins/help/js/i18n/keynav/de"),
+      // Skin CSS: keep as dynamic import so bundlers can extract CSS when supported
+      import("tinymce/skins/ui/oxide/skin.css"),
+    ]);
     const {
       onLoaded,
       ...rest
@@ -185,8 +190,12 @@ const TinymceRender: React.FC<any> = ({
   useEffect(() => {
     initTiny();
     return () => {
-      if (editor) {
-        tinymce.remove(editor);
+      if (typeof window !== "undefined" && editor) {
+        // dynamic import to access the same tinymce instance
+        import("tinymce/tinymce").then((m: any) => {
+          const tm = m.default ?? m;
+          tm.remove(editor);
+        });
       }
     };
   }, []);

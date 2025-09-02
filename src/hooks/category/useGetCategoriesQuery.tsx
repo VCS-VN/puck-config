@@ -7,8 +7,13 @@ type Props = Partial<QueryType<{ data: Partial<ICategory>[]; total: number }>>;
 
 export const useGetCategoriesQuery = (queries?: any, props?: Props) => {
   return useQuery({
-    ...props,
     queryKey: ["categories", queries],
-    queryFn: () => getCategories(queries),
+    queryFn: ({ signal }) => getCategories(queries, signal as AbortSignal),
+    // Sensible defaults for smoother UX; can be overridden by props
+    staleTime: 60_000,
+    gcTime: 300_000,
+    placeholderData: (prev) => prev as any,
+    retry: 1,
+    ...(props as any),
   });
 };

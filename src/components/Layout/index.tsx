@@ -178,7 +178,7 @@ export const layoutField: ObjectField<LayoutFieldProps> = {
     bgColor: {
       label: "Background Color",
       ...colorField,
-    } as any,
+    },
     bgImage: {
       label: "Background Image",
       type: "text",
@@ -252,7 +252,7 @@ export { Layout };
 export function withLayout<
   ThisComponentConfig extends ComponentConfig<any> = ComponentConfig
 >(componentConfig: ThisComponentConfig): ThisComponentConfig {
-  const baseFields = {
+  const baseFields: any = {
     paddingTop: layoutField.objectFields.paddingTop,
     paddingRight: layoutField.objectFields.paddingRight,
     paddingBottom: layoutField.objectFields.paddingBottom,
@@ -298,10 +298,10 @@ export function withLayout<
         ...componentConfig.defaultProps?.layout,
       },
     },
-    resolveFields: (_, params) => {
+    resolveFields: (_: any, params: any) => {
       const parentType = params.parent?.type;
 
-      let adjustedObjectFields = baseFields;
+      let adjustedObjectFields: any = baseFields;
 
       if (parentType === "Grid") {
         adjustedObjectFields = {
@@ -312,7 +312,7 @@ export function withLayout<
           startRow: layoutField.objectFields.startRow,
           justifySelf: layoutField.objectFields.justifySelf,
           alignSelf: layoutField.objectFields.alignSelf,
-        } as any;
+        };
       } else if (parentType === "Flex") {
         adjustedObjectFields = {
           ...baseFields,
@@ -320,18 +320,18 @@ export function withLayout<
           shrink: layoutField.objectFields.shrink,
           basis: layoutField.objectFields.basis,
           alignSelf: layoutField.objectFields.alignSelf,
-        } as any;
+        };
       }
 
-      const adjustedLayout: ObjectField = {
+      const adjustedLayout: any = {
         ...layoutField,
         objectFields: adjustedObjectFields,
-      } as any;
+      };
 
       return {
         ...componentConfig.fields,
         layout: adjustedLayout,
-      };
+      } as any;
     },
     inline: true,
     render: (props) => (
@@ -341,13 +341,9 @@ export function withLayout<
         ref={props.puck?.dragRef}
         style={{
           ...(props.style || {}),
-          position: props.puck?.isEditing
-            ? (props.style?.position as any) ?? "relative"
-            : props.style?.position,
+          position: props.puck?.isEditing ? (props.style?.position as any) ?? "relative" : props.style?.position,
           cursor: props.puck?.isEditing ? "grab" : props.style?.cursor,
-          outline: props.puck?.isEditing
-            ? "1px dashed rgba(0,0,0,0.15)"
-            : undefined,
+          outline: props.puck?.isEditing ? "1px dashed rgba(0,0,0,0.15)" : undefined,
         }}
       >
         {props.puck?.isEditing ? (

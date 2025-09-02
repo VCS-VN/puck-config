@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { get } from "lodash";
+import { getHttpClientConfig } from "./httpConfig";
 
 // let URL = "";
 // if (typeof process !== "undefined") {
@@ -80,31 +81,28 @@ import { get } from "lodash";
 // export { httpClient };
 
 export const initHttpClient = () => {
-  let URL = "";
-  if (typeof process !== "undefined") {
-    URL = process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL as string;
-  } else {
-    URL = import.meta.env.VITE_CUSTOMER_API_URL;
-  }
+  const cfg = getHttpClientConfig();
+
+  // Fallback baseURL for app dev mode
+  const fallbackBaseURL = typeof process !== "undefined"
+    ? (process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL as string | undefined)
+    : (import.meta as any)?.env?.VITE_CUSTOMER_API_URL;
 
   const httpClient = axios.create({
-    baseURL: URL,
+    baseURL: cfg.baseURL ?? fallbackBaseURL ?? "",
   });
 
-  const getLocalToken = () => {
-    return localStorage.getItem("accessToken");
-  };
+  const getLocalToken = () => cfg.getAccessToken?.() ?? (typeof localStorage !== 'undefined' ? localStorage.getItem("accessToken") : null);
 
   const refreshToken = async () => {
-    const token = localStorage.getItem("refreshToken");
+    if (cfg.onRefreshToken) return cfg.onRefreshToken(httpClient);
 
+    // Default fallback refresh flow (optional)
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem("refreshToken") : undefined;
     const response = await httpClient.get("/api/v1/auth/refresh-token", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     });
-
-    if (response?.data) {
+    if (response?.data && typeof localStorage !== 'undefined') {
       const { refreshToken, accessToken } = response.data;
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("accessToken", accessToken);
@@ -115,33 +113,35 @@ export const initHttpClient = () => {
     (config) => {
       const token = getLocalToken();
       if (token && !config?.headers?.Authorization) {
-        config.headers.Authorization = `Bearer ${token}`;
+        (config.headers as any).Authorization = `Bearer ${token}`;
       }
       return config;
     },
-    (error) => {
-      return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
   );
 
   httpClient.interceptors.response.use(
     (res) => res,
     async (e) => {
       const status = e.response ? e.response.status : null;
-      const config = e.config;
+      const config = e.config ?? {};
 
       switch (status) {
         case 401:
           if (
-            config.url !== "/api/v1/auth/refresh-token" &&
-            config.url !== "/api/v1/auth/login"
+            (config as any).url !== "/api/v1/auth/refresh-token" &&
+            (config as any).url !== "/api/v1/auth/login"
           ) {
             await refreshToken();
-          } else if (config.url === "/api/v1/auth/refresh-token") {
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("accessToken");
-            const url = encodeURIComponent(location.href);
-            location.href = `/sign-in?return=${url}`;
+          } else if ((config as any).url === "/api/v1/auth/refresh-token") {
+            if (typeof localStorage !== 'undefined') {
+              localStorage.removeItem("refreshToken");
+              localStorage.removeItem("accessToken");
+            }
+            if (typeof location !== 'undefined') {
+              const url = encodeURIComponent(location.href);
+              location.href = `/sign-in?return=${url}`;
+            }
           }
           break;
         default:

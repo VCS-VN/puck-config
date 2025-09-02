@@ -1,0 +1,132 @@
+function E(g, c) {
+  for (var p = 0; p < c.length; p++) {
+    const i = c[p];
+    if (typeof i != "string" && !Array.isArray(i)) {
+      for (const o in i)
+        if (o !== "default" && !(o in g)) {
+          const l = Object.getOwnPropertyDescriptor(i, o);
+          l && Object.defineProperty(g, o, l.get ? l : {
+            enumerable: !0,
+            get: () => i[o]
+          });
+        }
+    }
+  }
+  return Object.freeze(Object.defineProperty(g, Symbol.toStringTag, { value: "Module" }));
+}
+var b = {};
+(function() {
+  var g = tinymce.util.Tools.resolve("tinymce.PluginManager");
+  const c = (e) => (t) => t.options.get(e), p = (e) => {
+    const t = e.options.register;
+    t("insertdatetime_dateformat", {
+      processor: "string",
+      default: e.translate("%Y-%m-%d")
+    }), t("insertdatetime_timeformat", {
+      processor: "string",
+      default: e.translate("%H:%M:%S")
+    }), t("insertdatetime_formats", {
+      processor: "string[]",
+      default: [
+        "%H:%M:%S",
+        "%Y-%m-%d",
+        "%I:%M:%S %p",
+        "%D"
+      ]
+    }), t("insertdatetime_element", {
+      processor: "boolean",
+      default: !1
+    });
+  }, i = c("insertdatetime_dateformat"), o = c("insertdatetime_timeformat"), l = c("insertdatetime_formats"), h = c("insertdatetime_element"), T = (e) => {
+    const t = l(e);
+    return t.length > 0 ? t[0] : o(e);
+  }, D = "Sun Mon Tue Wed Thu Fri Sat Sun".split(" "), _ = "Sunday Monday Tuesday Wednesday Thursday Friday Saturday Sunday".split(" "), I = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "), A = "January February March April May June July August September October November December".split(" "), m = (e, t) => {
+    if (e = "" + e, e.length < t)
+      for (let n = 0; n < t - e.length; n++)
+        e = "0" + e;
+    return e;
+  }, u = (e, t, n = /* @__PURE__ */ new Date()) => (t = t.replace("%D", "%m/%d/%Y"), t = t.replace("%r", "%I:%M:%S %p"), t = t.replace("%Y", "" + n.getFullYear()), t = t.replace("%y", "" + n.getYear()), t = t.replace("%m", m(n.getMonth() + 1, 2)), t = t.replace("%d", m(n.getDate(), 2)), t = t.replace("%H", "" + m(n.getHours(), 2)), t = t.replace("%M", "" + m(n.getMinutes(), 2)), t = t.replace("%S", "" + m(n.getSeconds(), 2)), t = t.replace("%I", "" + ((n.getHours() + 11) % 12 + 1)), t = t.replace("%p", n.getHours() < 12 ? "AM" : "PM"), t = t.replace("%B", "" + e.translate(A[n.getMonth()])), t = t.replace("%b", "" + e.translate(I[n.getMonth()])), t = t.replace("%A", "" + e.translate(_[n.getDay()])), t = t.replace("%a", "" + e.translate(D[n.getDay()])), t = t.replace("%%", "%"), t), C = (e, t, n, a) => {
+    const r = e.dom.create("time", { datetime: n }, a);
+    e.dom.replace(r, t), e.selection.select(r, !0), e.selection.collapse(!1);
+  }, d = (e, t) => {
+    if (h(e)) {
+      const n = u(e, t);
+      let a;
+      /%[HMSIp]/.test(t) ? a = u(e, "%Y-%m-%dT%H:%M") : a = u(e, "%Y-%m-%d");
+      const r = e.dom.getParent(e.selection.getStart(), "time");
+      r ? C(e, r, a, n) : e.insertContent('<time datetime="' + a + '">' + n + "</time>");
+    } else
+      e.insertContent(u(e, t));
+  }, F = (e) => {
+    e.addCommand("mceInsertDate", (t, n) => {
+      d(e, n ?? i(e));
+    }), e.addCommand("mceInsertTime", (t, n) => {
+      d(e, n ?? o(e));
+    });
+  }, H = (e) => {
+    let t = e;
+    return {
+      get: () => t,
+      set: (r) => {
+        t = r;
+      }
+    };
+  };
+  var S = tinymce.util.Tools.resolve("tinymce.util.Tools");
+  const M = (e) => (t) => {
+    const n = () => {
+      t.setEnabled(e.selection.isEditable());
+    };
+    return e.on("NodeChange", n), n(), () => {
+      e.off("NodeChange", n);
+    };
+  }, O = (e) => {
+    const t = l(e), n = H(T(e)), a = (s) => e.execCommand("mceInsertDate", !1, s);
+    e.ui.registry.addSplitButton("insertdatetime", {
+      icon: "insert-time",
+      tooltip: "Insert date/time",
+      select: (s) => s === n.get(),
+      fetch: (s) => {
+        s(S.map(t, (y) => ({
+          type: "choiceitem",
+          text: u(e, y),
+          value: y
+        })));
+      },
+      onAction: (s) => {
+        a(n.get());
+      },
+      onItemAction: (s, y) => {
+        n.set(y), a(y);
+      },
+      onSetup: M(e)
+    });
+    const r = (s) => () => {
+      n.set(s), a(s);
+    };
+    e.ui.registry.addNestedMenuItem("insertdatetime", {
+      icon: "insert-time",
+      text: "Date/time",
+      getSubmenuItems: () => S.map(t, (s) => ({
+        type: "menuitem",
+        text: u(e, s),
+        onAction: r(s)
+      })),
+      onSetup: M(e)
+    });
+  };
+  var Y = () => {
+    g.add("insertdatetime", (e) => {
+      p(e), F(e), O(e);
+    });
+  };
+  Y();
+})();
+const P = /* @__PURE__ */ E({
+  __proto__: null,
+  default: b
+}, [b]);
+export {
+  P as i
+};
+//# sourceMappingURL=index-1jDOormX.js.map

@@ -1,12 +1,12 @@
 import { ComponentConfig } from "@measured/puck";
-import { colorField } from "../../components/ColorField";
-import { IconField } from "../../components/Icon";
-import { renderIcon } from "../../components/Icon/IconConstant";
+import {colorField} from "../../components/ColorField";
+import {IconField} from "../../components/Icon";
+import {renderIcon} from "../../components/Icon/IconConstant";
 export type IconProps = {
   href?: string;
   size?: string;
-  color?: string;
-  icon?: string;
+  color?: string,
+  icon?: string,
 };
 
 export const IconPlugins: ComponentConfig<IconProps> = {
@@ -14,43 +14,45 @@ export const IconPlugins: ComponentConfig<IconProps> = {
   fields: {
     icon: {
       label: "Icon",
-      ...IconField,
-    } as any,
+      ...IconField
+    },
     size: {
-      label: "Size",
+      label: 'Size',
       type: "text",
       placeholder: "...px",
     },
     color: {
       label: "Color",
       ...colorField,
-    } as any,
-    href: {
-      label: "Link",
-      type: "text",
     },
+    href: {
+      label: 'Link',
+      type: "text"
+    },
+
   },
   defaultProps: {
-    icon: "bi bi-0-circle",
+    icon: 'bi bi-0-circle',
     size: "14px",
-    color: "",
-    href: "",
+    color: '',
+    href: '',
   },
   render: ({
-    href,
-    size,
-    color,
-    icon,
-    // puck
+             href,
+             size,
+             color,
+             icon,
+             // puck
   }) => {
-    console.log("icon", icon);
+    console.log("icon",icon)
     return (
       <a href={href}>
         {renderIcon({
           iconName: icon,
           mf_color: color,
-          mf_font_size: size,
+          mf_font_size: size
         })}
+
       </a>
     );
   },

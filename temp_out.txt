@@ -1,0 +1,61 @@
+  selectionMode?: "limit" | "select" | "ids";
+  selectedCategories?: Array<{ id: string; name: string; icon?: string }>;
+  categoryIds?: string; // comma-separated ids for manual input mode
+  parentCategoryId?: string; // filter by parent category
+  bindSelectedCategoryVariableName?: string; // write selected category id to variable state
+};
+
+// Icon mapping for categories
+const iconMap = {
+  FiSmartphone,
+  FiMonitor,
+  FiWatch,
+  FiCamera,
+  FiHeadphones,
+  FiZap,
+  FiPackage,
+};
+
+// Function to get icon based on category name
+const getCategoryIcon = (categoryName: string) => {
+  const name = categoryName.toLowerCase();
+  } else if (!showAll && selectionMode === "ids" && categoryIds) {
+    const ids = categoryIds
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean);
+    displayCategories = ids.map((id) => {
+      const match = apiCategories.find((c: any) => String(c.id) === String(id));
+      return { id, name: match?.name || id, icon: match?.icon };
+    });
+  } else if (parentCategoryId && Array.isArray(tree)) {
+    const findNode = (nodes: any[]): any => {
+      for (const n of nodes) {
+        if (String(n.id) === String(parentCategoryId)) return n;
+        const f = n.children && findNode(n.children);
+        if (f) return f;
+      }
+      return null;
+    };
+    const node = findNode(tree) || {};
+    const children = Array.isArray(node.children) ? node.children : [];
+    displayCategories = showAll ? children : children.slice(0, limit);
+      } else if (data?.props?.selectionMode === "ids") {
+        fields.categoryIds = base.categoryIds;
+      } else {
+        fields.limit = base.limit;
+      }
+    } else {
+      fields.limit = base.limit; // optional to tune skeleton/desktop grid columns
+    }
+
+    return fields;
+  },
+  render: (props) => (
+    <ErrorBoundary fallbackRender={() => <div>Unable to load categories.</div>}>
+      <CategoryGridRender {...props} puck={(props as any).puck} />
+    </ErrorBoundary>
+  ),
+};
+
+export const CategoryGrid = withLayout(CategoryGridInternal);

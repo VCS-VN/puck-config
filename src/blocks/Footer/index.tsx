@@ -1,22 +1,7 @@
 import { ComponentConfig } from "@measured/puck";
 import { withLayout } from "@/components/Layout";
-import {
-  Box,
-  Flex,
-  Link,
-  Stack,
-  Text,
-  Input,
-  IconButton,
-} from "@chakra-ui/react";
-import {
-  LuFacebook,
-  LuInstagram,
-  LuTwitter,
-  LuYoutube,
-  LuLinkedin,
-  LuGithub,
-} from "react-icons/lu";
+import { Box, Flex, Link, Stack, Text, Input, IconButton } from "@chakra-ui/react";
+import { LuFacebook, LuInstagram, LuTwitter, LuYoutube, LuLinkedin, LuGithub } from "react-icons/lu";
 
 export type FooterProps = {
   columns: { title?: string; links: { label: string; href: string }[] }[];
@@ -47,23 +32,15 @@ const FooterInternal: ComponentConfig<FooterProps> = {
       },
       defaultItemProps: { title: "Column", links: [] },
     },
-    showNewsletter: {
-      type: "radio",
-      label: "Newsletter",
-      options: [
-        { label: "On", value: true },
-        { label: "Off", value: false },
-      ],
-    },
+    showNewsletter: { type: "radio", label: "Newsletter", options: [
+      { label: "On", value: true },
+      { label: "Off", value: false },
+    ]},
     newsletterPlaceholder: { type: "text", label: "Newsletter Placeholder" },
-    showSocial: {
-      type: "radio",
-      label: "Social Icons",
-      options: [
-        { label: "On", value: true },
-        { label: "Off", value: false },
-      ],
-    },
+    showSocial: { type: "radio", label: "Social Icons", options: [
+      { label: "On", value: true },
+      { label: "Off", value: false },
+    ]},
     socialLinks: {
       type: "array",
       label: "Social Links",
@@ -87,20 +64,8 @@ const FooterInternal: ComponentConfig<FooterProps> = {
   },
   defaultProps: {
     columns: [
-      {
-        title: "Shop",
-        links: [
-          { label: "New Arrivals", href: "/" },
-          { label: "Best Sellers", href: "/" },
-        ],
-      },
-      {
-        title: "Support",
-        links: [
-          { label: "Contact", href: "/contact" },
-          { label: "FAQ", href: "/faq" },
-        ],
-      },
+      { title: "Shop", links: [ { label: "New Arrivals", href: "/" }, { label: "Best Sellers", href: "/" } ] },
+      { title: "Support", links: [ { label: "Contact", href: "/contact" }, { label: "FAQ", href: "/faq" } ] },
     ],
     showNewsletter: true,
     newsletterPlaceholder: "Enter your email",
@@ -111,14 +76,7 @@ const FooterInternal: ComponentConfig<FooterProps> = {
       { platform: "twitter", href: "https://twitter.com" },
     ],
   },
-  render: ({
-    columns,
-    showNewsletter,
-    newsletterPlaceholder,
-    showSocial,
-    socialLinks = [],
-    puck,
-  }) => {
+  render: ({ columns, showNewsletter, newsletterPlaceholder, showSocial, socialLinks = [], puck }) => {
     const isEditing = !!puck?.isEditing;
     const iconMap: Record<string, any> = {
       facebook: LuFacebook,
@@ -129,31 +87,14 @@ const FooterInternal: ComponentConfig<FooterProps> = {
       github: LuGithub,
     };
     return (
-      <Box
-        bg="gray.50"
-        borderTop="1px solid"
-        borderColor="gray.200"
-        py={8}
-        px={{ base: 4, md: 8 }}
-      >
-        <Flex
-          direction={{ base: "column", md: "row" }}
-          gap={8}
-          justify="space-between"
-        >
+      <Box bg="gray.50" borderTop="1px solid" borderColor="gray.200" py={8} px={{ base: 4, md: 8 }}>
+        <Flex direction={{ base: "column", md: "row" }} gap={8} justify="space-between">
           <Flex gap={8} wrap="wrap" flex={1}>
             {columns?.map((col, idx) => (
               <Stack key={idx} minW={{ base: "40%", md: "200px" }}>
-                {col.title ? (
-                  <Text fontWeight="semibold">{col.title}</Text>
-                ) : null}
+                {col.title ? <Text fontWeight="semibold">{col.title}</Text> : null}
                 {(col.links || []).map((l, i) => (
-                  <Link
-                    key={i}
-                    href={!isEditing ? l.href : undefined}
-                    onClick={(e) => isEditing && e.preventDefault()}
-                    color="gray.700"
-                  >
+                  <Link key={i} href={!isEditing ? l.href : undefined} onClick={(e) => isEditing && e.preventDefault()} color="gray.700">
                     {l.label}
                   </Link>
                 ))}
@@ -169,36 +110,27 @@ const FooterInternal: ComponentConfig<FooterProps> = {
             ) : null}
             {showSocial ? (
               <Flex gap={2}>
-                {socialLinks
-                  .filter((s) => !!s?.href && !!s?.platform)
-                  .map((s, idx) => {
-                    const Icon = iconMap[s.platform] || LuTwitter;
-                    return (
-                      <Link
-                        key={`${s.platform}-${idx}`}
-                        href={s.href}
-                        target={isEditing ? undefined : "_blank"}
-                      >
-                        <IconButton
-                          key={`${s.platform}-${idx}`}
-                          aria-label={s.platform}
-                          as={isEditing ? undefined : "a"}
-                          // href={isEditing ? undefined : s.href}
-                          // target={isEditing ? undefined : "_blank"}
-                          rel={isEditing ? undefined : "noopener noreferrer"}
-                        >
-                          <Icon />
-                        </IconButton>
-                      </Link>
-                    );
-                  })}
+                {socialLinks.filter((s) => !!s?.href && !!s?.platform).map((s, idx) => {
+                  const Icon = iconMap[s.platform] || LuTwitter;
+                  return (
+                    <IconButton
+                      key={`${s.platform}-${idx}`}
+                      aria-label={s.platform}
+                      onClick={() => {
+                        if (!isEditing && s.href) {
+                          window.open(s.href, '_blank', 'noopener,noreferrer')
+                        }
+                      }}
+                    >
+                      <Icon />
+                    </IconButton>
+                  );
+                })}
               </Flex>
             ) : null}
           </Stack>
         </Flex>
-        <Text mt={6} color="gray.500" fontSize="sm">
-          © {new Date().getFullYear()} Your Store
-        </Text>
+        <Text mt={6} color="gray.500" fontSize="sm">© {new Date().getFullYear()} Your Store</Text>
       </Box>
     );
   },

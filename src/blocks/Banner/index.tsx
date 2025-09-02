@@ -78,56 +78,25 @@ const BannerInternal: ComponentConfig<BannerProps> = {
         { label: "Contain", value: "contain" },
       ],
     },
-    autoplay: {
-      type: "radio",
-      label: "Autoplay",
-      options: [
-        { label: "On", value: true },
-        { label: "Off", value: false },
-      ],
-    },
-    intervalMs: {
-      type: "number",
-      label: "Autoplay Interval (ms)",
-      min: 1000,
-      max: 30000,
-    },
-    showDots: {
-      type: "radio",
-      label: "Show Dots",
-      options: [
-        { label: "Yes", value: true },
-        { label: "No", value: false },
-      ],
-    },
-    showArrows: {
-      type: "radio",
-      label: "Show Arrows",
-      options: [
-        { label: "Yes", value: true },
-        { label: "No", value: false },
-      ],
-    },
-    overlayEnabled: {
-      type: "radio",
-      label: "Text Overlay",
-      options: [
-        { label: "On", value: true },
-        { label: "Off", value: false },
-      ],
-    },
-    overlayOpacity: {
-      type: "number",
-      label: "Overlay Opacity (0-1)",
-      min: 0,
-      max: 1,
-    },
-    overlayWidthPercent: {
-      type: "number",
-      label: "Overlay Width %",
-      min: 10,
-      max: 100,
-    },
+    autoplay: { type: "radio", label: "Autoplay", options: [
+      { label: "On", value: true },
+      { label: "Off", value: false },
+    ] },
+    intervalMs: { type: "number", label: "Autoplay Interval (ms)", min: 1000, max: 30000 },
+    showDots: { type: "radio", label: "Show Dots", options: [
+      { label: "Yes", value: true },
+      { label: "No", value: false },
+    ] },
+    showArrows: { type: "radio", label: "Show Arrows", options: [
+      { label: "Yes", value: true },
+      { label: "No", value: false },
+    ] },
+    overlayEnabled: { type: "radio", label: "Text Overlay", options: [
+      { label: "On", value: true },
+      { label: "Off", value: false },
+    ] },
+    overlayOpacity: { type: "number", label: "Overlay Opacity (0-1)", min: 0, max: 1 },
+    overlayWidthPercent: { type: "number", label: "Overlay Width %", min: 10, max: 100 },
     slides: {
       type: "array",
       label: "Slides",
@@ -175,8 +144,7 @@ const BannerInternal: ComponentConfig<BannerProps> = {
     overlayWidthPercent: 60,
     slides: [
       {
-        imageUrl:
-          "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop",
+        imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop",
         alt: "Banner 1",
         textEnabled: true,
         eyebrow: "iPhone 14 Series",
@@ -204,24 +172,15 @@ const BannerInternal: ComponentConfig<BannerProps> = {
   }) => {
     const [index, setIndex] = useState(0);
     const timerRef = useRef<number | null>(null);
-    const safeSlides = useMemo(
-      () => (Array.isArray(slides) && slides.length ? slides : []),
-      [slides]
-    );
+    const safeSlides = useMemo(() => Array.isArray(slides) && slides.length ? slides : [], [slides]);
 
     const next = () => setIndex((i) => (i + 1) % (safeSlides.length || 1));
-    const prev = () =>
-      setIndex(
-        (i) => (i - 1 + (safeSlides.length || 1)) % (safeSlides.length || 1)
-      );
+    const prev = () => setIndex((i) => (i - 1 + (safeSlides.length || 1)) % (safeSlides.length || 1));
 
     useEffect(() => {
       if (!autoplay || puck?.isEditing || safeSlides.length <= 1) return;
       if (timerRef.current) window.clearInterval(timerRef.current);
-      timerRef.current = window.setInterval(
-        next,
-        Math.max(1000, intervalMs || 5000)
-      );
+      timerRef.current = window.setInterval(next, Math.max(1000, intervalMs || 5000));
       return () => {
         if (timerRef.current) window.clearInterval(timerRef.current);
       };
@@ -229,45 +188,21 @@ const BannerInternal: ComponentConfig<BannerProps> = {
 
     const current = safeSlides[index] as Slide | undefined;
 
-    const heightObj: HeightByBreakpoint =
-      typeof height === "number"
-        ? { base: height, md: height, lg: height }
-        : height || {};
-    const hBase = heightObj.base ?? 360;
-    const hMd = heightObj.md ?? hBase;
-    const hLg = heightObj.lg ?? hMd;
+    const heightObj: HeightByBreakpoint = typeof height === "number" ? { base: height, md: height, lg: height } : (height || {});
+    const hBase = (heightObj.base ?? 360);
+    const hMd = (heightObj.md ?? hBase);
+    const hLg = (heightObj.lg ?? hMd);
 
     return (
-      <Box
-        position="relative"
-        overflow="hidden"
-        borderRadius="lg"
-        onMouseEnter={() => {
-          if (timerRef.current) {
-            window.clearInterval(timerRef.current);
-            timerRef.current = null;
-          }
-        }}
-        onMouseLeave={() => {
-          if (autoplay && !puck?.isEditing && safeSlides.length > 1) {
-            timerRef.current = window.setInterval(
-              next,
-              Math.max(1000, intervalMs || 5000)
-            );
-          }
-        }}
+      <Box position="relative" overflow="hidden" borderRadius="lg"
+        onMouseEnter={() => { if (timerRef.current) { window.clearInterval(timerRef.current); timerRef.current = null; } }}
+        onMouseLeave={() => { if (autoplay && !puck?.isEditing && safeSlides.length > 1) { timerRef.current = window.setInterval(next, Math.max(1000, intervalMs || 5000)); } }}
       >
         {/* Slide */}
         <Flex
           direction={{ base: "column", md: "row" }}
           justify="stretch"
-          align={
-            verticalAlign === "start"
-              ? "flex-start"
-              : verticalAlign === "end"
-              ? "flex-end"
-              : "center"
-          }
+          align={verticalAlign === "start" ? "flex-start" : verticalAlign === "end" ? "flex-end" : "center"}
           gap={6}
           h={{ base: `${hBase}px`, md: `${hMd}px`, lg: `${hLg}px` }}
           bg="black"
@@ -281,12 +216,8 @@ const BannerInternal: ComponentConfig<BannerProps> = {
               pointerEvents="none"
               bgGradient={
                 textSide === "left"
-                  ? `linear(to-r, rgba(0,0,0,${overlayOpacity ?? 0.6}) ${
-                      overlayWidthPercent ?? 60
-                    }%, rgba(0,0,0,0) 100%)`
-                  : `linear(to-l, rgba(0,0,0,${overlayOpacity ?? 0.6}) ${
-                      overlayWidthPercent ?? 60
-                    }%, rgba(0,0,0,0) 100%)`
+                  ? `linear(to-r, rgba(0,0,0,${overlayOpacity ?? 0.6}) ${overlayWidthPercent ?? 60}%, rgba(0,0,0,0) 100%)`
+                  : `linear(to-l, rgba(0,0,0,${overlayOpacity ?? 0.6}) ${overlayWidthPercent ?? 60}%, rgba(0,0,0,0) 100%)`
               }
             />
           )}
@@ -295,21 +226,13 @@ const BannerInternal: ComponentConfig<BannerProps> = {
             <Flex
               order={textSide === "left" ? 0 : 1}
               direction="column"
-              justify={
-                verticalAlign === "start"
-                  ? "flex-start"
-                  : verticalAlign === "end"
-                  ? "flex-end"
-                  : "center"
-              }
+              justify={verticalAlign === "start" ? "flex-start" : verticalAlign === "end" ? "flex-end" : "center"}
               flex={{ base: "0 0 auto", md: "1 1 50%" }}
               minW={{ base: "100%", md: "50%" }}
               gap={3}
             >
               {current?.eyebrow ? (
-                <Text color="gray.300" fontSize={{ base: "sm", md: "md" }}>
-                  {current.eyebrow}
-                </Text>
+                <Text color="gray.300" fontSize={{ base: "sm", md: "md" }}>{current.eyebrow}</Text>
               ) : null}
               {current?.headline ? (
                 <Heading fontSize={{ base: "2xl", md: "4xl" }} lineHeight="1.1">
@@ -323,9 +246,12 @@ const BannerInternal: ComponentConfig<BannerProps> = {
               ) : null}
               {current?.ctaLabel ? (
                 <Button
-                  as="a"
-                  // href={puck?.isEditing ? undefined : current.ctaHref || "#"}
-                  onClick={(e) => puck?.isEditing && e.preventDefault()}
+                  onClick={(e) => {
+                    if (puck?.isEditing) return e.preventDefault();
+                    const href = current.ctaHref || '#'
+                    if (href.startsWith('http')) window.open(href, '_blank', 'noopener,noreferrer')
+                    else window.location.assign(href)
+                  }}
                   variant="solid"
                   colorScheme="gray"
                   mt={2}
@@ -342,14 +268,8 @@ const BannerInternal: ComponentConfig<BannerProps> = {
             order={textSide === "left" ? 1 : 0}
             justify="center"
             align="center"
-            flex={{
-              base: "1 1 auto",
-              md: current?.textEnabled !== false ? "1 1 50%" : "1 1 100%",
-            }}
-            minW={{
-              base: "100%",
-              md: current?.textEnabled !== false ? "50%" : "100%",
-            }}
+            flex={{ base: "1 1 auto", md: current?.textEnabled !== false ? "1 1 50%" : "1 1 100%" }}
+            minW={{ base: "100%", md: current?.textEnabled !== false ? "50%" : "100%" }}
           >
             {current?.imageUrl ? (
               <Image
@@ -394,14 +314,7 @@ const BannerInternal: ComponentConfig<BannerProps> = {
 
         {/* Dots */}
         {showDots && safeSlides.length > 1 && (
-          <Stack
-            direction="row"
-            gap={2}
-            position="absolute"
-            bottom={4}
-            left="50%"
-            transform="translateX(-50%)"
-          >
+          <Stack direction="row" gap={2} position="absolute" bottom={4} left="50%" transform="translateX(-50%)">
             {safeSlides.map((_, i) => (
               <Box
                 key={i}

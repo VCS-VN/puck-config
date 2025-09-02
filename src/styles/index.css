@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.no-preflight * {
+  all: revert; /* Revert Tailwind's base styles */
+}

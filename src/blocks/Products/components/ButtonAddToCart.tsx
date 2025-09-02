@@ -13,8 +13,9 @@ import { get, round } from "lodash";
 import ListModel from "@/blocks/Products/components/ListModel.tsx";
 import { useEffect, useMemo, useState } from "react";
 import { useGetProductDetailQuery } from "../../../hooks/products";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ProductionState } from "@/services/common/production.state";
+import { CartDrawerOpenState } from "@/state/cartDrawer.state";
 // import {toaster} from "@/components/ui/toaster"
 
 interface IProps {
@@ -51,6 +52,7 @@ const ButtonAddToCart = (props: IProps) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedModel, setSelectedModel] = useState<any>(null);
   const [productionState, setProductionState] = useRecoilState(ProductionState);
+  const setCartOpen = useSetRecoilState(CartDrawerOpenState);
 
   const onChangeDataProduct = (value: any) => {
     setValueProduct((prev: any) => {
@@ -108,6 +110,8 @@ const ButtonAddToCart = (props: IProps) => {
     try {
       setProductionState((prev) => ({ ...prev, [keyAddToCart]: cart }));
     } catch {}
+    // Open Header cart drawer for consistent UX
+    try { setCartOpen(true); } catch {}
     onCloseDrawer?.();
     // toaster.create({
     //     title: `Add to cart success`,

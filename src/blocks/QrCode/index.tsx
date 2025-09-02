@@ -1,7 +1,5 @@
 import { ComponentConfig } from "@measured/puck";
 import { colorField } from "../../components/ColorField";
-import { IconField } from "../../components/Icon";
-import { renderIcon } from "../../components/Icon/IconConstant";
 import { QrCode } from "@chakra-ui/react";
 import { ALargeSmall } from "lucide-react";
 
@@ -31,7 +29,7 @@ export const QrCodePlugins: ComponentConfig<IconProps> = {
     color: {
       label: "Color",
       ...colorField,
-    } as any,
+    },
     content: {
       label: "Content",
       type: "text",

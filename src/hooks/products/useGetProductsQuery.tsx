@@ -9,20 +9,25 @@ type Props = Partial<QueryType<{ data: IProduct[]; total: number }>>;
 
 export const useGetProductsQuery = (queries?: any, props?: Props) => {
   let storeId = queries?.storeId;
+
   if (typeof process !== "undefined") {
     storeId = process?.env?.NEXT_PUBLIC_ENTITY_ID;
   } else {
-    storeId = import.meta?.env?.VITE_ENTITY_ID;
+    storeId = import.meta.env.VITE_ENTITY_ID ;
   }
-
   queries = {
     ...queries,
     storeId: queries?.storeId || storeId,
   };
 
   return useQuery({
-    ...props,
     queryKey: ["products", queries],
-    queryFn: () => getProducts(queries),
+    queryFn: ({ signal }) => getProducts(queries, signal as AbortSignal),
+    staleTime: 60_000,
+    gcTime: 300_000,
+    placeholderData: (prev) => prev as any,
+    keepPreviousData: true,
+    retry: 1,
+    ...(props as any),
   });
 };

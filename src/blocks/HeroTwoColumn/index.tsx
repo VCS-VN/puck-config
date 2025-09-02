@@ -1,6 +1,6 @@
 import { ComponentConfig } from "@measured/puck";
 import { withLayout } from "@/components/Layout";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react"; 
 import { useMemo } from "react";
 
 type WidthByBreakpoint = {
@@ -60,12 +60,7 @@ const HeroTwoColumnInternal: ComponentConfig<HeroTwoColumnProps> = {
         { label: "No", value: false },
       ],
     },
-    stickyOffsetTop: {
-      type: "number",
-      label: "Sticky Offset Top (px)",
-      min: 0,
-      max: 200,
-    },
+    stickyOffsetTop: { type: "number", label: "Sticky Offset Top (px)", min: 0, max: 200 },
     left: { type: "slot", label: "Left Slot (Categories)" },
     right: { type: "slot", label: "Right Slot (Banner)" },
   },
@@ -80,56 +75,40 @@ const HeroTwoColumnInternal: ComponentConfig<HeroTwoColumnProps> = {
     left: [],
     right: [],
   },
-  render: ({
-    height,
-    gap,
-    leftWidth,
-    rightWidth,
-    leftScrollable,
-    leftSticky,
-    stickyOffsetTop,
-    left,
-    right,
-    puck,
-  }) => {
-    const Left = left;
-    const Right = right;
+  render: ({ height, gap, leftWidth, rightWidth, leftScrollable, leftSticky, stickyOffsetTop, left, right, puck }) => {
+    const Left = left; 
+    const Right = right; 
     const isEditing = !!(puck as any)?.isEditing;
     const minEmpty = Math.max(60, (height || 360) - 40);
     const leftW = useMemo(() => leftWidth, [leftWidth]);
     const rightW = useMemo(() => rightWidth, [rightWidth]);
-    return (
-      <Flex
-        direction={{ base: "column", md: "row" }}
-        gap={gap}
-        align="stretch"
-        w="100%"
-        minH={`${height}px`}
-        // sx={{ contain: "layout paint style" }}
-      >
-        <Box
+    return ( 
+      <Flex 
+        direction={{ base: "column", md: "row" }} 
+        gap={gap} 
+        align="stretch" 
+        w="100%" 
+        minH={`${height}px`} 
+        style={{ contain: "layout paint style" }}
+      > 
+        <Box 
           minW={0}
           flexBasis={leftW as any}
           flexGrow={0}
           flexShrink={0}
-          minH={{ base: `${height}px`, md: `${height}px` }}
-          position={!isEditing && leftSticky ? "sticky" : undefined}
-          top={
-            !isEditing && leftSticky ? `${stickyOffsetTop || 0}px` : undefined
-          }
+          minH={{ base: `${height}px`, md: `${height}px` }} 
+          position={!isEditing && leftSticky ? "sticky" : undefined} 
+          top={!isEditing && leftSticky ? `${stickyOffsetTop || 0}px` : undefined} 
           transition={isEditing ? "none" : "width 120ms ease-out"}
-          // sx={{
-          //   contain: "layout paint style",
-          //   willChange: isEditing ? undefined : "width",
-          // }}
-        >
+          style={{ contain: "layout paint style", willChange: isEditing ? undefined : "width" }}
+        > 
           <Box
             overflowY={!isEditing && leftScrollable ? "auto" : "visible"}
             maxH={!isEditing && leftScrollable ? `${height}px` : undefined}
-          >
-            <Left minEmptyHeight={minEmpty} />
-          </Box>
-        </Box>
+          > 
+            <Left minEmptyHeight={minEmpty} /> 
+          </Box> 
+        </Box> 
         <Box
           minW={0}
           flexBasis={rightW as any}
@@ -137,16 +116,13 @@ const HeroTwoColumnInternal: ComponentConfig<HeroTwoColumnProps> = {
           flexShrink={1}
           minH={`${height}px`}
           transition={isEditing ? "none" : "width 120ms ease-out"}
-          // sx={{
-          //   contain: "layout paint style",
-          //   willChange: isEditing ? undefined : "width",
-          // }}
-        >
-          <Right minEmptyHeight={minEmpty} />
-        </Box>
-      </Flex>
-    );
-  },
-};
+          style={{ contain: "layout paint style", willChange: isEditing ? undefined : "width" }}
+        > 
+          <Right minEmptyHeight={minEmpty} /> 
+        </Box> 
+      </Flex> 
+    ); 
+  }, 
+}; 
 
 export const HeroTwoColumn = withLayout(HeroTwoColumnInternal);

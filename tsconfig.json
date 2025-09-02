@@ -1,27 +1,39 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "ESNext","moduleResolution": "Bundler",
     "jsx": "react-jsx",
-    "moduleResolution": "bundler",
-    "declaration": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "outDir": "dist",
-    "strict": true,
-    "types": [
-      "vite/client",
-      "node"
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
     ],
+    "skipLibCheck": true,
+    "incremental": true,
+    /* Bundler mode */
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "strict": false,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "baseUrl": "src",
     "paths": {
       "@/*": [
         "*"
       ]
     },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
   },
-  "include": [
+  "exclude": [
+    "src/main.tsx",
+    "src/routeTree.gen.ts",
     "src",
-    "src/global.d.ts"
+    "node_modules"
   ]
 }

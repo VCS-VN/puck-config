@@ -1,0 +1,129 @@
+function lt(g, w) {
+  for (var c = 0; c < w.length; c++) {
+    const l = w[c];
+    if (typeof l != "string" && !Array.isArray(l)) {
+      for (const i in l)
+        if (i !== "default" && !(i in g)) {
+          const d = Object.getOwnPropertyDescriptor(l, i);
+          d && Object.defineProperty(g, i, d.get ? d : {
+            enumerable: !0,
+            get: () => l[i]
+          });
+        }
+    }
+  }
+  return Object.freeze(Object.defineProperty(g, Symbol.toStringTag, { value: "Module" }));
+}
+var $ = {};
+(function() {
+  var g = tinymce.util.Tools.resolve("tinymce.PluginManager");
+  const w = () => /(?:[A-Za-z][A-Za-z\d.+-]{0,14}:\/\/(?:[-.~*+=!&;:'%@?^${}(),\w]+@)?|www\.|[-;:&=+$,.\w]+@)[A-Za-z\d-]+(?:\.[A-Za-z\d-]+)*(?::\d+)?(?:\/(?:[-.~*+=!;:'%@$(),\/\w]*[-~*+=%@$()\/\w])?)?(?:\?(?:[-.~*+=!&;:'%@?^${}(),\/\w]+))?(?:#(?:[-.~*+=!&;:'%@?^${}(),\/\w]+))?/g, c = (t) => (e) => e.options.get(t), l = (t) => {
+    const e = t.options.register;
+    e("autolink_pattern", {
+      processor: "regexp",
+      default: new RegExp("^" + w().source + "$", "i")
+    }), e("link_default_target", { processor: "string" }), e("link_default_protocol", {
+      processor: "string",
+      default: "https"
+    });
+  }, i = c("autolink_pattern"), d = c("link_default_target"), z = c("link_default_protocol"), R = c("allow_unsafe_link_target"), Z = (t, e, n) => {
+    var o;
+    return n(t, e.prototype) ? !0 : ((o = t.constructor) === null || o === void 0 ? void 0 : o.name) === e.name;
+  }, j = (t) => {
+    const e = typeof t;
+    return t === null ? "null" : e === "object" && Array.isArray(t) ? "array" : e === "object" && Z(t, String, (n, o) => o.isPrototypeOf(n)) ? "string" : e;
+  }, B = (t) => (e) => j(e) === t, D = (t) => (e) => t === e, F = B("string"), M = D(void 0), U = (t) => t == null, O = (t) => !U(t), W = (t) => (e) => !t(e), q = Object.hasOwnProperty, K = (t, e) => q.call(t, e), V = (t, e, n) => t.length >= e.length && t.substr(n, n + e.length) === e, G = (t, e, n = 0, o) => {
+    const a = t.indexOf(e, n);
+    return a !== -1 ? M(o) ? !0 : a + e.length <= o : !1;
+  }, H = (t, e) => V(t, e, 0), I = "\uFEFF", J = (t) => t === I, Q = (t) => t.replace(/\uFEFF/g, "");
+  var X = tinymce.util.Tools.resolve("tinymce.dom.TextSeeker");
+  const Y = (t) => t.nodeType === 3, tt = (t) => t.nodeType === 1, T = (t) => /^[(\[{ \u00a0]$/.test(t), et = (t) => /^([A-Za-z][A-Za-z\d.+-]*:\/\/)|mailto:/.test(t), nt = (t) => /[?!,.;:]/.test(t), E = (t, e, n) => {
+    for (let o = e - 1; o >= 0; o--) {
+      const a = t.charAt(o);
+      if (!J(a) && n(a))
+        return o;
+    }
+    return -1;
+  }, ot = (t, e) => {
+    let n = t, o = e;
+    for (; tt(n) && n.childNodes[o]; )
+      n = n.childNodes[o], o = Y(n) ? n.data.length : n.childNodes.length;
+    return {
+      container: n,
+      offset: o
+    };
+  }, A = (t, e) => {
+    var n;
+    const o = t.schema.getVoidElements(), a = i(t), { dom: r, selection: v } = t;
+    if (r.getParent(v.getNode(), "a[href]") !== null)
+      return null;
+    const p = v.getRng(), k = X(r, (s) => r.isBlock(s) || K(o, s.nodeName.toLowerCase()) || r.getContentEditable(s) === "false"), {
+      container: P,
+      offset: m
+    } = ot(p.endContainer, p.endOffset), h = (n = r.getParent(P, r.isBlock)) !== null && n !== void 0 ? n : r.getRoot(), f = k.backwards(P, m + e, (s, b) => {
+      const u = s.data, _ = E(u, b, W(T));
+      return _ === -1 || nt(u[_]) ? _ : _ + 1;
+    }, h);
+    if (!f)
+      return null;
+    let S = f.container;
+    const x = k.backwards(f.container, f.offset, (s, b) => {
+      S = s;
+      const u = E(s.data, b, T);
+      return u === -1 ? u : u + 1;
+    }, h), y = r.createRng();
+    x ? y.setStart(x.container, x.offset) : y.setStart(S, 0), y.setEnd(f.container, f.offset);
+    const L = Q(y.toString()).match(a);
+    if (L) {
+      let s = L[0];
+      return H(s, "www.") ? s = z(t) + "://" + s : G(s, "@") && !et(s) && (s = "mailto:" + s), {
+        rng: y,
+        url: s
+      };
+    } else
+      return null;
+  }, C = (t, e) => {
+    const { dom: n, selection: o } = t, { rng: a, url: r } = e, v = o.getBookmark();
+    o.setRng(a);
+    const p = "createlink", k = {
+      command: p,
+      ui: !1,
+      value: r
+    };
+    if (!t.dispatch("BeforeExecCommand", k).isDefaultPrevented()) {
+      t.getDoc().execCommand(p, !1, r), t.dispatch("ExecCommand", k);
+      const m = d(t);
+      if (F(m)) {
+        const h = o.getNode();
+        n.setAttrib(h, "target", m), m === "_blank" && !R(t) && n.setAttrib(h, "rel", "noopener");
+      }
+    }
+    o.moveToBookmark(v), t.nodeChanged();
+  }, N = (t) => {
+    const e = A(t, -1);
+    O(e) && C(t, e);
+  }, st = N, rt = (t) => {
+    const e = A(t, 0);
+    O(e) && C(t, e);
+  }, at = (t) => {
+    t.on("keydown", (e) => {
+      e.keyCode === 13 && !e.isDefaultPrevented() && rt(t);
+    }), t.on("keyup", (e) => {
+      e.keyCode === 32 ? N(t) : (e.keyCode === 48 && e.shiftKey || e.keyCode === 221) && st(t);
+    });
+  };
+  var ct = () => {
+    g.add("autolink", (t) => {
+      l(t), at(t);
+    });
+  };
+  ct();
+})();
+const ft = /* @__PURE__ */ lt({
+  __proto__: null,
+  default: $
+}, [$]);
+export {
+  ft as i
+};
+//# sourceMappingURL=index-Ci06yj8u.js.map

@@ -1,8 +1,8 @@
 import { type ComponentConfig } from "@measured/puck";
 import { withLayout } from "../../components/Layout";
-import { type FC, useEffect, useMemo, useState } from "react"; 
-import { debounce, get, round } from "lodash"; 
-import { useGetProductsQuery } from "../../hooks/products"; 
+import { type FC, useEffect, useMemo, useState } from "react";
+import { debounce, get, round } from "lodash";
+import { useGetProductsQuery } from "../../hooks/products";
 import {
   Card,
   CardBody,
@@ -14,35 +14,39 @@ import {
   Text,
   Box,
   Button,
-  Drawer,
 } from "@chakra-ui/react";
 import { VariableState } from "@/services/common/variable.state";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ButtonAddToCart from "./components/ButtonAddToCart";
-// Use the same cart UI/logic as Header
-import { CheckoutRender } from "../Cart";
-import { ProductionState } from "@/services/common/production.state.ts"; 
+import { useSetRecoilState } from "recoil";
+import { CartDrawerOpenState } from "@/state/cartDrawer.state";
+import { ProductionState } from "@/services/common/production.state.ts";
 import { CategorySingleSelect } from "@/components/CategorySingleSelect";
 import { ProductMultiSelect } from "@/components/ProductMultiSelect";
 import { sendAnalyticsEvent } from "@/utils/analytics";
 import { parseUrlState, pushUrlState } from "@/utils/url";
 
-export type ProductsProps = { 
-  mobile: number; 
-  tablet: number; 
-  desktop: number; 
-  limit: number; 
-  categoryId?: string; 
-  // searchSize: SizeType; 
-  storeId?: string; 
-  variableName?: string; 
-  noResultsText?: string; 
+export type ProductsProps = {
+  mobile: number;
+  tablet: number;
+  desktop: number;
+  limit: number;
+  categoryId?: string;
+  // searchSize: SizeType;
+  storeId?: string;
+  variableName?: string;
+  noResultsText?: string;
   // storefront options
   header?: any;
   footer?: any;
   selectionMode?: "limit" | "ids" | "select" | "category";
   productIds?: string; // comma
-  selectedProducts?: Array<{ id: string; name: string; image?: string; price?: number }>;
+  selectedProducts?: Array<{
+    id: string;
+    name: string;
+    image?: string;
+    price?: number;
+  }>;
   sortBy?: "newest" | "priceAsc" | "priceDesc" | "featured";
   hideOutOfStock?: boolean;
   bindSortVariableName?: string;
@@ -53,16 +57,16 @@ export type ProductsProps = {
   openMiniCartAfterAdd?: boolean; // open mini cart drawer after adding
 };
 
-const ProductsRender: FC<ProductsProps & { puck?: any }> = ({ 
-  mobile, 
-  tablet, 
-  desktop, 
-  limit, 
-  categoryId, 
-  // searchSize, 
-  storeId, 
-  variableName, 
-  noResultsText, 
+const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
+  mobile,
+  tablet,
+  desktop,
+  limit,
+  categoryId,
+  // searchSize,
+  storeId,
+  variableName,
+  noResultsText,
   header: HeaderSlot,
   footer: FooterSlot,
   selectionMode = "limit",
@@ -77,15 +81,16 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   enableUrlSync = true,
   openMiniCartAfterAdd = true,
   puck,
-}) => { 
+}) => {
   // const store = useRecoilValue(CurrentStoreState);
   const variables = useRecoilValue(VariableState);
   const [productionState, setProductionState] = useRecoilState(ProductionState);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [openMiniCart, setOpenMiniCart] = useState(false);
+  const setCartOpen = useSetRecoilState(CartDrawerOpenState);
 
-  // console.log("🚀 ~ ProductsRender ~ variables:", variables);
-  // console.log("🚀 ~ ProductsRender ~ productionState:", productionState);
+  // Because we can't call setVars before we have it here, create a setter
+  const [__, setVars] = useRecoilState(VariableState);
+
   const keyAddToCart: string = "productCart";
   const valueOfSearchProductsVariable = useMemo(() => {
     if (!variableName) {
@@ -108,39 +113,95 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     []
   );
 
-  const [queries, setQueries] = useState({ 
-    search: debouncedValue, 
-    page: 1, 
-    limit: limit, 
+  const [queries, setQueries] = useState({
+    search: debouncedValue,
+    page: 1,
+    limit: limit,
     sortBy,
     hideOutOfStock,
-  }); 
+  });
 
   const extraFilters = useMemo(() => {
-    const v = bindFiltersVariableName ? (variables as any)[bindFiltersVariableName] : undefined;
+    const v = bindFiltersVariableName
+      ? (variables as any)[bindFiltersVariableName]
+      : undefined;
     return v || {};
   }, [variables, bindFiltersVariableName]);
 
-  const { data: products, isLoading } = useGetProductsQuery( 
-    { 
-      // storeSlug: store?.slug, 
-      query: queries.search, 
-      isGettingModels: true, 
-      isGettingDefaultModel: true, 
-      limit: queries.limit, 
-      page: queries?.page, 
+  const { data: products, isLoading } = useGetProductsQuery(
+    {
+      // storeSlug: store?.slug,
+      query: queries.search,
+      isGettingModels: true,
+      isGettingDefaultModel: true,
+      limit: queries.limit,
+      page: queries?.page,
       categoryId:
         selectionMode === "category"
-          ? ((bindCategoryVariableName ? (variables as any)[bindCategoryVariableName] : undefined) || categoryId)
-          : undefined, 
+          ? (bindCategoryVariableName
+              ? (variables as any)[bindCategoryVariableName]
+              : undefined) || categoryId
+          : undefined,
       sortBy: queries.sortBy,
       hideOutOfStock: queries.hideOutOfStock,
       priceMin: extraFilters?.priceMin,
       priceMax: extraFilters?.priceMax,
-      storeId: storeId, 
+      storeId: storeId,
     },
     { keepPreviousData: true }
-  ); 
+  );
+
+  const saveCartToStore = (carts: any[]) => {
+    setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
+    setSelectedProduct(null);
+    if (openMiniCartAfterAdd) setCartOpen(true);
+  };
+
+  // Decide display list
+  let display = products?.data || [];
+  if (selectionMode === "ids" && productIds) {
+    const ids = productIds
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean);
+    // if API page has items, map by ids when possible, else build minimal items
+    const mapById: Record<string, any> = (products?.data || []).reduce(
+      (acc: any, p: any) => {
+        acc[String(p.id)] = p;
+        return acc;
+      },
+      {}
+    );
+    display = ids.map((id) => mapById[id] || { id, name: id });
+  } else if (selectionMode === "select" && selectedProducts?.length) {
+    display = selectedProducts as any[];
+  }
+
+  // Helper: infer out-of-stock from API shape
+  const isOutOfStock = (p: any): boolean => {
+    const rq = p?.remainedQuantity;
+    if (typeof rq === "number") return rq <= 0;
+    const models: any[] = Array.isArray(p?.models) ? p.models : [];
+    if (models.length > 0) {
+      // assume status === 1 means sellable; others are not
+      const anyActive = models.some((m) => Number(m?.status) === 1);
+      return !anyActive;
+    }
+    if (p?.defaultModel) return Number(p?.defaultModel?.status) !== 1;
+    // fallback to product statusId if available
+    if (typeof p?.statusId === "number") return Number(p.statusId) !== 1;
+    return false; // unknown -> treat as in stock
+  };
+
+  // Optionally filter out-of-stock locally if backend param not supported
+  if (queries.hideOutOfStock) {
+    display = (display || []).filter((p: any) => !isOutOfStock(p));
+  }
+
+  const total =
+    selectionMode === "limit" || selectionMode === "category"
+      ? products?.total || display.length
+      : display.length;
 
   // watch + mounted
 
@@ -152,13 +213,13 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     return () => debouncedSetValue.cancel();
   }, [valueOfSearchProductsVariable, debouncedSetValue]);
 
-  useEffect(() => { 
-    setQueries((prev) => ({ 
-      ...prev, 
-      search: debouncedValue, 
-      page: 1, 
-    })); 
-  }, [debouncedValue]); 
+  useEffect(() => {
+    setQueries((prev) => ({
+      ...prev,
+      search: debouncedValue,
+      page: 1,
+    }));
+  }, [debouncedValue]);
 
   useEffect(() => {
     setQueries((prev) => ({ ...prev, sortBy, hideOutOfStock }));
@@ -166,8 +227,12 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
 
   // Bind from variable state if variable names provided (for FacetControls)
   useEffect(() => {
-    const vSort = bindSortVariableName ? get(variables, bindSortVariableName) : undefined;
-    const vHide = bindHideOutOfStockVariableName ? get(variables, bindHideOutOfStockVariableName) : undefined;
+    const vSort = bindSortVariableName
+      ? get(variables, bindSortVariableName)
+      : undefined;
+    const vHide = bindHideOutOfStockVariableName
+      ? get(variables, bindHideOutOfStockVariableName)
+      : undefined;
     setQueries((prev) => ({
       ...prev,
       sortBy: (vSort as any) || prev.sortBy,
@@ -203,11 +268,14 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Because we can't call setVars before we have it here, create a setter
-  const [__, setVars] = useRecoilState(VariableState);
   useEffect(() => {
     if (!enableUrlSync || typeof window === "undefined") return;
-    const catId = selectionMode === "category" ? ((bindCategoryVariableName ? (variables as any)[bindCategoryVariableName] : undefined) || categoryId) : undefined;
+    const catId =
+      selectionMode === "category"
+        ? (bindCategoryVariableName
+            ? (variables as any)[bindCategoryVariableName]
+            : undefined) || categoryId
+        : undefined;
     const pm = extraFilters?.priceMin;
     const px = extraFilters?.priceMax;
     pushUrlState({
@@ -219,14 +287,29 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       priceMax: px,
       categoryId: catId,
     });
-  }, [queries.search, queries.page, queries.sortBy, queries.hideOutOfStock, extraFilters?.priceMin, extraFilters?.priceMax, selectionMode, variables, bindCategoryVariableName, categoryId, enableUrlSync]);
+  }, [
+    queries.search,
+    queries.page,
+    queries.sortBy,
+    queries.hideOutOfStock,
+    extraFilters?.priceMin,
+    extraFilters?.priceMax,
+    selectionMode,
+    variables,
+    bindCategoryVariableName,
+    categoryId,
+    enableUrlSync,
+  ]);
 
   // If URL had priceMin/Max or category on first mount, set VariableState
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
       const u = parseUrlState();
-      if (bindFiltersVariableName && (u.priceMin != null || u.priceMax != null)) {
+      if (
+        bindFiltersVariableName &&
+        (u.priceMin != null || u.priceMax != null)
+      ) {
         setVars((prev) => ({
           ...prev,
           [bindFiltersVariableName]: {
@@ -246,56 +329,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const saveCartToStore = (carts: any[]) => {
-    setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
-    setSelectedProduct(null);
-    if (openMiniCartAfterAdd) setOpenMiniCart(true);
-  };
-  if (!isLoading && !products?.total) {
-    return (
-      <Box>
-        <Text>{noResultsText || "No results found"}</Text>
-      </Box>
-    );
-  }
-
-  // Decide display list
-  let display = products?.data || [];
-  if (selectionMode === "ids" && productIds) {
-    const ids = productIds.split(",").map((x) => x.trim()).filter(Boolean);
-    // if API page has items, map by ids when possible, else build minimal items
-    const mapById: Record<string, any> = (products?.data || []).reduce((acc: any, p: any) => {
-      acc[String(p.id)] = p;
-      return acc;
-    }, {});
-    display = ids.map((id) => mapById[id] || { id, name: id });
-  } else if (selectionMode === "select" && selectedProducts?.length) {
-    display = selectedProducts as any[];
-  }
-
-  // Helper: infer out-of-stock from API shape
-  const isOutOfStock = (p: any): boolean => {
-    const rq = p?.remainedQuantity;
-    if (typeof rq === "number") return rq <= 0;
-    const models: any[] = Array.isArray(p?.models) ? p.models : [];
-    if (models.length > 0) {
-      // assume status === 1 means sellable; others are not
-      const anyActive = models.some((m) => Number(m?.status) === 1);
-      return !anyActive;
-    }
-    if (p?.defaultModel) return Number(p?.defaultModel?.status) !== 1;
-    // fallback to product statusId if available
-    if (typeof p?.statusId === "number") return Number(p.statusId) !== 1;
-    return false; // unknown -> treat as in stock
-  };
-
-  // Optionally filter out-of-stock locally if backend param not supported
-  if (queries.hideOutOfStock) {
-    display = (display || []).filter((p: any) => !isOutOfStock(p));
-  }
-
-  const total = selectionMode === "limit" || selectionMode === "category" ? (products?.total || display.length) : display.length;
-
   // Analytics: impressions
   useEffect(() => {
     if (!display?.length) return;
@@ -308,149 +341,177 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       });
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(display?.map((p: any) => p.id)), queries.page, queries.sortBy]);
+  }, [display?.map((p: any) => p.id), queries.page, queries.sortBy]);
 
-  return ( 
-    <Box> 
+  if (!isLoading && !products?.total) {
+    return (
+      <Box>
+        <Text>{noResultsText || "No results found"}</Text>
+      </Box>
+    );
+  }
+
+  return (
+    <Box>
       {HeaderSlot ? <HeaderSlot minEmptyHeight={40} /> : null}
-      <SimpleGrid 
-        columns={{ 
-          base: mobile, 
-          sm: tablet, 
-          md: tablet, 
-          lg: desktop, 
-        }} 
-        gap={4} 
-      > 
-        {isLoading && (selectionMode === "limit" || selectionMode === "category")
-          ? Array.from({ length: limit }).map((_, index) => ( 
-              <Skeleton key={index} height="300px" borderRadius="md" /> 
-            )) 
-          : display?.map((product: any) => { 
-              const defaultModel = get( 
-                product, 
-                "defaultModel", 
-                get(product, "models.0") 
-              ); 
+      <SimpleGrid
+        columns={{
+          base: mobile,
+          sm: tablet,
+          md: tablet,
+          lg: desktop,
+        }}
+        gap={4}
+      >
+        {isLoading &&
+        (selectionMode === "limit" || selectionMode === "category")
+          ? Array.from({ length: limit }).map((_, index) => (
+              <Skeleton key={index} height="300px" borderRadius="md" />
+            ))
+          : display?.map((product: any) => {
+              const defaultModel = get(
+                product,
+                "defaultModel",
+                get(product, "models.0")
+              );
 
               const baseCents = get(defaultModel, "price", product.price || 0);
-              const saleCents = get(defaultModel, "onlinePrice", product.onlinePrice ?? baseCents);
+              const saleCents = get(
+                defaultModel,
+                "onlinePrice",
+                product.onlinePrice ?? baseCents
+              );
               const isOnSale = Number(saleCents) < Number(baseCents);
               const outOfStock = isOutOfStock(product);
 
               return (
-                <Card.Root key={product.id} variant="outline" position="relative">
+                <Card.Root
+                  key={product.id}
+                  variant="outline"
+                  position="relative"
+                >
                   {isOnSale && (
-                    <Box position="absolute" top="2" left="2" px="2" py="1" bg="red.500" color="white" borderRadius="sm" fontSize="xs">
+                    <Box
+                      position="absolute"
+                      top="2"
+                      left="2"
+                      px="2"
+                      py="1"
+                      bg="red.500"
+                      color="white"
+                      borderRadius="sm"
+                      fontSize="xs"
+                    >
                       Sale
                     </Box>
                   )}
                   {outOfStock && (
-                    <Box position="absolute" top="2" right="2" px="2" py="1" bg="gray.600" color="white" borderRadius="sm" fontSize="xs">
+                    <Box
+                      position="absolute"
+                      top="2"
+                      right="2"
+                      px="2"
+                      py="1"
+                      bg="gray.600"
+                      color="white"
+                      borderRadius="sm"
+                      fontSize="xs"
+                    >
                       Out of stock
                     </Box>
                   )}
                   <CardBody>
-                    <Image 
-                      src={ 
-                        product.image || 
-                        "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg" 
-                      } 
-                      alt={product.name} 
-                      borderRadius="md" 
-                    /> 
-                    <Card.Title>{product.name}</Card.Title> 
+                    <Image
+                      src={
+                        product.image ||
+                        "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
+                      }
+                      alt={product.name}
+                      borderRadius="md"
+                    />
+                    <Card.Title>{product.name}</Card.Title>
                     <Box mt="2">
                       {isOnSale ? (
                         <>
-                          <Text as="span" textStyle="xl" fontWeight="semibold" color="red.500" mr="2">
+                          <Text
+                            as="span"
+                            textStyle="xl"
+                            fontWeight="semibold"
+                            color="red.500"
+                            mr="2"
+                          >
                             ${round((saleCents || 0) / 100, 0)}
                           </Text>
-                          <Text as="span" textStyle="sm" color="gray.500" textDecoration="line-through">
+                          <Text
+                            as="span"
+                            textStyle="sm"
+                            color="gray.500"
+                            textDecoration="line-through"
+                          >
                             ${round((baseCents || 0) / 100, 0)}
                           </Text>
                         </>
                       ) : (
-                        <Text textStyle="2xl" fontWeight="medium" letterSpacing="tight">
+                        <Text
+                          textStyle="2xl"
+                          fontWeight="medium"
+                          letterSpacing="tight"
+                        >
                           ${round((baseCents || 0) / 100, 0)}
                         </Text>
                       )}
                     </Box>
-                  </CardBody> 
-                  <CardFooter gap="2"> 
-                    <Button 
-                      colorPalette={"orange"} 
+                  </CardBody>
+                  <CardFooter gap="2">
+                    <Button
+                      colorPalette={"orange"}
                       disabled={outOfStock}
-                      onClick={() => { 
-                        setSelectedProduct(product); 
-                      }} 
-                    > 
-                      Add to cart 
-                    </Button> 
+                      onClick={() => {
+                        setSelectedProduct(product);
+                      }}
+                    >
+                      Add to cart
+                    </Button>
                     {/* <ButtonAddToCart 
               
-                    /> */} 
-                  </CardFooter> 
-                </Card.Root> 
-              ); 
-            })} 
+                    /> */}
+                  </CardFooter>
+                </Card.Root>
+              );
+            })}
 
-        <ButtonAddToCart 
-          openDrawer={!!selectedProduct} 
-          product={selectedProduct} 
-          keyAddToCart={keyAddToCart} 
-          saveCartToStore={saveCartToStore} 
-          onCloseDrawer={() => setSelectedProduct(null)} 
-        /> 
-        {/* Cart Drawer (aligned with Header) */}
-        <Drawer.Root
-          placement="right"
-          size="md"
-          open={openMiniCart}
-          onOpenChange={(e: any) => {
-            const isOpen = typeof e === "boolean" ? e : e?.open;
-            setOpenMiniCart(!!isOpen);
-          }}
-        >
-          <Drawer.Backdrop />
-          <Drawer.Positioner>
-            <Drawer.Content>
-              <Drawer.Header>Cart</Drawer.Header>
-              <Drawer.CloseTrigger />
-              <Drawer.Body>
-                <CheckoutRender
-                  limit={10}
-                  noResultsText="No items"
-                  urlToProduct="/"
-                  storeId={storeId || puck?.metadata?.storeId}
-                />
-              </Drawer.Body>
-            </Drawer.Content>
-          </Drawer.Positioner>
-        </Drawer.Root>
-      </SimpleGrid> 
+        <ButtonAddToCart
+          openDrawer={!!selectedProduct}
+          product={selectedProduct}
+          keyAddToCart={keyAddToCart}
+          saveCartToStore={saveCartToStore}
+          onCloseDrawer={() => setSelectedProduct(null)}
+        />
+        {/* Header owns Cart Drawer; trigger via CartDrawerOpenState */}
+      </SimpleGrid>
       {FooterSlot ? <FooterSlot minEmptyHeight={40} /> : null}
 
-      {(selectionMode === "limit" || selectionMode === "category") && total > 0 && ( 
-        <Pagination.Root 
-          mt="6" 
-          count={total} 
-          pageSize={queries.limit} 
-          page={queries.page} 
-          onPageChange={({ page }) => 
-            setQueries((prev) => ({ 
-              ...prev, 
-              page, 
-            })) 
-          } 
-        > 
-          <Pagination.PrevTrigger /> 
-          {/* <Pagination.Items /> */} 
-          <Pagination.NextTrigger /> 
-        </Pagination.Root> 
-      )} 
-    </Box> 
-  ); 
+      {(selectionMode === "limit" || selectionMode === "category") &&
+        total > 0 && (
+          <Pagination.Root
+            mt="6"
+            count={total}
+            pageSize={queries.limit}
+            page={queries.page}
+            onPageChange={({ page }) =>
+              setQueries((prev) => ({
+                ...prev,
+                page,
+              }))
+            }
+          >
+            <Pagination.PrevTrigger />
+            {/* <Pagination.Items /> */}
+            <Pagination.NextTrigger />
+          </Pagination.Root>
+        )}
+    </Box>
+  );
   //   // <Section>
   //   //   <Input.Search
   //   //     placeholder="Search..."
@@ -498,12 +559,12 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
 //   );
 // };
 
-const ProductsInternal: ComponentConfig = { 
-  fields: { 
-    mobile: { type: "number", label: "Mobile (base)", min: 1, max: 2 }, 
-    tablet: { type: "number", label: "Tablet", min: 1, max: 4 }, 
-    desktop: { type: "number", label: "Desktop", min: 1, max: 6 }, 
-    limit: { type: "number", label: "Limit", min: 1, max: 20 }, 
+const ProductsInternal: ComponentConfig = {
+  fields: {
+    mobile: { type: "number", label: "Mobile (base)", min: 1, max: 2 },
+    tablet: { type: "number", label: "Tablet", min: 1, max: 4 },
+    desktop: { type: "number", label: "Desktop", min: 1, max: 6 },
+    limit: { type: "number", label: "Limit", min: 1, max: 20 },
     header: { type: "slot", label: "Header Slot" },
     footer: { type: "slot", label: "Footer Slot" },
     selectionMode: {
@@ -516,13 +577,41 @@ const ProductsInternal: ComponentConfig = {
         { label: "Enter IDs", value: "ids" },
       ],
     },
-    openMiniCartAfterAdd: { type: "radio", label: "Open Mini Cart After Add", options: [ { label: "Yes", value: true }, { label: "No", value: false } ] },
-    enableUrlSync: { type: "radio", label: "Enable URL Sync", options: [ { label: "Yes", value: true }, { label: "No", value: false } ] },
-    bindCategoryVariableName: { type: "text", label: "Bind Category Var (optional)" },
-    bindFiltersVariableName: { type: "text", label: "Bind Filters Var (optional)" },
-    selectedProducts: { type: "custom", label: "Choose Products", render: ProductMultiSelect },
+    openMiniCartAfterAdd: {
+      type: "radio",
+      label: "Open Mini Cart After Add",
+      options: [
+        { label: "Yes", value: true },
+        { label: "No", value: false },
+      ],
+    },
+    enableUrlSync: {
+      type: "radio",
+      label: "Enable URL Sync",
+      options: [
+        { label: "Yes", value: true },
+        { label: "No", value: false },
+      ],
+    },
+    bindCategoryVariableName: {
+      type: "text",
+      label: "Bind Category Var (optional)",
+    },
+    bindFiltersVariableName: {
+      type: "text",
+      label: "Bind Filters Var (optional)",
+    },
+    selectedProducts: {
+      type: "custom",
+      label: "Choose Products",
+      render: ProductMultiSelect,
+    },
     productIds: { type: "text", label: "Product IDs (comma-separated)" },
-    categoryId: { type: "custom", label: "Category", render: CategorySingleSelect },
+    categoryId: {
+      type: "custom",
+      label: "Category",
+      render: CategorySingleSelect,
+    },
     sortBy: {
       type: "select",
       label: "Sort By",
@@ -541,11 +630,11 @@ const ProductsInternal: ComponentConfig = {
         { label: "No", value: false },
       ],
     },
-    variableName: { 
-      type: "text", 
-      label: "Variable Name to Use", 
-    }, 
-    noResultsText: { type: "text", label: "No Results Message" }, 
+    variableName: {
+      type: "text",
+      label: "Variable Name to Use",
+    },
+    noResultsText: { type: "text", label: "No Results Message" },
     // searchSize: {
     //   type: "select",
     //   label: "Search Size",
@@ -560,35 +649,35 @@ const ProductsInternal: ComponentConfig = {
     //   render: (props) => <CategoryField {...props} />,
     // },
   },
-  defaultProps: { 
-    mobile: 2, 
-    tablet: 4, 
-    desktop: 4, 
-    limit: 10, 
+  defaultProps: {
+    mobile: 2,
+    tablet: 4,
+    desktop: 4,
+    limit: 10,
     header: [],
     footer: [],
     selectionMode: "limit",
     productIds: "",
     selectedProducts: [],
-    categoryId: undefined, 
+    categoryId: undefined,
     bindCategoryVariableName: "products.categoryId",
     bindFiltersVariableName: "products.filters",
     enableUrlSync: true,
     openMiniCartAfterAdd: true,
     sortBy: "featured",
     hideOutOfStock: false,
-    noResultsText: "No Results", 
-    variableName: undefined, 
-  }, 
-  render: ({ 
-    puck, 
-    mobile, 
-    tablet, 
-    desktop, 
-    limit, 
-    noResultsText, 
-    categoryId, 
-    variableName, 
+    noResultsText: "No Results",
+    variableName: undefined,
+  },
+  render: ({
+    puck,
+    mobile,
+    tablet,
+    desktop,
+    limit,
+    noResultsText,
+    categoryId,
+    variableName,
     header,
     footer,
     selectionMode,
@@ -600,17 +689,17 @@ const ProductsInternal: ComponentConfig = {
     enableUrlSync,
     bindCategoryVariableName,
     openMiniCartAfterAdd,
-  }) => { 
-    return ( 
-      <ProductsRender 
-        mobile={mobile} 
-        tablet={tablet} 
-        desktop={desktop} 
-        categoryId={categoryId} 
-        variableName={variableName} 
-        limit={limit} 
-        noResultsText={noResultsText} 
-        storeId={puck?.metadata?.storeId} 
+  }) => {
+    return (
+      <ProductsRender
+        mobile={mobile}
+        tablet={tablet}
+        desktop={desktop}
+        categoryId={categoryId}
+        variableName={variableName}
+        limit={limit}
+        noResultsText={noResultsText}
+        storeId={puck?.metadata?.storeId}
         header={header}
         footer={footer}
         selectionMode={selectionMode}
@@ -623,9 +712,9 @@ const ProductsInternal: ComponentConfig = {
         bindCategoryVariableName={bindCategoryVariableName}
         openMiniCartAfterAdd={openMiniCartAfterAdd}
         puck={puck as any}
-      /> 
-    ); 
-  }, 
-}; 
+      />
+    );
+  },
+};
 
 export const Products = withLayout(ProductsInternal);

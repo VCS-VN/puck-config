@@ -1,0 +1,126 @@
+function N(u, p) {
+  for (var m = 0; m < p.length; m++) {
+    const s = p[m];
+    if (typeof s != "string" && !Array.isArray(s)) {
+      for (const g in s)
+        if (g !== "default" && !(g in u)) {
+          const a = Object.getOwnPropertyDescriptor(s, g);
+          a && Object.defineProperty(u, g, a.get ? a : {
+            enumerable: !0,
+            get: () => s[g]
+          });
+        }
+    }
+  }
+  return Object.freeze(Object.defineProperty(u, Symbol.toStringTag, { value: "Module" }));
+}
+var S = {};
+(function() {
+  const u = (e) => {
+    let t = e;
+    return {
+      get: () => t,
+      set: (i) => {
+        t = i;
+      }
+    };
+  };
+  var p = tinymce.util.Tools.resolve("tinymce.PluginManager");
+  const m = (e) => () => e;
+  var s = tinymce.util.Tools.resolve("tinymce.Env");
+  const g = (e) => e.dispatch("ResizeEditor"), a = (e) => (t) => t.options.get(e), O = (e) => {
+    const t = e.options.register;
+    t("autoresize_overflow_padding", {
+      processor: "number",
+      default: 1
+    }), t("autoresize_bottom_margin", {
+      processor: "number",
+      default: 50
+    });
+  }, E = a("min_height"), R = a("max_height"), C = a("autoresize_overflow_padding"), A = a("autoresize_bottom_margin"), P = (e) => e.plugins.fullscreen && e.plugins.fullscreen.isFullscreen(), v = (e, t) => {
+    const n = e.getBody();
+    n && (n.style.overflowY = t ? "" : "hidden", t || (n.scrollTop = 0));
+  }, _ = (e, t, n, o) => {
+    var i;
+    const c = parseInt((i = e.getStyle(t, n, o)) !== null && i !== void 0 ? i : "", 10);
+    return isNaN(c) ? 0 : c;
+  }, T = (e) => {
+    if ((e == null ? void 0 : e.type.toLowerCase()) === "setcontent") {
+      const t = e;
+      return t.selection === !0 || t.paste === !0;
+    } else
+      return !1;
+  }, h = (e, t, n, o) => {
+    var i;
+    const c = e.dom, l = e.getDoc();
+    if (!l)
+      return;
+    if (P(e)) {
+      v(e, !0);
+      return;
+    }
+    const r = l.documentElement, b = o ? o() : C(e), w = (i = E(e)) !== null && i !== void 0 ? i : e.getElement().offsetHeight;
+    let f = w;
+    const F = _(c, r, "margin-top", !0), I = _(c, r, "margin-bottom", !0);
+    let y = r.offsetHeight + F + I + b;
+    y < 0 && (y = 0);
+    const j = e.getContainer().offsetHeight, D = e.getContentAreaContainer().offsetHeight, H = j - D;
+    y + H > w && (f = y + H);
+    const d = R(e);
+    if (d && f > d ? (f = d, v(e, !0)) : v(e, !1), f !== t.get()) {
+      const L = f - t.get();
+      if (c.setStyle(e.getContainer(), "height", f + "px"), t.set(f), g(e), s.browser.isSafari() && (s.os.isMacOS() || s.os.isiOS())) {
+        const z = e.getWin();
+        z.scrollTo(z.pageXOffset, z.pageYOffset);
+      }
+      e.hasFocus() && T(n) && e.selection.scrollIntoView(), (s.browser.isSafari() || s.browser.isChromium()) && L < 0 && h(e, t, n, o);
+    }
+  }, B = (e, t) => {
+    let n = () => A(e), o, i;
+    e.on("init", (c) => {
+      o = 0;
+      const l = C(e), r = e.dom;
+      r.setStyles(e.getDoc().documentElement, { height: "auto" }), s.browser.isEdge() || s.browser.isIE() ? r.setStyles(e.getBody(), {
+        paddingLeft: l,
+        paddingRight: l,
+        "min-height": 0
+      }) : r.setStyles(e.getBody(), {
+        paddingLeft: l,
+        paddingRight: l
+      }), h(e, t, c, n), o += 1;
+    }), e.on("NodeChange SetContent keyup FullscreenStateChanged ResizeContent", (c) => {
+      if (o === 1)
+        i = e.getContainer().offsetHeight, h(e, t, c, n), o += 1;
+      else if (o === 2) {
+        const l = i < e.getContainer().offsetHeight;
+        if (l) {
+          const r = e.dom, b = e.getDoc();
+          r.setStyles(b.documentElement, { "min-height": 0 }), r.setStyles(e.getBody(), { "min-height": "inherit" });
+        }
+        n = l ? m(0) : n, o += 1;
+      } else
+        h(e, t, c, n);
+    });
+  }, M = (e, t) => {
+    e.addCommand("mceAutoResize", () => {
+      h(e, t);
+    });
+  };
+  var x = () => {
+    p.add("autoresize", (e) => {
+      if (O(e), e.options.isSet("resize") || e.options.set("resize", !1), !e.inline) {
+        const t = u(0);
+        M(e, t), B(e, t);
+      }
+    });
+  };
+  x();
+})();
+const V = /* @__PURE__ */ N({
+  __proto__: null,
+  default: S
+}, [S]);
+export {
+  V as i
+};
+//# sourceMappingURL=index-DOqzZcxP.js.map

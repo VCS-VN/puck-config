@@ -2,6 +2,7 @@ import { Section } from "../../components/Section";
 import { WithLayout, withLayout } from "../../components/Layout";
 import { ComponentConfig } from "@measured/puck";
 import getClassNameFactory from "../../utils/get-class-name-factory";
+// @ts-ignore - CSS modules types handled via ambient declaration for build
 import styles from "./styles.module.css";
 
 const getClassName = getClassNameFactory("Heading", styles);
