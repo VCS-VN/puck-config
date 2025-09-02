@@ -47,7 +47,11 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
         { label: "Enter IDs", value: "ids" },
       ],
     },
-    selectedCategories: { type: "custom", label: "Choose Categories", render: CategoryMultiSelect },
+    selectedCategories: {
+      type: "custom",
+      label: "Choose Categories",
+      render: CategoryMultiSelect,
+    },
     categoryIds: { type: "text", label: "Category IDs (comma)" },
     limit: { type: "number", label: "Limit", min: 1, max: 30 },
     itemHeight: { type: "number", label: "Item Height (px)", min: 32, max: 72 },
@@ -59,7 +63,12 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
         { label: "Off", value: false },
       ],
     },
-    submenuWidth: { type: "number", label: "Submenu Width (px)", min: 160, max: 640 },
+    submenuWidth: {
+      type: "number",
+      label: "Submenu Width (px)",
+      min: 160,
+      max: 640,
+    },
   },
   defaultProps: {
     title: "",
@@ -88,7 +97,12 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
     submenuWidth = 360,
     puck,
   }) => {
-    const entityId = ((import.meta as any)?.env?.VITE_ENTITY_ID as string) || storeId || "";
+    const entityId =
+      ((import.meta as any)?.env?.VITE_ENTITY_ID as string) ||
+      storeId ||
+      puck.metadata?.entityId ||
+      "";
+
     const { data: listData } = useGetCategoriesQuery(
       {
         storeId: entityId,
@@ -109,25 +123,52 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
 
     const apiCategories = (listData?.data || [])
       .map((c: any) => {
-        const id = c?.id ?? c?.entityId ?? c?.value ?? c?._id ?? c?.code ?? c?.slug;
-        const name = c?.name ?? c?.label ?? c?.title ?? c?.slug ?? c?.code ?? c?.displayName ?? c?.text;
-        return { id: id != null ? String(id) : "", name: name ? String(name) : (id != null ? String(id) : ""), icon: c?.icon };
+        const id =
+          c?.id ?? c?.entityId ?? c?.value ?? c?._id ?? c?.code ?? c?.slug;
+        const name =
+          c?.name ??
+          c?.label ??
+          c?.title ??
+          c?.slug ??
+          c?.code ??
+          c?.displayName ??
+          c?.text;
+        return {
+          id: id != null ? String(id) : "",
+          name: name ? String(name) : id != null ? String(id) : "",
+          icon: c?.icon,
+        };
       })
       .filter((c: any) => c.id !== "");
-    const effectiveMode = (selectedCategories?.length || 0) > 0 && selectionMode !== "ids" ? "select" : selectionMode;
+    const effectiveMode =
+      (selectedCategories?.length || 0) > 0 && selectionMode !== "ids"
+        ? "select"
+        : selectionMode;
     const displayCategories: CategoryItem[] = useMemo(() => {
       if (effectiveMode === "select" && selectedCategories?.length) {
         return selectedCategories;
       }
       if (effectiveMode === "ids" && categoryIds) {
-        const ids = categoryIds.split(",").map((x) => x.trim()).filter(Boolean);
+        const ids = categoryIds
+          .split(",")
+          .map((x) => x.trim())
+          .filter(Boolean);
         return ids.map((id) => {
-          const match = apiCategories.find((c: any) => String(c.id ?? c.entityId ?? c.value) === String(id));
+          const match = apiCategories.find(
+            (c: any) => String(c.id ?? c.entityId ?? c.value) === String(id)
+          );
           return { id, name: match?.name || id, icon: match?.icon };
         });
       }
       return showAll ? apiCategories : apiCategories.slice(0, limit);
-    }, [showAll, effectiveMode, selectedCategories, categoryIds, apiCategories, limit]);
+    }, [
+      showAll,
+      effectiveMode,
+      selectedCategories,
+      categoryIds,
+      apiCategories,
+      limit,
+    ]);
 
     const ensureTree = async () => {
       if (tree || !hoverSubmenu) return;
@@ -150,13 +191,29 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
         return null;
       };
       const node = findNode(tree);
-      return (node?.children || []).map((c: any) => ({ id: String(c.id), name: String(c.name || "") }));
+      return (node?.children || []).map((c: any) => ({
+        id: String(c.id),
+        name: String(c.name || ""),
+      }));
     };
 
     return (
-      <Box position="relative" bg="white" border="1px solid" borderColor="gray.200" borderRadius="md" overflow="hidden">
+      <Box
+        position="relative"
+        bg="white"
+        border="1px solid"
+        borderColor="gray.200"
+        borderRadius="md"
+        overflow="hidden"
+      >
         {title ? (
-          <Box px={3} py={2} borderBottom="1px solid" borderColor="gray.200" fontWeight="semibold">
+          <Box
+            px={3}
+            py={2}
+            borderBottom="1px solid"
+            borderColor="gray.200"
+            fontWeight="semibold"
+          >
             {title}
           </Box>
         ) : null}
@@ -166,10 +223,11 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
               key={String(c.id)}
               onClick={(e: any) => {
                 if (puck?.isEditing) return e.preventDefault();
-                const href = matchDataCondition(urlRedirect, c)
+                const href = matchDataCondition(urlRedirect, c);
                 if (href) {
-                  if (String(href).startsWith('http')) window.open(String(href), '_blank', 'noopener,noreferrer')
-                  else window.location.assign(String(href))
+                  if (String(href).startsWith("http"))
+                    window.open(String(href), "_blank", "noopener,noreferrer");
+                  else window.location.assign(String(href));
                 }
               }}
               _hover={{ textDecoration: "none", bg: "gray.50" }}
@@ -183,48 +241,61 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
                 setHoveredId(c.id);
                 await ensureTree();
               }}
-              onMouseLeave={() => setHoveredId((prev) => (prev === c.id ? null : prev))}
+              onMouseLeave={() =>
+                setHoveredId((prev) => (prev === c.id ? null : prev))
+              }
             >
-              <Text color="gray.800" fontSize="sm">{c.name}</Text>
+              <Text color="gray.800" fontSize="sm">
+                {c.name}
+              </Text>
               <Icon as={FiChevronRight} color="gray.400" />
 
-              {hoverSubmenu && hoveredId === c.id && (subItems(c.id).length > 0) && (
-                <Box
-                  position="absolute"
-                  top={0}
-                  left="100%"
-                  w={`${submenuWidth}px`}
-                  bg="white"
-                  border="1px solid"
-                  borderColor="gray.200"
-                  borderRadius="md"
-                  boxShadow="md"
-                  zIndex={10}
-                >
-                  <Stack gap={0} py={2}>
-                    {subItems(c.id).map((s) => (
-                      <Box
-                        key={String(s.id)}
-                        onClick={(e: any) => {
-                          if (puck?.isEditing) return e.preventDefault();
-                          const href = matchDataCondition(urlRedirect, s)
-                          if (href) {
-                            if (String(href).startsWith('http')) window.open(String(href), '_blank', 'noopener,noreferrer')
-                            else window.location.assign(String(href))
-                          }
-                        }}
-                        _hover={{ textDecoration: "none", bg: "gray.50" }}
-                        px={3}
-                        h={`${itemHeight - 6}px`}
-                        display="flex"
-                        alignItems="center"
-                      >
-                        <Text color="gray.700" fontSize="sm">{s.name}</Text>
-                      </Box>
-                    ))}
-                  </Stack>
-                </Box>
-              )}
+              {hoverSubmenu &&
+                hoveredId === c.id &&
+                subItems(c.id).length > 0 && (
+                  <Box
+                    position="absolute"
+                    top={0}
+                    left="100%"
+                    w={`${submenuWidth}px`}
+                    bg="white"
+                    border="1px solid"
+                    borderColor="gray.200"
+                    borderRadius="md"
+                    boxShadow="md"
+                    zIndex={10}
+                  >
+                    <Stack gap={0} py={2}>
+                      {subItems(c.id).map((s) => (
+                        <Box
+                          key={String(s.id)}
+                          onClick={(e: any) => {
+                            if (puck?.isEditing) return e.preventDefault();
+                            const href = matchDataCondition(urlRedirect, s);
+                            if (href) {
+                              if (String(href).startsWith("http"))
+                                window.open(
+                                  String(href),
+                                  "_blank",
+                                  "noopener,noreferrer"
+                                );
+                              else window.location.assign(String(href));
+                            }
+                          }}
+                          _hover={{ textDecoration: "none", bg: "gray.50" }}
+                          px={3}
+                          h={`${itemHeight - 6}px`}
+                          display="flex"
+                          alignItems="center"
+                        >
+                          <Text color="gray.700" fontSize="sm">
+                            {s.name}
+                          </Text>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
             </Box>
           ))}
         </Stack>

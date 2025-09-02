@@ -2,7 +2,7 @@ import { ComponentConfig } from "@measured/puck";
 import { withLayout } from "../../components/Layout";
 import { Section } from "../../components/Section";
 import { ErrorBoundary } from "react-error-boundary";
-import React, {useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
   Box,
   Text,
@@ -30,7 +30,7 @@ import {
 } from "react-icons/fi";
 import { useGetCategoriesQuery } from "../../hooks/category/useGetCategoriesQuery";
 import type { ICategory } from "../../services/sale/category/category.type";
-import {matchDataCondition} from "@/blocks/CommonFunction/function.ts";
+import { matchDataCondition } from "@/blocks/CommonFunction/function.ts";
 import { CategoryMultiSelect } from "@/components/CategoryMultiSelect";
 import { CategorySingleSelect } from "@/components/CategorySingleSelect";
 import { getCategoryTree } from "@/services/sale/category/category.api";
@@ -73,19 +73,29 @@ const iconMap = {
 // Function to get icon based on category name
 const getCategoryIcon = (categoryName: string) => {
   const name = categoryName.toLowerCase();
-  if (name.includes('phone') || name.includes('mobile')) return 'FiSmartphone';
-  if (name.includes('computer') || name.includes('laptop') || name.includes('pc')) return 'FiMonitor';
-  if (name.includes('watch') || name.includes('smartwatch')) return 'FiWatch';
-  if (name.includes('camera') || name.includes('photo')) return 'FiCamera';
-  if (name.includes('headphone') || name.includes('audio') || name.includes('sound')) return 'FiHeadphones';
-  if (name.includes('game') || name.includes('gaming')) return 'FiZap';
-  return 'FiPackage'; // default icon
+  if (name.includes("phone") || name.includes("mobile")) return "FiSmartphone";
+  if (
+    name.includes("computer") ||
+    name.includes("laptop") ||
+    name.includes("pc")
+  )
+    return "FiMonitor";
+  if (name.includes("watch") || name.includes("smartwatch")) return "FiWatch";
+  if (name.includes("camera") || name.includes("photo")) return "FiCamera";
+  if (
+    name.includes("headphone") ||
+    name.includes("audio") ||
+    name.includes("sound")
+  )
+    return "FiHeadphones";
+  if (name.includes("game") || name.includes("gaming")) return "FiZap";
+  return "FiPackage"; // default icon
 };
 
 const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
   title = "Browse By Category",
   subtitle = "Categories",
- urlRedirect ,
+  urlRedirect,
   storeId = ((import.meta as any)?.env?.VITE_ENTITY_ID as string) || "",
   mobile = 2,
   tablet = 4,
@@ -110,13 +120,24 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
   const redColor = "red.500";
 
   // Get storeId from environment variable
-  const entityId = ((import.meta as any)?.env?.VITE_ENTITY_ID as string) || storeId || "";
+  const entityId =
+    ((import.meta as any)?.env?.VITE_ENTITY_ID as string) ||
+    storeId ||
+    puck.metadata?.entityId ||
+    "";
 
   // Determine effective mode: if user already picked categories, honor that for rendering
-  const effectiveMode = (selectedCategories?.length || 0) > 0 && selectionMode !== "ids" ? "select" : selectionMode;
+  const effectiveMode =
+    (selectedCategories?.length || 0) > 0 && selectionMode !== "ids"
+      ? "select"
+      : selectionMode;
 
   // Fetch categories from API
-  const { data: categoriesData, isLoading, error } = useGetCategoriesQuery(
+  const {
+    data: categoriesData,
+    isLoading,
+    error,
+  } = useGetCategoriesQuery(
     {
       storeId: entityId,
       limit: showAll || effectiveMode !== "limit" ? undefined : limit,
@@ -176,7 +197,9 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
       .map((x) => x.trim())
       .filter(Boolean);
     displayCategories = ids.map((id) => {
-      const match = apiCategories.find((c: any) => String(c.id ?? c.entityId ?? c.value) === String(id));
+      const match = apiCategories.find(
+        (c: any) => String(c.id ?? c.entityId ?? c.value) === String(id)
+      );
       return { id, name: match?.name || id, icon: match?.icon };
     });
   } else if (parentCategoryId && Array.isArray(tree)) {
@@ -194,14 +217,30 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
   } else {
     const normalizedApi = (apiCategories || [])
       .map((c: any) => {
-        const id = c?.id ?? c?.entityId ?? c?.value ?? c?._id ?? c?.code ?? c?.slug;
-        const name = c?.name ?? c?.label ?? c?.title ?? c?.slug ?? c?.code ?? c?.displayName ?? c?.text;
-        return { id: id != null ? String(id) : "", name: name ? String(name) : (id != null ? String(id) : ""), icon: c?.icon };
+        const id =
+          c?.id ?? c?.entityId ?? c?.value ?? c?._id ?? c?.code ?? c?.slug;
+        const name =
+          c?.name ??
+          c?.label ??
+          c?.title ??
+          c?.slug ??
+          c?.code ??
+          c?.displayName ??
+          c?.text;
+        return {
+          id: id != null ? String(id) : "",
+          name: name ? String(name) : id != null ? String(id) : "",
+          icon: c?.icon,
+        };
       })
       .filter((c: any) => c.id !== "");
     displayCategories = shouldUseDefault
-      ? (showAll ? defaultCategories : defaultCategories.slice(0, limit))
-      : (showAll ? normalizedApi : normalizedApi.slice(0, limit));
+      ? showAll
+        ? defaultCategories
+        : defaultCategories.slice(0, limit)
+      : showAll
+      ? normalizedApi
+      : normalizedApi.slice(0, limit);
   }
 
   // console.log('CategoryGrid API Call:', {
@@ -216,11 +255,16 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
   // });
 
   // Pagination for desktop grid; horizontal scroll for mobile/tablet
-  const perPageCols = useBreakpointValue({ base: mobile, md: tablet, lg: desktop }) || desktop;
-  const isDesktop = useBreakpointValue({ base: false, md: false, lg: true }) || false;
+  const perPageCols =
+    useBreakpointValue({ base: mobile, md: tablet, lg: desktop }) || desktop;
+  const isDesktop =
+    useBreakpointValue({ base: false, md: false, lg: true }) || false;
   const [page, setPage] = React.useState(0);
   const perPage = Math.max(1, Number(perPageCols || desktop));
-  const totalPages = Math.max(1, Math.ceil((displayCategories?.length || 0) / perPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil((displayCategories?.length || 0) / perPage)
+  );
 
   React.useEffect(() => {
     // Clamp current page when data or layout changes
@@ -240,8 +284,8 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
     return {
       cardSize: {
         base: `${100 / mobile}%`, // Mobile: divide by mobile columns
-        md: `${100 / tablet}%`,   // Tablet: divide by tablet columns
-        lg: `${100 / desktop}%`,  // Desktop: divide by desktop columns
+        md: `${100 / tablet}%`, // Tablet: divide by tablet columns
+        lg: `${100 / desktop}%`, // Desktop: divide by desktop columns
       },
       gap: {
         base: 2,
@@ -257,7 +301,7 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
         base: 5,
         md: 5,
         lg: 6,
-      }
+      },
     };
   };
 
@@ -283,7 +327,7 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
     }
   };
 
-  const onClickCategory = (item:any) => {
+  const onClickCategory = (item: any) => {
     if (!bindSelectedCategoryVariableName) return;
     setVars((prev) => ({
       ...prev,
@@ -311,7 +355,9 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
                 {title}
               </Text>
               {isDesktop && totalPages > 1 ? (
-                <Text fontSize="sm" color="gray.500">Page {page + 1} / {totalPages}</Text>
+                <Text fontSize="sm" color="gray.500">
+                  Page {page + 1} / {totalPages}
+                </Text>
               ) : null}
             </Flex>
           </Stack>
@@ -341,7 +387,7 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
           </Stack>
         </Flex>
 
-                {/* Categories Grid/Slider */}
+        {/* Categories Grid/Slider */}
         <Box>
           {/* Mobile/Tablet: Horizontal Scroll */}
           <Box
@@ -358,83 +404,97 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
             display={{ base: "block", md: "block", lg: "none" }}
           >
             <Stack
-                direction="row"
-                gap={responsiveSizing.gap}
-                minW="max-content"
-                pb={2}
-                display="flex"
-                flexWrap="nowrap"
-                overflowX="auto"
-                css={{
-                  "&::-webkit-scrollbar": { display: "none" },
-                  scrollbarWidth: "none",
-                  msOverflowStyle: "none",
-                }}
+              direction="row"
+              gap={responsiveSizing.gap}
+              minW="max-content"
+              pb={2}
+              display="flex"
+              flexWrap="nowrap"
+              overflowX="auto"
+              css={{
+                "&::-webkit-scrollbar": { display: "none" },
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
             >
-                             {isLoading ? (
-                 // Loading skeleton 
-                 Array.from({ length: showAll || (selectionMode !== "limit") ? Math.min(visibleCategories.length || 8, 8) : limit }).map((_, index) => (
-                   <Skeleton 
-                     key={`skeleton-${index}`} 
-                     h={{ base: "100px", md: "110px" }} 
-                     w={{ base: "100px", md: "110px" }} 
-                     borderRadius="md" 
-                   /> 
-                 )) 
-               ) : error ? (
-                 // Error state
-                 <Text color="red.500" fontSize="sm">
-                   Failed to load categories
-                 </Text>
-               ) : (
-                 visibleCategories.map((category: any) => {
-                   // Handle both API data (ICategory) and mock data
-                   const categoryName = category.name || '';
-                   const categoryId = category.id || '';
-                   const iconKey = category.icon || getCategoryIcon(categoryName);
-                   const IconComponent = iconMap[iconKey as keyof typeof iconMap];
-                   const isSelected = selectedCategory === categoryId;
+              {isLoading ? (
+                // Loading skeleton
+                Array.from({
+                  length:
+                    showAll || selectionMode !== "limit"
+                      ? Math.min(visibleCategories.length || 8, 8)
+                      : limit,
+                }).map((_, index) => (
+                  <Skeleton
+                    key={`skeleton-${index}`}
+                    h={{ base: "100px", md: "110px" }}
+                    w={{ base: "100px", md: "110px" }}
+                    borderRadius="md"
+                  />
+                ))
+              ) : error ? (
+                // Error state
+                <Text color="red.500" fontSize="sm">
+                  Failed to load categories
+                </Text>
+              ) : (
+                visibleCategories.map((category: any) => {
+                  // Handle both API data (ICategory) and mock data
+                  const categoryName = category.name || "";
+                  const categoryId = category.id || "";
+                  const iconKey =
+                    category.icon || getCategoryIcon(categoryName);
+                  const IconComponent =
+                    iconMap[iconKey as keyof typeof iconMap];
+                  const isSelected = selectedCategory === categoryId;
 
-                return (
+                  return (
                     <Link
                       key={String(categoryId)}
-                      href={!puck?.isEditing && urlRedirect ? matchDataCondition(urlRedirect,category) : undefined}
-                       onClick={(e) => {
-                         if (puck?.isEditing) e.preventDefault();
-                       }}
-                     >
+                      href={
+                        !puck?.isEditing && urlRedirect
+                          ? matchDataCondition(urlRedirect, category)
+                          : undefined
+                      }
+                      onClick={(e) => {
+                        if (puck?.isEditing) e.preventDefault();
+                      }}
+                    >
                       <Button
-                         variant="outline"
-                           size="lg"
-                           h={{ base: "100px", md: "110px" }}
-                           w={{ base: "100px", md: "110px" }}
-                           minW={{ base: "100px", md: "110px" }}
-                           flexDirection="column"
-                           gap={{ base: 2, md: 2 }}
-                           bg={isSelected ? redColor : "white"}
-                           borderColor={isSelected ? redColor : "gray.200"}
-                           color={isSelected ? "white" : "gray.800"}
-                           _hover={{
-                             bg: isSelected ? redColor : "gray.50",
-                             borderColor: isSelected ? redColor : "gray.300",
-                           }}
-                           onClick={() => onClickCategory(category)}
-                           transition="all 0.2s"
-                           flexShrink={0}
-                         >
-                           <Icon
-                             as={IconComponent}
-                             boxSize={responsiveSizing.iconSize}
-                             color={isSelected ? "white" : "gray.800"}
-                           />
-                           <Text fontSize={responsiveSizing.fontSize} fontWeight="medium">
-                             {categoryName}
-                           </Text>
-                         </Button>
-                       </Link>
-                   );
-                 })
-               )}
+                        variant="outline"
+                        size="lg"
+                        h={{ base: "100px", md: "110px" }}
+                        w={{ base: "100px", md: "110px" }}
+                        minW={{ base: "100px", md: "110px" }}
+                        flexDirection="column"
+                        gap={{ base: 2, md: 2 }}
+                        bg={isSelected ? redColor : "white"}
+                        borderColor={isSelected ? redColor : "gray.200"}
+                        color={isSelected ? "white" : "gray.800"}
+                        _hover={{
+                          bg: isSelected ? redColor : "gray.50",
+                          borderColor: isSelected ? redColor : "gray.300",
+                        }}
+                        onClick={() => onClickCategory(category)}
+                        transition="all 0.2s"
+                        flexShrink={0}
+                      >
+                        <Icon
+                          as={IconComponent}
+                          boxSize={responsiveSizing.iconSize}
+                          color={isSelected ? "white" : "gray.800"}
+                        />
+                        <Text
+                          fontSize={responsiveSizing.fontSize}
+                          fontWeight="medium"
+                        >
+                          {categoryName}
+                        </Text>
+                      </Button>
+                    </Link>
+                  );
+                })
+              )}
             </Stack>
           </Box>
 
@@ -443,77 +503,87 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
             columns={{
               base: mobile,
               md: tablet,
-              lg: desktop
+              lg: desktop,
             }}
             gap={responsiveSizing.gap}
             display={{
               base: "none",
               md: "none",
-              lg: "grid"
+              lg: "grid",
             }}
           >
-                         {isLoading ? (
-              // Loading skeleton for desktop 
-              Array.from({ length: isDesktop ? perPage : (showAll || (selectionMode !== "limit") ? 12 : limit) }).map((_, index) => (
-                <Skeleton 
-                  key={`skeleton-desktop-${index}`} 
-                  h="120px" 
-                  w="100%" 
-                  borderRadius="md" 
-                /> 
-              )) 
-             ) : error ? (
-               // Error state
-               <Text color="red.500" fontSize="sm">
-                 Failed to load categories
-               </Text>
-             ) : (
-               visibleCategories.map((category: any) => {
-                 // Handle both API data (ICategory) and mock data
-                 const categoryName = category.name || '';
-                 const categoryId = category.id || '';
-                 const iconKey = category.icon || getCategoryIcon(categoryName);
-                 const IconComponent = iconMap[iconKey as keyof typeof iconMap];
-                 const isSelected = selectedCategory === categoryId;
+            {isLoading ? (
+              // Loading skeleton for desktop
+              Array.from({
+                length: isDesktop
+                  ? perPage
+                  : showAll || selectionMode !== "limit"
+                  ? 12
+                  : limit,
+              }).map((_, index) => (
+                <Skeleton
+                  key={`skeleton-desktop-${index}`}
+                  h="120px"
+                  w="100%"
+                  borderRadius="md"
+                />
+              ))
+            ) : error ? (
+              // Error state
+              <Text color="red.500" fontSize="sm">
+                Failed to load categories
+              </Text>
+            ) : (
+              visibleCategories.map((category: any) => {
+                // Handle both API data (ICategory) and mock data
+                const categoryName = category.name || "";
+                const categoryId = category.id || "";
+                const iconKey = category.icon || getCategoryIcon(categoryName);
+                const IconComponent = iconMap[iconKey as keyof typeof iconMap];
+                const isSelected = selectedCategory === categoryId;
 
                 return (
-                    <Link
-                      key={String(categoryId)}
-                      href={!puck?.isEditing && urlRedirect ? matchDataCondition(urlRedirect,category) : undefined}
-                       onClick={(e) => {
-                         if (puck?.isEditing) e.preventDefault();
-                       }}
-                     >
-                      <Button
-                         variant="outline"
-                         size="lg"
-                         h="120px"
-                         w="100%"
-                         flexDirection="column"
-                         gap={3}
-                         bg={isSelected ? redColor : "white"}
-                         borderColor={isSelected ? redColor : "gray.200"}
-                         color={isSelected ? "white" : "gray.800"}
-                         _hover={{
-                           bg: isSelected ? redColor : "gray.50",
-                           borderColor: isSelected ? redColor : "gray.300",
-                         }}
-                         onClick={() => onClickCategory(category)}
-                         transition="all 0.2s"
-                       >
-                         <Icon
-                           as={IconComponent}
-                           boxSize={6}
-                           color={isSelected ? "white" : "gray.800"}
-                         />
-                         <Text fontSize="sm" fontWeight="medium">
-                           {categoryName}
-                         </Text>
-                       </Button>
-                     </Link>
-                 );
-               })
-             )}
+                  <Link
+                    key={String(categoryId)}
+                    href={
+                      !puck?.isEditing && urlRedirect
+                        ? matchDataCondition(urlRedirect, category)
+                        : undefined
+                    }
+                    onClick={(e) => {
+                      if (puck?.isEditing) e.preventDefault();
+                    }}
+                  >
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      h="120px"
+                      w="100%"
+                      flexDirection="column"
+                      gap={3}
+                      bg={isSelected ? redColor : "white"}
+                      borderColor={isSelected ? redColor : "gray.200"}
+                      color={isSelected ? "white" : "gray.800"}
+                      _hover={{
+                        bg: isSelected ? redColor : "gray.50",
+                        borderColor: isSelected ? redColor : "gray.300",
+                      }}
+                      onClick={() => onClickCategory(category)}
+                      transition="all 0.2s"
+                    >
+                      <Icon
+                        as={IconComponent}
+                        boxSize={6}
+                        color={isSelected ? "white" : "gray.800"}
+                      />
+                      <Text fontSize="sm" fontWeight="medium">
+                        {categoryName}
+                      </Text>
+                    </Button>
+                  </Link>
+                );
+              })
+            )}
           </SimpleGrid>
         </Box>
       </Box>
@@ -523,95 +593,95 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
 };
 
 const CategoryGridFields = {
-    header: {
-      type: "slot",
-      label: "Header Slot",
-    },
-    bindSelectedCategoryVariableName: {
-      type: "text",
-      label: "Bind Selected Category Var",
-      placeholder: "products.categoryId",
-    },
-    showAll: {
-      type: "radio",
-      label: "Show All Categories",
-      options: [
-        { label: "Yes", value: true },
-        { label: "No", value: false },
-      ],
-    },
-    selectionMode: {
-      type: "radio",
-      label: "Selection Mode",
-      options: [
-        { label: "By Limit", value: "limit" },
-        { label: "Pick Categories", value: "select" },
-        { label: "Enter IDs", value: "ids" },
-      ],
-    },
-    selectedCategories: {
-      type: "custom",
-      label: "Choose Categories",
-      render: CategoryMultiSelect,
-    },
-    parentCategoryId: {
-      type: "custom",
-      label: "Parent Category",
-      render: CategorySingleSelect,
-    },
-    categoryIds: {
-      type: "text",
-      label: "Category IDs (comma-separated)",
-      placeholder: "id1,id2,id3",
-    },
-    title: {
-      type: "text",
-      label: "Title",
-    },
-    subtitle: {
-      type: "text",
-      label: "Subtitle",
-    },
-    storeId: {
-      type: "text",
-      label: "Store ID",
-    },
-    urlRedirect: {
-      type: "text",
-      label: "Url",
-    },
-    mobile: {
-      type: "number",
-      label: "Mobile Columns",
-      min: 1,
-      max: 4,
-    },
-    tablet: {
-      type: "number",
-      label: "Tablet Columns",
-      min: 2,
-      max: 6,
-    },
-    desktop: {
-      type: "number",
-      label: "Desktop Columns",
-      min: 3,
-      max: 8,
-    },
-    limit: {
-      type: "number",
-      label: "Total Categories Limit",
-      min: 1,
-      max: 20,
-    },
-    footer: {
-      type: "slot",
-      label: "Footer Slot",
-    },
+  header: {
+    type: "slot",
+    label: "Header Slot",
+  },
+  bindSelectedCategoryVariableName: {
+    type: "text",
+    label: "Bind Selected Category Var",
+    placeholder: "products.categoryId",
+  },
+  showAll: {
+    type: "radio",
+    label: "Show All Categories",
+    options: [
+      { label: "Yes", value: true },
+      { label: "No", value: false },
+    ],
+  },
+  selectionMode: {
+    type: "radio",
+    label: "Selection Mode",
+    options: [
+      { label: "By Limit", value: "limit" },
+      { label: "Pick Categories", value: "select" },
+      { label: "Enter IDs", value: "ids" },
+    ],
+  },
+  selectedCategories: {
+    type: "custom",
+    label: "Choose Categories",
+    render: CategoryMultiSelect,
+  },
+  parentCategoryId: {
+    type: "custom",
+    label: "Parent Category",
+    render: CategorySingleSelect,
+  },
+  categoryIds: {
+    type: "text",
+    label: "Category IDs (comma-separated)",
+    placeholder: "id1,id2,id3",
+  },
+  title: {
+    type: "text",
+    label: "Title",
+  },
+  subtitle: {
+    type: "text",
+    label: "Subtitle",
+  },
+  storeId: {
+    type: "text",
+    label: "Store ID",
+  },
+  urlRedirect: {
+    type: "text",
+    label: "Url",
+  },
+  mobile: {
+    type: "number",
+    label: "Mobile Columns",
+    min: 1,
+    max: 4,
+  },
+  tablet: {
+    type: "number",
+    label: "Tablet Columns",
+    min: 2,
+    max: 6,
+  },
+  desktop: {
+    type: "number",
+    label: "Desktop Columns",
+    min: 3,
+    max: 8,
+  },
+  limit: {
+    type: "number",
+    label: "Total Categories Limit",
+    min: 1,
+    max: 20,
+  },
+  footer: {
+    type: "slot",
+    label: "Footer Slot",
+  },
 } as const;
 
 const CategoryGridInternal: ComponentConfig<CategoryGridProps> = {
-  label: 'Categories',
+  label: "Categories",
   fields: CategoryGridFields as any,
   defaultProps: {
     title: "Browse By Category",

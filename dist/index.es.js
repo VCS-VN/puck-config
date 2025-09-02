@@ -1,4 +1,4 @@
-import { b as a, P, a as e } from "./index-DARSJq42.js";
+import { b as a, P, a as e } from "./index-Cj0GN3uA.js";
 export * from "@chakra-ui/react";
 export {
   a as PageEditorProvider,

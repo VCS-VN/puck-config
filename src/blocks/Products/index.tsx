@@ -119,6 +119,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     limit: limit,
     sortBy,
     hideOutOfStock,
+    storeId: puck?.metadata?.entityId,
   });
 
   const extraFilters = useMemo(() => {
