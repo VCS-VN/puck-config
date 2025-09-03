@@ -32,8 +32,6 @@ export type ProductsProps = {
   desktop: number;
   limit: number;
   categoryId?: string;
-  // searchSize: SizeType;
-  storeId?: string;
   variableName?: string;
   noResultsText?: string;
   // storefront options
@@ -63,8 +61,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   desktop,
   limit,
   categoryId,
-  // searchSize,
-  storeId,
   variableName,
   noResultsText,
   header: HeaderSlot,
@@ -131,7 +127,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
 
   const { data: products, isLoading } = useGetProductsQuery(
     {
-      // storeSlug: store?.slug,
+      ...queries,
       query: queries.search,
       isGettingModels: true,
       isGettingDefaultModel: true,
@@ -147,7 +143,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       hideOutOfStock: queries.hideOutOfStock,
       priceMin: extraFilters?.priceMin,
       priceMax: extraFilters?.priceMax,
-      storeId: storeId,
     },
     { keepPreviousData: true }
   );
@@ -513,52 +508,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
         )}
     </Box>
   );
-  //   // <Section>
-  //   //   <Input.Search
-  //   //     placeholder="Search..."
-  //   //     onSearch={(e) => {
-  //   //       setSearch(e);
-  //   //       setPage(1);
-  //   //     }}
-  //   //     loading={isLoading}
-  //   //     size={searchSize}
-  //   //   />
-  //   //   <Divider />
-
-  //   // </Section>
-  // );
 };
-
-// const buildTreeData = (nodes: any[] = []): any[] =>
-//   nodes.map((n) => ({
-//     title: n.name,
-//     value: n.id,
-//     children: buildTreeData(n.children || []),
-//   }));
-
-// const CategoryField: FC<{ value?: string; onChange: (v?: string) => void }> = ({
-//   value,
-//   onChange,
-// }) => {
-//   const store = useRecoilValue(CurrentStoreState);
-//   const { data } = useGetCategoryTreeQuery(
-//     { storeSlug: store?.slug },
-//     { enabled: !!store?.slug }
-//   );
-
-//   return (
-//     <TreeSelect
-//       value={value}
-//       onChange={onChange}
-//       allowClear
-//       treeData={buildTreeData(data?.data)}
-//       showSearch
-//       treeNodeFilterProp="title"
-//       style={{ width: "100%" }}
-//       placeholder="Select category"
-//     />
-//   );
-// };
 
 const ProductsInternal: ComponentConfig = {
   fields: {
@@ -701,7 +651,6 @@ const ProductsInternal: ComponentConfig = {
         variableName={variableName}
         limit={limit}
         noResultsText={noResultsText}
-        storeId={puck?.metadata?.storeId}
         header={header}
         footer={footer}
         selectionMode={selectionMode}

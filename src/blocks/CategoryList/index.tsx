@@ -12,7 +12,6 @@ type CategoryItem = { id: string; name: string; icon?: string };
 
 export type CategoryListProps = {
   title?: string;
-  storeId?: string;
   urlRedirect?: string;
   showAll?: boolean;
   selectionMode?: "limit" | "select" | "ids";
@@ -28,7 +27,6 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
   label: "Category List",
   fields: {
     title: { type: "text", label: "Title" },
-    storeId: { type: "text", label: "Store ID" },
     urlRedirect: { type: "text", label: "Url" },
     showAll: {
       type: "radio",
@@ -72,7 +70,6 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
   },
   defaultProps: {
     title: "",
-    storeId: ((import.meta as any)?.env?.VITE_ENTITY_ID as string) || "",
     urlRedirect: "",
     showAll: false,
     selectionMode: "limit",
@@ -85,7 +82,6 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
   },
   render: ({
     title,
-    storeId,
     urlRedirect,
     showAll,
     selectionMode,
@@ -99,8 +95,7 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
   }) => {
     const entityId =
       ((import.meta as any)?.env?.VITE_ENTITY_ID as string) ||
-      storeId ||
-      puck.metadata?.entityId ||
+      puck?.metadata?.entityId ||
       "";
 
     const { data: listData } = useGetCategoriesQuery(
