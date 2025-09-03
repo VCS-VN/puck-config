@@ -20,7 +20,11 @@ export default defineConfig({
     // dts({
     //   insertTypesEntry: true,
     // }),
-    dts({ include: ["src"] }),
+    dts({
+      rollupTypes: true, // Rolls up types into index.d.ts for easier resolution
+      include: ["src"], // Source files to generate types from
+      exclude: ["node_modules", "dist"],
+    }),
     tsconfigPaths(),
   ],
   resolve: {
@@ -45,7 +49,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "PuckConfig",
-      fileName: (format) => `index.${format}.js`,
+      fileName: (format) => `puck-config.${format}.js`,
       formats: ["es", "cjs"],
     },
     rollupOptions: {
@@ -60,16 +64,8 @@ export default defineConfig({
         // "recoil",
       ],
       output: {
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-          // "@chakra-ui/react": "ChakraUI",
-          // "@emotion/react": "EmotionReact",
-          // "@emotion/styled": "EmotionStyled",
-          // "framer-motion": "FramerMotion",
-          // "@tanstack/react-query": "ReactQuery",
-          // recoil: "Recoil",
-        },
+        assetFileNames: "assets/[name][extname]",
+        entryFileNames: "[name].js",
       },
     },
     sourcemap: true,

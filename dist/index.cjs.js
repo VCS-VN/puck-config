@@ -1,2 +1,0 @@
-"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const r=require("./index-DizpRHcx.cjs"),t=require("@chakra-ui/react");exports.PageEditorProvider=r.PageEditorProvider;exports.Products=r.Products;exports.PuckConfig=r.PuckConfig;Object.keys(t).forEach(e=>{e!=="default"&&!Object.prototype.hasOwnProperty.call(exports,e)&&Object.defineProperty(exports,e,{enumerable:!0,get:()=>t[e]})});
-//# sourceMappingURL=index.cjs.js.map
