@@ -47,10 +47,10 @@ export function PageEditorProvider({
     [colorModeProps]
   );
   return (
-    <Provider {...propsWithDefaults}>
-      <QueryClientProvider client={qc}>
+    <QueryClientProvider client={qc}>
+      <Provider {...propsWithDefaults}>
         <RecoilRoot>{children}</RecoilRoot>
-      </QueryClientProvider>
-    </Provider>
+      </Provider>
+    </QueryClientProvider>
   );
 }

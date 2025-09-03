@@ -691,6 +691,7 @@ const ProductsInternal: ComponentConfig = {
     bindCategoryVariableName,
     openMiniCartAfterAdd,
   }) => {
+    console.log("🚀 ~ puck:", puck);
     return (
       <ProductsRender
         mobile={mobile}
