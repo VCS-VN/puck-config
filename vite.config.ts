@@ -47,10 +47,10 @@ export default defineConfig({
   define: { global: "window" },
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/index.ts"),
+      entry: "src/index.ts",
       name: "PuckConfig",
       fileName: (format) => `puck-config.${format}.js`,
-      formats: ["es", "cjs"],
+      formats: ["es", "umd"],
     },
     rollupOptions: {
       external: [
