@@ -49,7 +49,7 @@ export default defineConfig({
     lib: {
       entry: "src/index.ts",
       name: "PuckConfig",
-      fileName: (format) => `puck-config.${format}.js`,
+      fileName: (format) => `index.${format}.js`,
       formats: ["es", "umd"],
     },
     rollupOptions: {
@@ -58,6 +58,7 @@ export default defineConfig({
         "react-dom",
         "@chakra-ui/react",
         "@emotion/react",
+        "@measured/puck",
         // "@emotion/styled",
         // "framer-motion",
         // "@tanstack/react-query",
