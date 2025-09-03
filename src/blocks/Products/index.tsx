@@ -118,7 +118,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     hideOutOfStock,
     storeId: puck?.metadata?.entityId,
   });
-  console.log("🚀 ~ ProductsRender ~ queries:", queries);
+  console.log("🚀 ~ ProductsRender ~ queries:", puck?.metadata?.entityId);
 
   const extraFilters = useMemo(() => {
     const v = bindFiltersVariableName
@@ -130,6 +130,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   const { data: products, isLoading } = useGetProductsQuery(
     {
       ...queries,
+      storeId: puck?.metadata?.entityId,
       query: queries.search,
       isGettingModels: true,
       isGettingDefaultModel: true,
