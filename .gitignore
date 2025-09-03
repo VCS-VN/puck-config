@@ -136,6 +136,6 @@ out
 # Vite logs files
 vite.config.js.timestamp-*
 
-# dist/
+dist/
 
 src/routeTree.gen.ts

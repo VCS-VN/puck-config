@@ -2,8 +2,8 @@
   "name": "puck-config",
   "private": true,
   "version": "0.0.1",
-  "main": "dist/index.umd.js",
-  "module": "dist/index.es.js",
+  "main": "dist/index.umd.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "files": [
@@ -73,6 +73,5 @@
     "@emotion/styled": "^11.14.1"
   },
   "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b",
-  "dependencies": {
-  }
+  "dependencies": {}
 }

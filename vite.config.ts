@@ -49,7 +49,7 @@ export default defineConfig({
     lib: {
       entry: "src/index.ts",
       name: "PuckConfig",
-      fileName: (format) => `index.${format}.js`,
+      fileName: "index",
       formats: ["es", "umd"],
     },
     rollupOptions: {
@@ -66,7 +66,11 @@ export default defineConfig({
       ],
       output: {
         assetFileNames: "assets/[name][extname]",
-        entryFileNames: "[name].js",
+        globals: {
+          react: "React",
+          "react-dom": "ReactDOM",
+          // Add globals for other externals if needed for UMD (e.g., '@chakra-ui/react': 'ChakraUI')
+        },
       },
     },
     sourcemap: true,
