@@ -78,8 +78,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   openMiniCartAfterAdd = true,
   puck,
 }) => {
-  console.log("🚀 ~ ProductsRender ~ puck:", puck);
-  // const store = useRecoilValue(CurrentStoreState);
   const variables = useRecoilValue(VariableState);
   const [productionState, setProductionState] = useRecoilState(ProductionState);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -118,7 +116,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     hideOutOfStock,
     storeId: puck?.metadata?.entityId,
   });
-  console.log("🚀 ~ ProductsRender ~ queries:", puck?.metadata?.entityId);
 
   const extraFilters = useMemo(() => {
     const v = bindFiltersVariableName
@@ -644,7 +641,6 @@ const ProductsInternal: ComponentConfig = {
     bindCategoryVariableName,
     openMiniCartAfterAdd,
   }) => {
-    console.log("🚀 ~ puckasdasd:", puck);
     return (
       <ProductsRender
         mobile={mobile}
