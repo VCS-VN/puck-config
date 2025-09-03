@@ -144,11 +144,13 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       priceMin: extraFilters?.priceMin,
       priceMax: extraFilters?.priceMax,
     },
-    { keepPreviousData: true }
+    {
+      refetchOnWindowFocus: false,
+    }
   );
 
   const saveCartToStore = (carts: any[]) => {
-    setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
+    setProductionState((prev) => ({ ...prev, [keyAddToCart]: carts || [] }));
     setSelectedProduct(null);
     if (openMiniCartAfterAdd) setCartOpen(true);
   };
@@ -204,7 +206,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   useEffect(() => {
     // có dom
     // giá trị biến thay đổi
-    debouncedSetValue(valueOfSearchProductsVariable || "");
+    debouncedSetValue((valueOfSearchProductsVariable || "") as any);
 
     return () => debouncedSetValue.cancel();
   }, [valueOfSearchProductsVariable, debouncedSetValue]);
