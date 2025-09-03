@@ -137,3 +137,5 @@ out
 vite.config.js.timestamp-*
 
 # dist/
+
+src/routeTree.gen.ts
