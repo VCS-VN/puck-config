@@ -185,9 +185,19 @@ const BannerInternal: ComponentConfig<BannerProps> = {
   }) => {
 
     const {data: bannerData} = useGetSlidersQuery({})
-    console.log("bannerData",bannerData)
     const [index, setIndex] = useState(0);
     const timerRef = useRef<number | null>(null);
+    const convertParams = (paramsList:any[]) => {
+      if (paramsList && _.isArray(paramsList)) {
+        let result :any = {}
+        paramsList.forEach((param:any) => {
+          result[param?.field] = param.value;
+        })
+        return result;
+      }
+      return {}
+      // item?.params
+    }
     const safeSlides = useMemo(() => {
       if (Array.isArray(slides) && slides.length > 0) {
         return slides
@@ -202,7 +212,7 @@ const BannerInternal: ComponentConfig<BannerProps> = {
             // headline: "Up to 12% off Voucher",
             description: "",
             ctaLabel: "Shop Now",
-            ctaHref: matchDataCondition(item?.url,item?.params),
+            ctaHref: matchDataCondition(item?.url,convertParams(item?.params)),
           }
         }).sort((a:any, b:any) => {
           const ai = a.index ?? Infinity;
