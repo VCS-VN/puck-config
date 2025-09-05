@@ -111,7 +111,7 @@ export const CheckoutRender: FC<CheckoutProps> = ({
     let total = 0;
     listProduct.forEach((item: any) => {
       let subTotalItem = round(
-        Number((item?.model.price ?? 0) / 100) * Number(item.quantity),
+        Number((item?.model?.price ?? 0) / 100) * Number(item.quantity),
         0
       );
       total += subTotalItem;
@@ -127,9 +127,9 @@ export const CheckoutRender: FC<CheckoutProps> = ({
   };
   const onProcessToCheckout = useProcessToCheckout({
     onSuccess: (data: any) => {
-      if (data?.url) {
-        window.location.href = data?.url;
-      }
+      // if (data?.url) {
+      //   window.location.href = data?.url;
+      // }
     },
   });
 

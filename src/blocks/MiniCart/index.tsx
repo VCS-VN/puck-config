@@ -10,7 +10,12 @@ import { CartDrawerOpenState } from "@/state/cartDrawer.state";
 export type MiniCartBlockProps = {
   keyAddToCart?: string;
   showBadge?: boolean;
-  placement?: "inline" | "fixed-top-right" | "fixed-bottom-right" | "fixed-bottom-left" | "fixed-top-left";
+  placement?:
+    | "inline"
+    | "fixed-top-right"
+    | "fixed-bottom-right"
+    | "fixed-bottom-left"
+    | "fixed-top-left";
 };
 
 const getPlacementStyle = (placement?: MiniCartBlockProps["placement"]) => {
@@ -32,7 +37,14 @@ const MiniCartBlockInternal: ComponentConfig<MiniCartBlockProps> = {
   label: "Mini Cart",
   fields: {
     keyAddToCart: { type: "text", label: "Cart Storage Key" },
-    showBadge: { type: "radio", label: "Show Badge", options: [ { label: "Yes", value: true }, { label: "No", value: false } ] },
+    showBadge: {
+      type: "radio",
+      label: "Show Badge",
+      options: [
+        { label: "Yes", value: true },
+        { label: "No", value: false },
+      ],
+    },
     placement: {
       type: "select",
       label: "Placement",
@@ -50,15 +62,21 @@ const MiniCartBlockInternal: ComponentConfig<MiniCartBlockProps> = {
     showBadge: true,
     placement: "fixed-bottom-right",
   },
-  render: ({ keyAddToCart = "productCart", showBadge = true, placement = "fixed-bottom-right", puck }) => {
+  render: ({
+    keyAddToCart = "productCart",
+    showBadge = true,
+    placement = "fixed-bottom-right",
+    puck,
+  }) => {
     const production = useRecoilValue(ProductionState);
     const setCartOpen = useSetRecoilState(CartDrawerOpenState);
 
-    const count = useMemo(() => {
+    const total = useMemo(() => {
       try {
-        const local = typeof window !== "undefined"
-          ? JSON.parse(localStorage.getItem(keyAddToCart) || "[]")
-          : [];
+        const local =
+          typeof window !== "undefined"
+            ? JSON.parse(localStorage.getItem(keyAddToCart) || "[]")
+            : [];
         const memory = (production?.[keyAddToCart] as any[]) || [];
         return (memory?.length || local?.length || 0) as number;
       } catch {
@@ -69,7 +87,9 @@ const MiniCartBlockInternal: ComponentConfig<MiniCartBlockProps> = {
     const style = getPlacementStyle(placement);
 
     const onClickCart = () => {
-      if (puck?.isEditing) return;
+      if (puck?.isEditing) {
+        return;
+      }
       setCartOpen(true);
     };
 
@@ -79,9 +99,14 @@ const MiniCartBlockInternal: ComponentConfig<MiniCartBlockProps> = {
           <IconButton aria-label="Cart" variant="ghost" onClick={onClickCart}>
             <LuShoppingCart />
           </IconButton>
-          {showBadge && count > 0 ? (
-            <Badge position="absolute" top="-2px" right="-2px" colorPalette="red">
-              {count}
+          {showBadge && total > 0 ? (
+            <Badge
+              position="absolute"
+              top="-2px"
+              right="-2px"
+              colorPalette="red"
+            >
+              {total}
             </Badge>
           ) : null}
         </Box>
@@ -93,4 +118,3 @@ const MiniCartBlockInternal: ComponentConfig<MiniCartBlockProps> = {
 };
 
 export const MiniCartBlock = withLayout(MiniCartBlockInternal);
-

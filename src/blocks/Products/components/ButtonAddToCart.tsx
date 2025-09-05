@@ -74,31 +74,34 @@ const ButtonAddToCart = (props: IProps) => {
   function addToCart() {
     const cart = JSON.parse(localStorage.getItem(keyAddToCart)) || [];
 
-    const existing = cart.find((item: any) => item.id === product.id && item?.model?.id === valueProduct?.id);
+    const existing = cart.find(
+      (item: any) =>
+        item.id === product?.id && item?.model?.id === valueProduct?.id
+    );
     if (existing) {
       existing.quantity += quantity;
     } else {
       cart.push({
         quantity,
-        "id": product?.id,
-        "name": product?.name,
-        "image": product?.image,
-        "storeId": product?.storeId,
-        "descriptions":product?.descriptions,
-        "price": product?.price,
-        "onlinePrice": product?.onlinePrice,
-        "weight": product?.weight,
-        "remainedQuantity": product?.remainedQuantity,
-        "hsCodeId": product?.hsCodeId,
-        "hsCode": product?.hsCode,
-        "model": {
-          "id": valueProduct?.id,
-          "name": valueProduct?.name,
-          "storeId": valueProduct?.storeId,
-          "price": valueProduct?.price,
-          "onlinePrice": valueProduct?.onlinePrice,
-          "weight": valueProduct?.weight,
-          "isDefault": valueProduct?.isDefault
+        id: product?.id,
+        name: product?.name,
+        image: product?.image,
+        storeId: product?.storeId,
+        descriptions: product?.descriptions,
+        price: product?.price,
+        onlinePrice: product?.onlinePrice,
+        weight: product?.weight,
+        remainedQuantity: product?.remainedQuantity,
+        hsCodeId: product?.hsCodeId,
+        hsCode: product?.hsCode,
+        model: {
+          id: selectedModel?.id,
+          name: selectedModel?.name,
+          storeId: selectedModel?.storeId,
+          price: selectedModel?.price,
+          onlinePrice: selectedModel?.onlinePrice,
+          weight: selectedModel?.weight,
+          isDefault: selectedModel?.isDefault,
         },
       });
     }
@@ -111,7 +114,9 @@ const ButtonAddToCart = (props: IProps) => {
       setProductionState((prev) => ({ ...prev, [keyAddToCart]: cart }));
     } catch {}
     // Open Header cart drawer for consistent UX
-    try { setCartOpen(true); } catch {}
+    try {
+      setCartOpen(true);
+    } catch {}
     onCloseDrawer?.();
     // toaster.create({
     //     title: `Add to cart success`,
