@@ -9,13 +9,16 @@ import {ALargeSmall} from "lucide-react";
 import {colorField} from "../../components/ColorField";
 import {IconField} from "../../components/Icon";
 import {renderIcon} from "../../components/Icon/IconConstant";
+import {matchDataCondition} from "../CommonFunction/function";
 
 export type IconProps = {
   variableName?: string
+  href?: string
   placeholder?: string
   initialValue?: string
   size?: "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | undefined;
   variant?: "outline" | "subtle" | "flushed" | undefined
+  fontSize?: string,
   color?: string,
   backgroundColor?: string,
   iconLeft?: string,
@@ -28,6 +31,7 @@ const baseInput: ComponentConfig<IconProps> = {
     variableName: {type: "text", label: "Variable Name (e.g., searchQuery)"},
     placeholder: {type: "text", label: "Placeholder"},
     initialValue: {type: "text", label: "Value"},
+    href: {type: "text", label: "Href"},
     size: {
       label: 'Size',
       type: "select",
@@ -51,6 +55,8 @@ const baseInput: ComponentConfig<IconProps> = {
         {label: "Outline", value: "outline"},
       ],
     },
+    fontSize: {type: "text", label: "Font Size"},
+
     color: {
       label: "Color",
       ...colorField,
@@ -80,6 +86,7 @@ const baseInput: ComponentConfig<IconProps> = {
     variableName: "",
     placeholder: "",
     initialValue: "",
+    href: "",
     size: 'md',
     variant: 'outline',
     color: '',
@@ -93,8 +100,10 @@ const baseInput: ComponentConfig<IconProps> = {
              variableName,
              placeholder,
              initialValue,
+             href,
              size,
              variant,
+             fontSize,
              color,
              backgroundColor,
              iconLeft,
@@ -119,6 +128,8 @@ const baseInput: ComponentConfig<IconProps> = {
       if (icon) {
         return renderIcon({
           iconName: icon,
+          mf_font_size: fontSize,
+          mf_color: color,
         })
       }
       if (text) {
@@ -129,12 +140,12 @@ const baseInput: ComponentConfig<IconProps> = {
     const renderStart = useMemo(() => {
       return renderElementInput(iconLeft,textLeft)
       },
-      [iconLeft,textLeft])
+      [iconLeft,textLeft,fontSize,color])
 
     const renderEnd = useMemo(() => {
         return renderElementInput(iconRight,textRight)
       },
-      [iconRight,textRight])
+      [iconRight,textRight,fontSize,color])
     return (
       <InputGroup startElement={renderStart} endElement={renderEnd}>
         <ChakraInput
@@ -145,6 +156,14 @@ const baseInput: ComponentConfig<IconProps> = {
           style={{
             color: color,
             backgroundColor: backgroundColor,
+          }}
+          _placeholder={{ color: "inherit" }}
+          onKeyDown={(e: KeyboardEvent) => {
+            if (e.key === "Enter" && href) {
+              window.location.href = matchDataCondition(href,{
+                value: value,
+              });
+            }
           }}
           onChange={(e) => {
             return setVariables((prev) => ({

@@ -1,9 +1,12 @@
 import { ComponentConfig } from "@measured/puck";
-import { Button, HStack } from "@chakra-ui/react"
+import { Button as ButtonC, HStack, Image } from "@chakra-ui/react"
 import {ALargeSmall} from "lucide-react";
 import {colorField} from "../../components/ColorField";
 import {IconField} from "../../components/Icon";
 import {renderIcon} from "../../components/Icon/IconConstant";
+import ggPlayImg from "./assets/google-play-store.png"
+import appStoreImg from "./assets/appStore.png"
+import {withLayout} from "../../components/Layout";
 // import { colorPalettes } from "compositions/lib/color-palettes"
 // import {ButtonVariant} from "@chakra-ui/react/dist/types/styled-system/generated/recipes.gen";
 export type ButtonProps = {
@@ -20,7 +23,7 @@ export type ButtonProps = {
   positionIcon?: 'left' | 'right'
 };
 
-export const ButtonPlugins: ComponentConfig<ButtonProps> = {
+const ButtonConfig: ComponentConfig<ButtonProps> = {
   label: "Button",
   fields: {
     label: {
@@ -132,7 +135,7 @@ export const ButtonPlugins: ComponentConfig<ButtonProps> = {
     return (
       <div>
         {(!typeView || typeView === 'normal') &&
-          <Button style={{
+          <ButtonC style={{
             color: color,
             backgroundColor:backgroundColor
           }}
@@ -149,16 +152,47 @@ export const ButtonPlugins: ComponentConfig<ButtonProps> = {
               mf_font_size: iconSize
             })}
 
-          </Button>
+          </ButtonC>
         }
         {
-          typeView === 'buttonGgPlay' && <div>buttonGgPlay</div>
+          typeView === 'buttonGgPlay' && <div>
+            <a href={href} className="cursor-pointer">
+              <Image
+                style={{
+                  border: "0.6px solid #ffffff",
+                  borderRadius: "4px",
+                }}
+                src={ggPlayImg}
+                width={"104px"}
+                height={"30px"}
+                alt={"buttonGgPlay"}
+                fit={"cover"}
+              />
+            </a>
+          </div>
         }
         {
-          typeView === 'buttonAppStore' && <div>buttonAppStore</div>
+          typeView === 'buttonAppStore' && <div>
+            <a href={href} className="cursor-pointer">
+              <Image
+                style={{
+                  border: "0.6px solid #ffffff",
+                  borderRadius: "4px",
+
+                }}
+                src={appStoreImg}
+                width={"104px"}
+                height={"30px"}
+                alt={"buttonAppStore"}
+              fit={"cover"}
+            /></a>
+
+          </div>
         }
 
       </div>
     );
   },
 };
+
+export const Button = withLayout(ButtonConfig)

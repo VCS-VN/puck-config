@@ -25,7 +25,8 @@ import { CategorySingleSelect } from "@/components/CategorySingleSelect";
 import { ProductMultiSelect } from "@/components/ProductMultiSelect";
 import { sendAnalyticsEvent } from "@/utils/analytics";
 import { parseUrlState, pushUrlState } from "@/utils/url";
-
+// @ts-ignore - CSS modules types handled via ambient declaration for build
+import "./style.css"
 export type ProductsProps = {
   mobile: number;
   tablet: number;
@@ -45,7 +46,8 @@ export type ProductsProps = {
     image?: string;
     price?: number;
   }>;
-  sortBy?: "newest" | "priceAsc" | "priceDesc" | "featured";
+  sortBy?: "newest" | "priceAsc" | "priceDesc" | "featured" | "selling";
+  sortOrder?: 'asc' | 'desc' | undefined;
   hideOutOfStock?: boolean;
   bindSortVariableName?: string;
   bindHideOutOfStockVariableName?: string;
@@ -69,6 +71,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   productIds,
   selectedProducts = [],
   sortBy = "featured",
+  sortOrder = undefined,
   hideOutOfStock = false,
   bindSortVariableName,
   bindHideOutOfStockVariableName,
@@ -113,6 +116,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     page: 1,
     limit: limit,
     sortBy,
+    sortOrder,
     hideOutOfStock,
     storeId: puck?.metadata?.entityId,
   });
@@ -140,17 +144,16 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
               : undefined) || categoryId
           : undefined,
       sortBy: queries.sortBy,
+      sortOrder: queries.sortOrder,
       hideOutOfStock: queries.hideOutOfStock,
       priceMin: extraFilters?.priceMin,
       priceMax: extraFilters?.priceMax,
     },
-    {
-      refetchOnWindowFocus: false,
-    }
+    { keepPreviousData: true }
   );
 
   const saveCartToStore = (carts: any[]) => {
-    setProductionState((prev) => ({ ...prev, [keyAddToCart]: carts || [] }));
+    setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
     setSelectedProduct(null);
     if (openMiniCartAfterAdd) setCartOpen(true);
   };
@@ -206,7 +209,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   useEffect(() => {
     // có dom
     // giá trị biến thay đổi
-    debouncedSetValue((valueOfSearchProductsVariable || "") as any);
+    debouncedSetValue(valueOfSearchProductsVariable || "");
 
     return () => debouncedSetValue.cancel();
   }, [valueOfSearchProductsVariable, debouncedSetValue]);
@@ -220,8 +223,8 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   }, [debouncedValue]);
 
   useEffect(() => {
-    setQueries((prev) => ({ ...prev, sortBy, hideOutOfStock }));
-  }, [sortBy, hideOutOfStock]);
+    setQueries((prev) => ({ ...prev, sortBy, sortOrder, hideOutOfStock }));
+  }, [sortBy, hideOutOfStock,sortOrder]);
 
   // Bind from variable state if variable names provided (for FacetControls)
   useEffect(() => {
@@ -248,6 +251,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
         search: (u.q as any) ?? prev.search,
         page: (u.page as any) ?? prev.page,
         sortBy: (u.sortBy as any) ?? prev.sortBy,
+        sortOrder: (u.sortOrder as any) ?? prev.sortOrder,
         hideOutOfStock: (u.hideOutOfStock as any) ?? prev.hideOutOfStock,
       }));
       // write filters variables
@@ -280,6 +284,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       q: queries.search || undefined,
       page: queries.page,
       sortBy: queries.sortBy,
+      sortOrder: queries.sortOrder,
       hideOutOfStock: queries.hideOutOfStock ? 1 : undefined,
       priceMin: pm,
       priceMax: px,
@@ -289,6 +294,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     queries.search,
     queries.page,
     queries.sortBy,
+    queries.sortOrder,
     queries.hideOutOfStock,
     extraFilters?.priceMin,
     extraFilters?.priceMax,
@@ -336,10 +342,16 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
         total,
         page: queries.page,
         sortBy: queries.sortBy,
+        sortOrder: queries.sortOrder,
       });
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [display?.map((p: any) => p.id), queries.page, queries.sortBy]);
+  }, [
+    display?.map((p: any) => p.id),
+    queries.page,
+    queries.sortBy,
+    queries.sortOrder,
+  ]);
 
   if (!isLoading && !products?.total) {
     return (
@@ -419,14 +431,33 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
                     </Box>
                   )}
                   <CardBody>
-                    <Image
-                      src={
-                        product.image ||
-                        "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
-                      }
-                      alt={product.name}
-                      borderRadius="md"
-                    />
+                    <div className={'product-card-image relative'}>
+                      <Image
+                        src={
+                          product.image ||
+                          "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
+                        }
+                        alt={product.name}
+                        borderRadius="md"
+                      />
+                      <div
+                        className={'product-card-image-button-add absolute'}
+                      >
+                        <Button
+                          className={'w-full'}
+                          colorPalette={"orange"}
+                          disabled={outOfStock}
+                          onClick={() => {
+                            setSelectedProduct(product);
+                          }}
+                        >
+                          Add to cart
+                        </Button>
+                      </div>
+
+                    </div>
+
+
                     <Card.Title>{product.name}</Card.Title>
                     <Box mt="2">
                       {isOnSale ? (
@@ -460,20 +491,12 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
                       )}
                     </Box>
                   </CardBody>
-                  <CardFooter gap="2">
-                    <Button
-                      colorPalette={"orange"}
-                      disabled={outOfStock}
-                      onClick={() => {
-                        setSelectedProduct(product);
-                      }}
-                    >
-                      Add to cart
-                    </Button>
-                    {/* <ButtonAddToCart 
-              
-                    /> */}
-                  </CardFooter>
+                  {/*<CardFooter gap="2">*/}
+                  {/*  */}
+                  {/*  /!* <ButtonAddToCart*/}
+
+                  {/*  /> *!/*/}
+                  {/*</CardFooter>*/}
                 </Card.Root>
               );
             })}
@@ -573,6 +596,15 @@ const ProductsInternal: ComponentConfig = {
         { label: "Newest", value: "newest" },
         { label: "Price: Low to High", value: "priceAsc" },
         { label: "Price: High to Low", value: "priceDesc" },
+        { label: "Selling", value: "selling" },
+      ],
+    },
+    sortOrder: {
+      type: "select",
+      label: "Sort Order",
+      options: [
+        { label: "Asc", value: "asc" },
+        { label: "Desc", value: "desc" },
       ],
     },
     hideOutOfStock: {
@@ -618,6 +650,7 @@ const ProductsInternal: ComponentConfig = {
     enableUrlSync: true,
     openMiniCartAfterAdd: true,
     sortBy: "featured",
+    sortOrder: "asc",
     hideOutOfStock: false,
     noResultsText: "No Results",
     variableName: undefined,
@@ -637,6 +670,7 @@ const ProductsInternal: ComponentConfig = {
     productIds,
     selectedProducts,
     sortBy,
+    sortOrder,
     hideOutOfStock,
     bindFiltersVariableName,
     enableUrlSync,
@@ -658,6 +692,7 @@ const ProductsInternal: ComponentConfig = {
         productIds={productIds}
         selectedProducts={selectedProducts as any}
         sortBy={sortBy}
+        sortOrder={sortOrder}
         hideOutOfStock={hideOutOfStock}
         bindFiltersVariableName={bindFiltersVariableName}
         enableUrlSync={enableUrlSync}

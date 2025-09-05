@@ -12,6 +12,9 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import {useGetSlidersQuery} from "../../hooks/sliders";
+import _ from "lodash";
+import {matchDataCondition} from "../CommonFunction/function";
 
 type Slide = {
   imageUrl: string;
@@ -100,7 +103,7 @@ const BannerInternal: ComponentConfig<BannerProps> = {
     slides: {
       type: "array",
       label: "Slides",
-      min: 1,
+      min: 0,
       arrayFields: {
         imageUrl: { type: "text", label: "Image URL" },
         alt: { type: "text", label: "Alt" },
@@ -143,16 +146,26 @@ const BannerInternal: ComponentConfig<BannerProps> = {
     overlayOpacity: 0.6,
     overlayWidthPercent: 60,
     slides: [
-      {
-        imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop",
-        alt: "Banner 1",
-        textEnabled: true,
-        eyebrow: "iPhone 14 Series",
-        headline: "Up to 10% off Voucher",
-        description: "",
-        ctaLabel: "Shop Now",
-        ctaHref: "#",
-      },
+      // {
+      //   imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop",
+      //   alt: "Banner 1",
+      //   textEnabled: true,
+      //   eyebrow: "iPhone 14 Series",
+      //   headline: "Up to 10% off Voucher",
+      //   description: "",
+      //   ctaLabel: "Shop Now",
+      //   ctaHref: "#",
+      // },
+      // {
+      //   imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop",
+      //   alt: "Banner 2",
+      //   textEnabled: true,
+      //   eyebrow: "iPhone 12 Series",
+      //   headline: "Up to 12% off Voucher",
+      //   description: "",
+      //   ctaLabel: "Shop Now 2",
+      //   ctaHref: "#",
+      // },
     ],
   },
   render: ({
@@ -170,9 +183,36 @@ const BannerInternal: ComponentConfig<BannerProps> = {
     slides,
     puck,
   }) => {
+
+    const {data: bannerData} = useGetSlidersQuery({})
+    console.log("bannerData",bannerData)
     const [index, setIndex] = useState(0);
     const timerRef = useRef<number | null>(null);
-    const safeSlides = useMemo(() => Array.isArray(slides) && slides.length ? slides : [], [slides]);
+    const safeSlides = useMemo(() => {
+      if (Array.isArray(slides) && slides.length > 0) {
+        return slides
+      }
+      if (_.isArray(bannerData) && bannerData?.length > 0) {
+        const newData : any = bannerData.map((item: any) => {
+          return {
+            imageUrl: item?.image,
+            alt: item?.name,
+            textEnabled: true,
+            eyebrow: item?.name,
+            // headline: "Up to 12% off Voucher",
+            description: "",
+            ctaLabel: "Shop Now",
+            ctaHref: matchDataCondition(item?.url,item?.params),
+          }
+        }).sort((a:any, b:any) => {
+          const ai = a.index ?? Infinity;
+          const bi = b.index ?? Infinity;
+          return ai - bi;
+        });
+        return newData;
+      }
+      return []
+    }, [slides,bannerData]);
 
     const next = () => setIndex((i) => (i + 1) % (safeSlides.length || 1));
     const prev = () => setIndex((i) => (i - 1 + (safeSlides.length || 1)) % (safeSlides.length || 1));
@@ -192,9 +232,11 @@ const BannerInternal: ComponentConfig<BannerProps> = {
     const hBase = (heightObj.base ?? 360);
     const hMd = (heightObj.md ?? hBase);
     const hLg = (heightObj.lg ?? hMd);
-
     return (
-      <Box position="relative" overflow="hidden" borderRadius="lg"
+      <Box
+        position="relative"
+        overflow="hidden"
+        borderRadius="lg"
         onMouseEnter={() => { if (timerRef.current) { window.clearInterval(timerRef.current); timerRef.current = null; } }}
         onMouseLeave={() => { if (autoplay && !puck?.isEditing && safeSlides.length > 1) { timerRef.current = window.setInterval(next, Math.max(1000, intervalMs || 5000)); } }}
       >

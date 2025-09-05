@@ -1,7 +1,9 @@
-import { ComponentConfig } from "@measured/puck";
-import { colorField } from "../../components/ColorField";
-import { QrCode } from "@chakra-ui/react";
-import { ALargeSmall } from "lucide-react";
+import {ComponentConfig} from "@measured/puck";
+import {colorField} from "../../components/ColorField";
+import {IconField} from "../../components/Icon";
+import {renderIcon} from "../../components/Icon/IconConstant";
+import {QrCode as QrCodeC} from "@chakra-ui/react"
+import {ALargeSmall} from "lucide-react";
 
 export type IconProps = {
   size?: "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | undefined;
@@ -9,7 +11,7 @@ export type IconProps = {
   content?: string;
 };
 
-export const QrCodePlugins: ComponentConfig<IconProps> = {
+export const QrCode: ComponentConfig<IconProps> = {
   label: "Qr Code",
   fields: {
     size: {
@@ -48,12 +50,13 @@ export const QrCodePlugins: ComponentConfig<IconProps> = {
   }) => {
     return (
       <div>
-        <QrCode.Root size={size} value={content}>
-          <QrCode.Frame style={{ color }}>
-            <QrCode.Pattern />
-          </QrCode.Frame>
-        </QrCode.Root>
+        <QrCodeC.Root size={size} value={content}>
+          <QrCodeC.Frame style={{color}}>
+            <QrCodeC.Pattern/>
+          </QrCodeC.Frame>
+        </QrCodeC.Root>
       </div>
+
     );
   },
 };

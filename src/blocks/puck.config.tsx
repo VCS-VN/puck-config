@@ -5,11 +5,11 @@ import { Heading } from "./Heading";
 import { Text } from "./Text";
 import Root from "./root";
 import { Input } from "./Input";
-import { ButtonPlugins } from "./Button";
+import {Button} from "./Button";
 import { Products } from "./Products";
 import { Cart } from "./Cart";
 import { CategoryGrid } from "./CategoryGrid";
-import { IconPlugins } from "./Icon";
+import { Icon } from "./Icon";
 import { Banner } from "./Banner";
 import { HeroTwoColumn } from "./HeroTwoColumn";
 import { CategoryList } from "./CategoryList";
@@ -17,8 +17,9 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { ProductDetail } from "./ProductDetail";
 import { FacetControls } from "./FacetControls";
-import { QrCodePlugins } from "./QrCode";
+import {QrCode} from "./QrCode";
 import { MiniCartBlock } from "./MiniCart";
+import {Image} from "./Image";
 
 export const PuckConfig = {
   root: Root,
@@ -43,12 +44,12 @@ export const PuckConfig = {
       defaultExpanded: true,
     },
     typography: {
-      components: ["Heading", "Text", "QrCodePlugins"],
+      components: ["Heading", "Text", "QrCode","Image"],
       defaultExpanded: true,
     },
     interactive: {
       title: "Actions",
-      components: ["ButtonPlugins", "Input", "IconPlugins"],
+      components: ["Button", "Input", "Icon"],
       defaultExpanded: false,
     },
     storefront: {
@@ -74,11 +75,12 @@ export const PuckConfig = {
 
     Heading,
     Text,
+    Image,
 
     Input,
-    ButtonPlugins,
-    IconPlugins,
-    QrCodePlugins,
+    Button,
+    Icon,
+    QrCode,
 
     Products,
     // Product,

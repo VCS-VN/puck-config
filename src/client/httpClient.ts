@@ -86,7 +86,7 @@ export const initHttpClient = () => {
   // Fallback baseURL for app dev mode
   const fallbackBaseURL = typeof process !== "undefined"
     ? (process?.env?.NEXT_PUBLIC_CUSTOMER_API_URL as string | undefined)
-    : (import.meta as any)?.env?.VITE_CUSTOMER_API_URL;
+    : import.meta.env.VITE_CUSTOMER_API_URL;
 
   const httpClient = axios.create({
     baseURL: cfg.baseURL ?? fallbackBaseURL ?? "",

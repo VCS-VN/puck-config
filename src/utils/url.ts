@@ -18,6 +18,7 @@ export const parseUrlState = (): UrlState => {
     q: p.get("q") || undefined,
     page: getNum("page") || 1,
     sortBy: p.get("sortBy") || undefined,
+    sortOrder: p.get("sortOrder") || undefined,
     hideOutOfStock: getBool("hideOutOfStock"),
     priceMin: getNum("priceMin"),
     priceMax: getNum("priceMax"),

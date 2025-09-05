@@ -22,18 +22,21 @@ const TextInner: ComponentConfig<TextProps> = {
   },
   defaultProps: {
     text: "Text",
-    href: ''
+    href: '',
+    maxWidth: '100%',
   },
   render: ({ text, maxWidth,href }) => {
     return (
-        <Section maxWidth={maxWidth}>
+        <div style={{
+          maxWidth: maxWidth || '100%'
+        }}>
           <a href={href}>
-            <article className="prose max-w-none lg:prose-xl">
+            <article className="prose max-w-none">
               <div dangerouslySetInnerHTML={{__html: text}}/>
             </article>
           </a>
 
-        </Section>
+        </div>
     );
   },
 };

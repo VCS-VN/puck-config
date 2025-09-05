@@ -9,7 +9,7 @@ export type IconProps = {
   icon?: string,
 };
 
-export const IconPlugins: ComponentConfig<IconProps> = {
+export const Icon: ComponentConfig<IconProps> = {
   label: "Icon",
   fields: {
     icon: {
@@ -44,7 +44,6 @@ export const IconPlugins: ComponentConfig<IconProps> = {
              icon,
              // puck
   }) => {
-    console.log("icon",icon)
     return (
       <a href={href}>
         {renderIcon({
