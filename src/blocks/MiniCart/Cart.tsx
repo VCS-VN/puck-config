@@ -110,16 +110,16 @@ export const CheckoutRender: FC<CheckoutProps> = ({
       total += subTotalItem;
     });
     return total;
-  },[listProduct])
+  }, [listProduct]);
 
   const removeItem = (indexItem: any) => {
     let newListProducts = _.cloneDeep(listProduct);
     if (newListProducts?.length === 1) {
       saveCartToStore([]);
       if (onClose) {
-        onClose()
+        onClose();
       }
-      return
+      return;
     }
     newListProducts = newListProducts.filter(
       (_: any, index: number) => index !== indexItem
@@ -128,9 +128,9 @@ export const CheckoutRender: FC<CheckoutProps> = ({
   };
   const onProcessToCheckout = useProcessToCheckout({
     onSuccess: (data: any) => {
-      // if (data?.url) {
-      //   window.location.href = data?.url;
-      // }
+      if (data?.url) {
+        window.location.href = data?.url;
+      }
     },
   });
 
@@ -154,6 +154,7 @@ export const CheckoutRender: FC<CheckoutProps> = ({
       mutateProcessToCheckout();
     }
   };
+
   if (!listProduct?.length) {
     return (
       <Box>
@@ -292,5 +293,3 @@ export const CheckoutRender: FC<CheckoutProps> = ({
     </div>
   );
 };
-
-

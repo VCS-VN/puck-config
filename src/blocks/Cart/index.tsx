@@ -75,7 +75,7 @@ export const CheckoutRender: FC<CheckoutProps> = ({
   }, []);
 
   const getProductionCart = () => {
-    console.log("productionState",productionState)
+    console.log("productionState", productionState);
     if (productionState && productionState?.[keyAddToCart]?.length > 0) {
       setListProduct(productionState?.[keyAddToCart]);
       return;
@@ -128,9 +128,9 @@ export const CheckoutRender: FC<CheckoutProps> = ({
   };
   const onProcessToCheckout = useProcessToCheckout({
     onSuccess: (data: any) => {
-      // if (data?.url) {
-      //   window.location.href = data?.url;
-      // }
+      if (data?.url) {
+        window.location.href = data?.url;
+      }
     },
   });
 
@@ -154,6 +154,7 @@ export const CheckoutRender: FC<CheckoutProps> = ({
       mutateProcessToCheckout();
     }
   };
+
   if (!listProduct?.length) {
     return (
       <Box>
