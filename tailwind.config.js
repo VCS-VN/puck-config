@@ -4,7 +4,6 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{html,js,ts,jsx,tsx}",
-    // './src/styles/editor-content.css'
   ],
   theme: {
     fontFamily: {
@@ -168,6 +167,6 @@ export default {
     { pattern: /format(-\w+)?/ },
   ],
   corePlugins: {
-    preflight: false, // Disable Preflight reset
+    // preflight: false, // Disable Preflight reset
   },
 };

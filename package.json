@@ -14,12 +14,13 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./style.css": "./dist/style.css"
   },
   "scripts": {
     "generate": "tsr generate",
     "dev": "tsr generate && vite",
-    "build": "vite build",
+    "build": "tsr generate && tsc -b && vite build",
     "build:app": "tsc -b && vite build",
     "build:lib": "tsup",
     "lint": "eslint .",

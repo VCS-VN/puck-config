@@ -26,7 +26,7 @@ import { ProductMultiSelect } from "@/components/ProductMultiSelect";
 import { sendAnalyticsEvent } from "@/utils/analytics";
 import { parseUrlState, pushUrlState } from "@/utils/url";
 // @ts-ignore - CSS modules types handled via ambient declaration for build
-import "./style.css"
+import "./style.css";
 export type ProductsProps = {
   mobile: number;
   tablet: number;
@@ -47,7 +47,7 @@ export type ProductsProps = {
     price?: number;
   }>;
   sortBy?: "newest" | "priceAsc" | "priceDesc" | "featured" | "selling";
-  sortOrder?: 'asc' | 'desc' | undefined;
+  sortOrder?: "asc" | "desc" | undefined;
   hideOutOfStock?: boolean;
   bindSortVariableName?: string;
   bindHideOutOfStockVariableName?: string;
@@ -118,7 +118,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     sortBy,
     sortOrder,
     hideOutOfStock,
-    storeId: puck?.metadata?.entityId,
+    storeId: puck?.metadata?.entityId || puck?.metadata?.storeId,
   });
 
   const extraFilters = useMemo(() => {
@@ -224,7 +224,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
 
   useEffect(() => {
     setQueries((prev) => ({ ...prev, sortBy, sortOrder, hideOutOfStock }));
-  }, [sortBy, hideOutOfStock,sortOrder]);
+  }, [sortBy, hideOutOfStock, sortOrder]);
 
   // Bind from variable state if variable names provided (for FacetControls)
   useEffect(() => {
@@ -431,7 +431,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
                     </Box>
                   )}
                   <CardBody>
-                    <div className={'product-card-image relative'}>
+                    <div className={"product-card-image relative"}>
                       <Image
                         src={
                           product.image ||
@@ -440,11 +440,9 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
                         alt={product.name}
                         borderRadius="md"
                       />
-                      <div
-                        className={'product-card-image-button-add absolute'}
-                      >
+                      <div className={"product-card-image-button-add absolute"}>
                         <Button
-                          className={'w-full'}
+                          className={"w-full"}
                           colorPalette={"orange"}
                           disabled={outOfStock}
                           onClick={() => {
@@ -454,9 +452,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
                           Add to cart
                         </Button>
                       </div>
-
                     </div>
-
 
                     <Card.Title>{product.name}</Card.Title>
                     <Box mt="2">

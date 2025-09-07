@@ -14,11 +14,10 @@ export const matchDataCondition = (source?: string, data?: any) => {
 };
 
 export const diffTime = (dateTime:string) => {
-  const expiredAt = moment(dateTime, "YYYY-MM-DD HH:mm:ss");
+  const expiredAt = moment(dateTime);
   const now = moment();
 
   const minutesDiff = expiredAt.diff(now, 'minutes');
-
   if (minutesDiff < 0) {
     return 0
   } else {

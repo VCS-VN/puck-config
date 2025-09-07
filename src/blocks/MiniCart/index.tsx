@@ -2,7 +2,7 @@ import {type ComponentConfig} from "@measured/puck";
 import {withLayout} from "@/components/Layout";
 import {IconButton, Badge, Box, Flex, Drawer, Portal, Text, Card, CardBody, Image, Button} from "@chakra-ui/react";
 import {LuShoppingCart} from "react-icons/lu";
-import {useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {ProductionState} from "@/services/common/production.state";
 import {CartDrawerOpenState} from "@/state/cartDrawer.state";
@@ -20,6 +20,7 @@ export type MiniCartBlockProps = {
     | "fixed-top-left";
   noResultsText?: string;
   urlToProduct?: string;
+  puck?: any;
 };
 
 const getPlacementStyle = (placement?: MiniCartBlockProps["placement"]) => {
@@ -36,6 +37,87 @@ const getPlacementStyle = (placement?: MiniCartBlockProps["placement"]) => {
       return {};
   }
 };
+
+
+export const MiniCart: React.FC<MiniCartBlockProps> = ({
+                                                         keyAddToCart = "productCart",
+                                                         showBadge = true,
+                                                         placement = "fixed-bottom-right",
+                                                         puck,
+                                                         noResultsText,
+                                                         urlToProduct,
+                                                       }) => {
+
+  const production = useRecoilValue(ProductionState);
+  // const setCartOpen = useSetRecoilState(CartDrawerOpenState);
+  const [cartOpen,setCartOpen] = useState(false)
+  const total = useMemo(() => {
+    try {
+      const local =
+        typeof window !== "undefined"
+          ? JSON.parse(localStorage.getItem(keyAddToCart) || "[]")
+          : [];
+      const memory = (production?.[keyAddToCart] as any[]) || [];
+      return (memory?.length || local?.length || 0) as number;
+    } catch {
+      return 0;
+    }
+  }, [production, keyAddToCart]);
+
+  const style = getPlacementStyle(placement);
+
+  const onClickCart = () => {
+    if (puck?.isEditing) {
+      return;
+    }
+    setCartOpen(true);
+  };
+
+  const onClose = ()=> {
+    setCartOpen(false);
+  }
+  return <Box style={style as any}>
+    <Box position="relative" display="inline-block">
+      <IconButton aria-label="Cart" onClick={onClickCart}>
+        <LuShoppingCart/>
+      </IconButton>
+      {showBadge && total > 0 ? (
+        <Badge
+          position="absolute"
+          top="-2px"
+          right="-2px"
+          colorPalette="red"
+        >
+          {total}
+        </Badge>
+      ) : null}
+    </Box>
+    <Drawer.Root
+      placement="bottom"
+      open={cartOpen}
+      onOpenChange={({ open }) => { if (!open) onClose(); }}>
+      <Portal>
+        <Drawer.Backdrop />
+        <Drawer.Positioner>
+          <Drawer.Content>
+            <Drawer.Header>
+              <Drawer.Title>Cart</Drawer.Title>
+            </Drawer.Header>
+            <Drawer.Body>
+              <CheckoutRender
+                keyAddToCart={keyAddToCart}
+                urlToProduct={urlToProduct}
+                noResultsText={noResultsText}
+                onClose={onClose}
+              ></CheckoutRender>
+            </Drawer.Body>
+          </Drawer.Content>
+        </Drawer.Positioner>
+      </Portal>
+    </Drawer.Root>
+  </Box>
+
+}
 
 const MiniCartBlockInternal: ComponentConfig<MiniCartBlockProps> = {
   label: "Mini Cart",
@@ -79,76 +161,17 @@ const MiniCartBlockInternal: ComponentConfig<MiniCartBlockProps> = {
              noResultsText,
              urlToProduct,
            }) => {
-    const production = useRecoilValue(ProductionState);
-    // const setCartOpen = useSetRecoilState(CartDrawerOpenState);
-    const [cartOpen,setCartOpen] = useState(false)
-    const total = useMemo(() => {
-      try {
-        const local =
-          typeof window !== "undefined"
-            ? JSON.parse(localStorage.getItem(keyAddToCart) || "[]")
-            : [];
-        const memory = (production?.[keyAddToCart] as any[]) || [];
-        return (memory?.length || local?.length || 0) as number;
-      } catch {
-        return 0;
-      }
-    }, [production, keyAddToCart]);
 
-    const style = getPlacementStyle(placement);
-
-    const onClickCart = () => {
-      if (puck?.isEditing) {
-        return;
-      }
-      setCartOpen(true);
-    };
-
-    const onClose = ()=> {
-      setCartOpen(false);
-    }
 
     return (
-      <Box style={style as any}>
-        <Box position="relative" display="inline-block">
-          <IconButton aria-label="Cart" onClick={onClickCart}>
-            <LuShoppingCart/>
-          </IconButton>
-          {showBadge && total > 0 ? (
-            <Badge
-              position="absolute"
-              top="-2px"
-              right="-2px"
-              colorPalette="red"
-            >
-              {total}
-            </Badge>
-          ) : null}
-        </Box>
-        <Drawer.Root
-          placement="bottom"
-          open={cartOpen}
-          onOpenChange={({ open }) => { if (!open) onClose(); }}>
-          <Portal>
-            <Drawer.Backdrop />
-            <Drawer.Positioner>
-              <Drawer.Content>
-                <Drawer.Header>
-                  <Drawer.Title>Cart</Drawer.Title>
-                </Drawer.Header>
-                <Drawer.Body>
-                  <CheckoutRender
-                    keyAddToCart={keyAddToCart}
-                    urlToProduct={urlToProduct}
-                    noResultsText={noResultsText}
-                    onClose={onClose}
-                  ></CheckoutRender>
-                </Drawer.Body>
-              </Drawer.Content>
-            </Drawer.Positioner>
-          </Portal>
-        </Drawer.Root>
-      </Box>
+      <MiniCart
+        keyAddToCart={keyAddToCart}
+        showBadge={showBadge}
+        placement={placement}
+        noResultsText={noResultsText}
+        urlToProduct={urlToProduct}
+        puck={puck}
+      ></MiniCart>
     );
   },
 };

@@ -56,13 +56,11 @@ export default defineConfig({
       external: [
         "react",
         "react-dom",
+        "antd",
         "@chakra-ui/react",
         "@emotion/react",
-        "@measured/puck",
-        // "@emotion/styled",
-        // "framer-motion",
-        // "@tanstack/react-query",
-        // "recoil",
+        "@emotion/styled",
+        "framer-motion",
       ],
       output: {
         assetFileNames: "assets/[name][extname]",
@@ -73,6 +71,7 @@ export default defineConfig({
         },
       },
     },
+    cssCodeSplit: false,
     sourcemap: true,
   },
 });

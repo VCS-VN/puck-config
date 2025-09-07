@@ -15,7 +15,7 @@ import {
   Skeleton,
   // SkeletonText,
   Link,
-  useBreakpointValue,
+  useBreakpointValue, Image,
 } from "@chakra-ui/react";
 import {
   FiChevronLeft,
@@ -154,18 +154,9 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
     }
   );
 
-  // Default categories data
-  const defaultCategories = [
-    { id: "1", name: "Phones", icon: "FiSmartphone" },
-    { id: "2", name: "Computers", icon: "FiMonitor" },
-    { id: "3", name: "SmartWatch", icon: "FiWatch" },
-    { id: "4", name: "Camera", icon: "FiCamera" },
-    { id: "5", name: "HeadPhones", icon: "FiHeadphones" },
-    { id: "6", name: "Gaming", icon: "FiZap" },
-  ];
+  console.log("categoriesData",categoriesData)
 
-  // Transform API data to display format
-  // If API returns less than 4 items, use defaultCategories
+
   const apiCategories = categoriesData?.data || [];
   const [tree, setTree] = React.useState<any[] | null>(null);
   React.useEffect(() => {
@@ -231,14 +222,11 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
           id: id != null ? String(id) : "",
           name: name ? String(name) : id != null ? String(id) : "",
           icon: c?.icon,
+          image: c?.image,
         };
       })
       .filter((c: any) => c.id !== "");
-    displayCategories = shouldUseDefault
-      ? showAll
-        ? defaultCategories
-        : defaultCategories.slice(0, limit)
-      : showAll
+    displayCategories = showAll
       ? normalizedApi
       : normalizedApi.slice(0, limit);
   }
@@ -479,11 +467,24 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
                         transition="all 0.2s"
                         flexShrink={0}
                       >
-                        <Icon
-                          as={IconComponent}
-                          boxSize={responsiveSizing.iconSize}
-                          color={isSelected ? "white" : "gray.800"}
-                        />
+                        {category?.image ? <div>
+                            <Image
+                              src={
+                                category.image ||
+                                "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
+                              }
+                              alt={category.name}
+                              borderRadius="md"
+                            />
+                          </div> :
+
+                          <Icon
+                            as={IconComponent}
+                            boxSize={responsiveSizing.iconSize}
+                            color={isSelected ? "white" : "gray.800"}
+                          />
+                        }
+
                         <Text
                           fontSize={responsiveSizing.fontSize}
                           fontWeight="medium"
@@ -571,11 +572,25 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
                       onClick={() => onClickCategory(category)}
                       transition="all 0.2s"
                     >
-                      <Icon
-                        as={IconComponent}
-                        boxSize={6}
-                        color={isSelected ? "white" : "gray.800"}
-                      />
+                      {category?.image ? <div>
+                          <Image
+                            src={
+                              category.image ||
+                              "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
+                            }
+                            alt={category.name}
+                            borderRadius="md"
+                            width={"24px"}
+                            height={"24px"}
+                          />
+                        </div> :
+                        <Icon
+                          as={IconComponent}
+                          boxSize={6}
+                          color={isSelected ? "white" : "gray.800"}
+                        />
+                      }
+
                       <Text fontSize="sm" fontWeight="medium">
                         {categoryName}
                       </Text>
