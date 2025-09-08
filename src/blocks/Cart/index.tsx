@@ -75,9 +75,8 @@ export const CheckoutRender: FC<CheckoutProps> = ({
   }, []);
 
   const getProductionCart = () => {
-    console.log("productionState", productionState);
-    if (productionState && productionState?.[keyAddToCart]?.length > 0) {
-      setListProduct(productionState?.[keyAddToCart]);
+    if (productionState && productionState?.[keyAddToCart]) {
+      setListProduct(productionState?.[keyAddToCart] || []);
       return;
     }
     if (!productionState?.[keyAddToCart]) {
@@ -249,8 +248,8 @@ export const CheckoutRender: FC<CheckoutProps> = ({
           ))}
         </Table.Body>
       </Table.Root>
-      <div className={"flex justify-between mt-10 mb-2 px-2"}>
-        <Button variant="outline">Return To Shop</Button>
+      <div className={"flex justify-center mt-10 mb-2 px-2"}>
+        {/*<Button variant="outline">Return To Shop</Button>*/}
 
         <div>
           <Card.Root width="320px">

@@ -439,6 +439,8 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
                         }
                         alt={product.name}
                         borderRadius="md"
+                        width={"100%"}
+                        height={'200px'}
                       />
                       <div className={"product-card-image-button-add absolute"}>
                         <Button
