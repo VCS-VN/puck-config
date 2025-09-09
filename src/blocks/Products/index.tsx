@@ -362,23 +362,24 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   }
 
   return (
-    <Box>
-      {HeaderSlot ? <HeaderSlot minEmptyHeight={40} /> : null}
-      <SimpleGrid
-        columns={{
-          base: mobile,
-          sm: tablet,
-          md: tablet,
-          lg: desktop,
-        }}
-        gap={4}
-      >
-        {isLoading &&
-        (selectionMode === "limit" || selectionMode === "category")
-          ? Array.from({ length: limit }).map((_, index) => (
+    <>
+      <Box>
+        {HeaderSlot ? <HeaderSlot minEmptyHeight={40} /> : null}
+        <SimpleGrid
+          columns={{
+            base: mobile,
+            sm: tablet,
+            md: tablet,
+            lg: desktop,
+          }}
+          gap={4}
+        >
+          {isLoading &&
+          (selectionMode === "limit" || selectionMode === "category")
+            ? Array.from({ length: limit }).map((_, index) => (
               <Skeleton key={index} height="300px" borderRadius="md" />
             ))
-          : display?.map((product: any) => {
+            : display?.map((product: any) => {
               const defaultModel = get(
                 product,
                 "defaultModel",
@@ -499,37 +500,39 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
               );
             })}
 
-        <ButtonAddToCart
-          openDrawer={!!selectedProduct}
-          product={selectedProduct}
-          keyAddToCart={keyAddToCart}
-          saveCartToStore={saveCartToStore}
-          onCloseDrawer={() => setSelectedProduct(null)}
-        />
-        {/* Header owns Cart Drawer; trigger via CartDrawerOpenState */}
-      </SimpleGrid>
-      {FooterSlot ? <FooterSlot minEmptyHeight={40} /> : null}
 
-      {(selectionMode === "limit" || selectionMode === "category") &&
-        total > 0 && (
-          <Pagination.Root
-            mt="6"
-            count={total}
-            pageSize={queries.limit}
-            page={queries.page}
-            onPageChange={({ page }) =>
-              setQueries((prev) => ({
-                ...prev,
-                page,
-              }))
-            }
-          >
-            <Pagination.PrevTrigger />
-            {/* <Pagination.Items /> */}
-            <Pagination.NextTrigger />
-          </Pagination.Root>
-        )}
-    </Box>
+          {/* Header owns Cart Drawer; trigger via CartDrawerOpenState */}
+        </SimpleGrid>
+        {FooterSlot ? <FooterSlot minEmptyHeight={40} /> : null}
+
+        {(selectionMode === "limit" || selectionMode === "category") &&
+          total > 0 && (
+            <Pagination.Root
+              mt="6"
+              count={total}
+              pageSize={queries.limit}
+              page={queries.page}
+              onPageChange={({ page }) =>
+                setQueries((prev) => ({
+                  ...prev,
+                  page,
+                }))
+              }
+            >
+              <Pagination.PrevTrigger />
+              {/* <Pagination.Items /> */}
+              <Pagination.NextTrigger />
+            </Pagination.Root>
+          )}
+      </Box>
+      <ButtonAddToCart
+        openDrawer={!!selectedProduct}
+        product={selectedProduct}
+        keyAddToCart={keyAddToCart}
+        saveCartToStore={saveCartToStore}
+        onCloseDrawer={() => setSelectedProduct(null)}
+      />
+    </>
   );
 };
 

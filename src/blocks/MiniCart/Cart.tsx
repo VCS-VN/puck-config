@@ -177,88 +177,186 @@ export const CheckoutRender: FC<CheckoutProps> = ({
 
   return (
     <div>
-      <Table.Root size="sm">
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>Product</Table.ColumnHeader>
-            <Table.ColumnHeader>Price</Table.ColumnHeader>
-            <Table.ColumnHeader>Quantity</Table.ColumnHeader>
-            <Table.ColumnHeader>Subtotal</Table.ColumnHeader>
-            <Table.ColumnHeader textAlign="end"></Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {listProduct.map((item: any, index: number) => (
-            <Table.Row key={index}>
-              <Table.Cell>
-                <div className={"flex items-center gap-1 w-full"}>
-                  <Image
-                    src={
-                      item.image ||
-                      "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
-                    }
-                    width={"50px"}
-                    height={"50px"}
-                    alt={item.name}
-                    borderRadius="md"
-                  />
-                  <div>
-                    <div>
-                      <span>{item?.name}</span>
-                    </div>
-                    <div>
-                      <Badge colorPalette="purple">{item?.model?.name}</Badge>
+      {/* mobile/tablet*/}
+      <Box
+        display={{ base: "block", md: "block", lg: "none" }}
+      >
+        <Table.Root size="sm">
+          <Table.ColumnGroup>
+            <Table.Column maxWidth="100px" />
+            <Table.Column />
+            <Table.Column />
+            <Table.Column />
+            <Table.Column />
+          </Table.ColumnGroup>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Product</Table.ColumnHeader>
+              <Table.ColumnHeader>Price</Table.ColumnHeader>
+              <Table.ColumnHeader>Quantity</Table.ColumnHeader>
+              <Table.ColumnHeader>Subtotal</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end"></Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {listProduct.map((item: any, index: number) => (
+              <Table.Row key={index}>
+                <Table.Cell>
+                  <div className={"flex items-center gap-1"}
+                  >
+                    <Image
+                      src={
+                        item.image ||
+                        "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
+                      }
+                      width={"20px"}
+                      height={"20px"}
+                      alt={item.name}
+                      borderRadius="md"
+                    />
+                    <div
+                      style={{
+                      maxWidth: "80px"
+                    }}>
+                      <div>
+                        <Text lineClamp="2">
+                          {item?.name}
+                        </Text>
+                      </div>
+                      <div>
+                        <Badge style={{
+                          maxWidth: "80px",
+                          whiteSpace: 'break-spaces'
+                        }} colorPalette="purple">
+                          <Text lineClamp="2">
+                            {item?.model?.name}
+                          </Text>
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Table.Cell>
-              <Table.Cell>
-                ${`${round((item?.model?.price ?? 0) / 100, 0)}`}
-              </Table.Cell>
-              <Table.Cell>
-                <NumberInput.Root
-                  style={{
-                    width: "72px",
-                  }}
-                  value={item.quantity}
-                  onValueChange={(e: any) => {
-                    onChangeQuantity(e?.valueAsNumber, index);
-                  }}
-                >
-                  <NumberInput.Control />
-                  <NumberInput.Input />
-                </NumberInput.Root>
-              </Table.Cell>
-              <Table.Cell>
-                $
-                {`${round(
-                  Number((item?.model?.price ?? 0) / 100) *
+                </Table.Cell>
+                <Table.Cell>
+                  ${`${round((item?.model?.price ?? 0) / 100, 0)}`}
+                </Table.Cell>
+                <Table.Cell>
+                  <NumberInput.Root
+                    style={{
+                      width: "72px",
+                    }}
+                    value={item.quantity}
+                    onValueChange={(e: any) => {
+                      onChangeQuantity(e?.valueAsNumber, index);
+                    }}
+                  >
+                    <NumberInput.Control />
+                    <NumberInput.Input />
+                  </NumberInput.Root>
+                </Table.Cell>
+                <Table.Cell>
+                  $
+                  {`${round(
+                    Number((item?.model?.price ?? 0) / 100) *
                     Number(item.quantity),
-                  0
-                )}`}
-              </Table.Cell>
-              <Table.Cell>
-                <LuTrash2
-                  className={"cursor-pointer"}
-                  onClick={() => {
-                    removeItem(index);
-                  }}
-                ></LuTrash2>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
-      {/*<div className={'flex justify-between mt-4'}>*/}
-      {/*    <Button variant="outline">Return To Shop</Button>*/}
+                    0
+                  )}`}
+                </Table.Cell>
+                <Table.Cell>
+                  <LuTrash2
+                    className={"cursor-pointer"}
+                    onClick={() => {
+                      removeItem(index);
+                    }}
+                  ></LuTrash2>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
 
-      {/*    /!*<Button*!/*/}
-      {/*    /!*    variant="outline"*!/*/}
-      {/*    /!*    onClick={() => {*!/*/}
-      {/*    /!*        saveCartToStore(listProduct)*!/*/}
-      {/*    /!*    }}*!/*/}
-      {/*    /!*>Update Cart</Button>*!/*/}
-      {/*</div>*/}
+      </Box>
+      <Box
+        display={{
+          base: "none",
+          md: "none",
+          lg: "block",
+        }}
+      >
+        <Table.Root size="sm">
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Product</Table.ColumnHeader>
+              <Table.ColumnHeader>Price</Table.ColumnHeader>
+              <Table.ColumnHeader>Quantity</Table.ColumnHeader>
+              <Table.ColumnHeader>Subtotal</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end"></Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {listProduct.map((item: any, index: number) => (
+              <Table.Row key={index}>
+                <Table.Cell>
+                  <div className={"flex items-center gap-1"}
+                       style={{}}
+                  >
+                    <Image
+                      src={
+                        item.image ||
+                        "https://image-cdn.episcloud.com/01K3FWBPKYKTP161HMFH6DX420.jpeg"
+                      }
+                      width={"50px"}
+                      height={"50px"}
+                      alt={item.name}
+                      borderRadius="md"
+                    />
+                    <div>
+                      <div>
+                        <span>{item?.name}</span>
+                      </div>
+                      <div>
+                        <Badge colorPalette="purple">{item?.model?.name}</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </Table.Cell>
+                <Table.Cell>
+                  ${`${round((item?.model?.price ?? 0) / 100, 0)}`}
+                </Table.Cell>
+                <Table.Cell>
+                  <NumberInput.Root
+                    style={{
+                      width: "72px",
+                    }}
+                    value={item.quantity}
+                    onValueChange={(e: any) => {
+                      onChangeQuantity(e?.valueAsNumber, index);
+                    }}
+                  >
+                    <NumberInput.Control />
+                    <NumberInput.Input />
+                  </NumberInput.Root>
+                </Table.Cell>
+                <Table.Cell>
+                  $
+                  {`${round(
+                    Number((item?.model?.price ?? 0) / 100) *
+                    Number(item.quantity),
+                    0
+                  )}`}
+                </Table.Cell>
+                <Table.Cell>
+                  <LuTrash2
+                    className={"cursor-pointer"}
+                    onClick={() => {
+                      removeItem(index);
+                    }}
+                  ></LuTrash2>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </Box>
       <div className={"flex justify-center mt-10 mb-2 px-2"}>
         {/*<Button variant="outline">Return To Shop</Button>*/}
 

@@ -19,11 +19,16 @@ import {useRecoilState, useRecoilValue} from "recoil";
 import {ProductionState} from "@/services/common/production.state";
 import {CheckoutRender} from "../Cart";
 import {CartDrawerOpenState} from "@/state/cartDrawer.state";
+import SearchInput from "./components/SearchInput";
+import ButtonAddToCart from "../Products/components/ButtonAddToCart";
+import {InputRichText} from "../../components/InputRichText";
 
 export type HeaderProps = {
   logoType?: "text" | "image";
   logoText?: string;
   logoImageUrl?: string;
+  logoImageWidth?: string;
+  logoImageHeight?: string;
   navLinks?: { label: string; href: string }[];
   showSearch?: boolean;
   searchVariableName?: string;
@@ -46,8 +51,21 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
         {label: "Image", value: "image"},
       ],
     },
-    logoText: {type: "text", label: "Logo Text"},
+    logoText: {
+      label: "Logo Text",
+      ...InputRichText
+    },
     logoImageUrl: {type: "text", label: "Logo Image URL"},
+    logoImageWidth: {
+      label: 'Logo Image Width',
+      type: "text",
+      placeholder: "...px",
+    },
+    logoImageHeight: {
+      label: 'Logo Image Height',
+      type: "text",
+      placeholder: "...px",
+    },
     navLinks: {
       type: "array",
       label: "Navigation Links",
@@ -121,6 +139,8 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
              logoType,
              logoText,
              logoImageUrl,
+             logoImageWidth,
+             logoImageHeight,
              navLinks = [],
              showSearch,
              searchVariableName,
@@ -134,8 +154,17 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
            }) => {
     const isEditing = !!puck?.isEditing;
     const [variables, setVariables] = useRecoilState(VariableState);
-    const productionState = useRecoilValue(ProductionState);
+    const [productionState, setProductionState] = useRecoilState(ProductionState);
+
+    const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
     const keyAddToCart = "productCart";
+
+    const saveCartToStore = (carts: any[]) => {
+      setProductionState({ ...productionState, [keyAddToCart]: carts || [] });
+      setSelectedProduct(null);
+      setCartOpen(true);
+    };
     const count = useMemo(() => {
       const local =
         typeof window !== "undefined"
@@ -218,10 +247,18 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
                 <LuMenu/>
               </IconButton>
               {logoType === "image" && logoImageUrl ? (
-                <Image src={logoImageUrl} alt={logoText || "Logo"} h={6}/>
+                <Image
+                  src={logoImageUrl}
+                  alt={"Logo"}
+                  h={6}
+                  height={logoImageHeight || "50px"}
+                  width={logoImageWidth || "50px"}
+                />
               ) : (
-                <Text fontWeight="bold" fontSize={{base: "lg", md: "xl"}}>
-                  {logoText}
+                <Text fontSize={{base: "lg", md: "xl"}}>
+                  <article className="prose max-w-none">
+                    <div dangerouslySetInnerHTML={{__html: logoText}}/>
+                  </article>
                 </Text>
               )}
             </Flex>
@@ -270,20 +307,25 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
                   minW={{base: "auto", md: "280px"}}
                   style={{transition: "width 120ms ease", willChange: "width"}}
                 >
-                  <CInput
-                    size="sm"
-                    variant="subtle"
+                  <SearchInput
+                    puck={puck}
                     placeholder={searchPlaceholder || "Search"}
-                    value={searchLocal}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setSearchLocal(v);
-                      debouncedUpdateRef.current(v);
-                    }}
-                  />
-                  <IconButton size="sm" aria-label="Search" variant="ghost">
-                    <LuSearch/>
-                  </IconButton>
+                    setSelectedProduct={setSelectedProduct}
+                  ></SearchInput>
+                  {/*<CInput*/}
+                  {/*  size="sm"*/}
+                  {/*  variant="subtle"*/}
+                  {/*  placeholder={searchPlaceholder || "Search"}*/}
+                  {/*  value={searchLocal}*/}
+                  {/*  onChange={(e) => {*/}
+                  {/*    const v = e.target.value;*/}
+                  {/*    setSearchLocal(v);*/}
+                  {/*    debouncedUpdateRef.current(v);*/}
+                  {/*  }}*/}
+                  {/*/>*/}
+                  {/*<IconButton size="sm" aria-label="Search" variant="ghost">*/}
+                  {/*  <LuSearch/>*/}
+                  {/*</IconButton>*/}
                 </Flex>
               ) : null}
 
@@ -383,20 +425,25 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
                       borderRadius="md"
                       gap={1}
                     >
-                      <CInput
-                        size="sm"
-                        variant="subtle"
+                      <SearchInput
+                        puck={puck}
                         placeholder={searchPlaceholder || "Search"}
-                        value={searchLocal}
-                        onChange={(e) => {
-                          const v = e.target.value;
-                          setSearchLocal(v);
-                          debouncedUpdateRef.current(v);
-                        }}
-                      />
-                      <IconButton size="sm" aria-label="Search" variant="ghost">
-                        <LuSearch/>
-                      </IconButton>
+                        setSelectedProduct={setSelectedProduct}
+                      ></SearchInput>
+                      {/*<CInput*/}
+                      {/*  size="sm"*/}
+                      {/*  variant="subtle"*/}
+                      {/*  placeholder={searchPlaceholder || "Search"}*/}
+                      {/*  value={searchLocal}*/}
+                      {/*  onChange={(e) => {*/}
+                      {/*    const v = e.target.value;*/}
+                      {/*    setSearchLocal(v);*/}
+                      {/*    debouncedUpdateRef.current(v);*/}
+                      {/*  }}*/}
+                      {/*/>*/}
+                      {/*<IconButton size="sm" aria-label="Search" variant="ghost">*/}
+                      {/*  <LuSearch/>*/}
+                      {/*</IconButton>*/}
                     </Flex>
                   ) : null}
 
@@ -425,6 +472,13 @@ const HeaderInternal: ComponentConfig<HeaderProps> = {
             </Drawer.Content>
           </Drawer.Positioner>
         </Drawer.Root>
+        <ButtonAddToCart
+          openDrawer={!!selectedProduct}
+          product={selectedProduct}
+          keyAddToCart={keyAddToCart}
+          saveCartToStore={saveCartToStore}
+          onCloseDrawer={() => setSelectedProduct(null)}
+        />
       </>
     );
   },
