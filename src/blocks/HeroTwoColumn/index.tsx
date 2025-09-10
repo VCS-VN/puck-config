@@ -1,6 +1,6 @@
 import { ComponentConfig } from "@measured/puck";
 import { withLayout } from "@/components/Layout";
-import { Box, Flex } from "@chakra-ui/react"; 
+import { Box, Flex } from "@chakra-ui/react";
 import { useMemo } from "react";
 
 type WidthByBreakpoint = {
@@ -21,10 +21,10 @@ export type HeroTwoColumnProps = {
   right: any; // slot
 };
 
-const HeroTwoColumnInternal: ComponentConfig<HeroTwoColumnProps> = {
+const HeroTwoColumnInternal: ComponentConfig = {
   label: "Hero Two Column",
   fields: {
-    height: { type: "number", label: "Height (px)", min: 200, max: 900 },
+    height: { type: "number", label: "Height (px)", min: 0, max: 900 },
     gap: { type: "number", label: "Gap", min: 0, max: 32 },
     leftWidth: {
       type: "object",
@@ -65,7 +65,7 @@ const HeroTwoColumnInternal: ComponentConfig<HeroTwoColumnProps> = {
     right: { type: "slot", label: "Right Slot (Banner)" },
   },
   defaultProps: {
-    height: 360,
+    height: 160,
     gap: 4,
     leftWidth: { base: "100%", md: "30%", lg: "25%" },
     rightWidth: { base: "100%", md: "70%", lg: "75%" },
@@ -76,53 +76,54 @@ const HeroTwoColumnInternal: ComponentConfig<HeroTwoColumnProps> = {
     right: [],
   },
   render: ({ height, gap, leftWidth, rightWidth, leftScrollable, leftSticky, stickyOffsetTop, left, right, puck }) => {
-    const Left = left; 
-    const Right = right; 
+    const Left = left;
+    const Right = right;
     const isEditing = !!(puck as any)?.isEditing;
-    const minEmpty = Math.max(60, (height || 360) - 40);
+    const minEmpty = Math.max(60, (height || 160) - 40);
+    console.log("minEmpty",minEmpty)
     const leftW = useMemo(() => leftWidth, [leftWidth]);
     const rightW = useMemo(() => rightWidth, [rightWidth]);
-    return ( 
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
-        gap={gap} 
-        align="stretch" 
-        w="100%" 
-        minH={`${height}px`} 
+    return (
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        gap={gap}
+        align="stretch"
+        w="100%"
+        minH={{lg: `${height}px`,md: `100%`}}
         style={{ contain: "layout paint style" }}
-      > 
-        <Box 
+      >
+        <Box
           minW={0}
           flexBasis={leftW as any}
           flexGrow={0}
           flexShrink={0}
-          minH={{ base: `${height}px`, md: `${height}px` }} 
-          position={!isEditing && leftSticky ? "sticky" : undefined} 
-          top={!isEditing && leftSticky ? `${stickyOffsetTop || 0}px` : undefined} 
+          minH={{ lg: `${height}px`, md: `100%` }}
+          position={!isEditing && leftSticky ? "sticky" : undefined}
+          top={!isEditing && leftSticky ? `${stickyOffsetTop || 0}px` : undefined}
           transition={isEditing ? "none" : "width 120ms ease-out"}
           style={{ contain: "layout paint style", willChange: isEditing ? undefined : "width" }}
-        > 
+        >
           <Box
             overflowY={!isEditing && leftScrollable ? "auto" : "visible"}
             maxH={!isEditing && leftScrollable ? `${height}px` : undefined}
-          > 
-            <Left minEmptyHeight={minEmpty} /> 
-          </Box> 
-        </Box> 
+          >
+            <Left minEmptyHeight={minEmpty} />
+          </Box>
+        </Box>
         <Box
           minW={0}
           flexBasis={rightW as any}
           flexGrow={1}
           flexShrink={1}
-          minH={`${height}px`}
+          minH={{ lg: `${height}px`, md: `100%` }}
           transition={isEditing ? "none" : "width 120ms ease-out"}
           style={{ contain: "layout paint style", willChange: isEditing ? undefined : "width" }}
-        > 
-          <Right minEmptyHeight={minEmpty} /> 
-        </Box> 
-      </Flex> 
-    ); 
-  }, 
-}; 
+        >
+          <Right minEmptyHeight={minEmpty} />
+        </Box>
+      </Flex>
+    );
+  },
+};
 
 export const HeroTwoColumn = withLayout(HeroTwoColumnInternal);

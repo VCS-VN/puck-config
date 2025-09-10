@@ -7,6 +7,7 @@ import { useGetCategoriesQuery } from "@/hooks/category/useGetCategoriesQuery";
 import { getCategoryTree } from "@/services/sale/category/category.api";
 import { matchDataCondition } from "@/blocks/CommonFunction/function";
 import { CategoryMultiSelect } from "@/components/CategoryMultiSelect";
+import {pushUrlState} from "../../utils/url";
 
 type CategoryItem = { id: string; name: string; icon?: string };
 
@@ -216,8 +217,13 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
           {displayCategories.map((c) => (
             <Box
               key={String(c.id)}
+              className={"cursor-pointer"}
               onClick={(e: any) => {
                 if (puck?.isEditing) return e.preventDefault();
+                if (!urlRedirect) {
+                  pushUrlState({ categoryId: c?.id, page: 1 });
+                  return
+                }
                 const href = matchDataCondition(urlRedirect, c);
                 if (href) {
                   if (String(href).startsWith("http"))
@@ -264,8 +270,13 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
                       {subItems(c.id).map((s) => (
                         <Box
                           key={String(s.id)}
+                          className={"cursor-pointer"}
                           onClick={(e: any) => {
                             if (puck?.isEditing) return e.preventDefault();
+                            if (!urlRedirect) {
+                              pushUrlState({ categoryId: s?.id, page: 1 });
+                              return
+                            }
                             const href = matchDataCondition(urlRedirect, s);
                             if (href) {
                               if (String(href).startsWith("http"))
