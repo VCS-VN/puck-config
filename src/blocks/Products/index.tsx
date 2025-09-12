@@ -25,7 +25,7 @@ import { CategorySingleSelect } from "@/components/CategorySingleSelect";
 import { ProductMultiSelect } from "@/components/ProductMultiSelect";
 import { sendAnalyticsEvent } from "@/utils/analytics";
 import { parseUrlState, pushUrlState } from "@/utils/url";
-import { useRouterState } from '@tanstack/react-router';
+// import { useRouterState } from '@tanstack/react-router';
 // @ts-ignore - CSS modules types handled via ambient declaration for build
 import "./style.css";
 export type ProductsProps = {
@@ -112,9 +112,10 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     []
   );
 
-  const searchQuery = useRouterState({
-    select: state => state.location.search, //
-  });
+  const searchQuery:any = {}
+  // const searchQuery = useRouterState({
+  //   select: state => state.location.search, //
+  // });
 
 
   const [queries, setQueries] = useState({
