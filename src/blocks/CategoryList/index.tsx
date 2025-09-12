@@ -28,7 +28,9 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
   label: "Category List",
   fields: {
     title: { type: "text", label: "Title" },
-    urlRedirect: { type: "text", label: "Url" },
+    urlRedirect: {
+      type: "text",
+      label: "Url click on category" },
     showAll: {
       type: "radio",
       label: "Show All",

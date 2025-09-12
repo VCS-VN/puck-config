@@ -128,10 +128,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     storeId: puck?.metadata?.entityId || puck?.metadata?.storeId,
   });
 
-  useEffect(() => {
-    console.log("searchQuery",searchQuery)
-    setQueries((prev) => ({ ...prev,categoryId: searchQuery?.categoryId }));
-  }, [searchQuery?.categoryId]);
   const extraFilters = useMemo(() => {
     const v = bindFiltersVariableName
       ? (variables as any)[bindFiltersVariableName]
@@ -233,8 +229,18 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
   }, [debouncedValue]);
 
   useEffect(() => {
-    setQueries((prev) => ({ ...prev, sortBy, sortOrder, hideOutOfStock }));
-  }, [sortBy, hideOutOfStock, sortOrder]);
+    setQueries((prev) => ({ ...prev,
+      sortBy,
+      sortOrder,
+      hideOutOfStock ,
+      categoryId: searchQuery?.categoryId
+    }));
+  }, [
+    sortBy,
+    hideOutOfStock,
+    sortOrder,
+    searchQuery?.categoryId
+  ]);
 
   // Bind from variable state if variable names provided (for FacetControls)
   useEffect(() => {
@@ -248,6 +254,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       ...prev,
       sortBy: (vSort as any) || prev.sortBy,
       hideOutOfStock: (vHide as any) ?? prev.hideOutOfStock,
+      categoryId: searchQuery?.categoryId || prev?.categoryId
     }));
   }, [variables, bindSortVariableName, bindHideOutOfStockVariableName]);
 
@@ -263,6 +270,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
         sortBy: (u.sortBy as any) ?? prev.sortBy,
         sortOrder: (u.sortOrder as any) ?? prev.sortOrder,
         hideOutOfStock: (u.hideOutOfStock as any) ?? prev.hideOutOfStock,
+        categoryId: searchQuery?.categoryId
       }));
       // write filters variables
       if (bindFiltersVariableName) {

@@ -663,7 +663,7 @@ const CategoryGridFields = {
   },
   urlRedirect: {
     type: "text",
-    label: "Url",
+    label: "Url click on category",
   },
   mobile: {
     type: "number",
