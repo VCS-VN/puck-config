@@ -112,7 +112,12 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     []
   );
 
-
+  const searchQuery = useRouterState({
+    select: state => state.location.search, //
+  });
+  useEffect(() => {
+    console.log("searchQuery",searchQuery)
+  }, [searchQuery]);
 
   const [queries, setQueries] = useState({
     search: debouncedValue,
