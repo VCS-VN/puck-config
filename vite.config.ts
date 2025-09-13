@@ -64,17 +64,21 @@ export default defineConfig({
         "@emotion/react",
         "@emotion/styled",
         "framer-motion",
+        "@tanstack/react-query",
+        "@tanstack/react-router",
       ],
       output: {
         assetFileNames: "assets/[name][extname]",
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
+          "@tanstack/react-query": "TanStackQuery",
           // Add globals for other externals if needed for UMD (e.g., '@chakra-ui/react': 'ChakraUI')
         },
       },
     },
     cssCodeSplit: false,
     sourcemap: true,
+    target: "esnext"
   },
 });
