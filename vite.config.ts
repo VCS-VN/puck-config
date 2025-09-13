@@ -27,6 +27,9 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  ssr: {
+    noExternal: true, // Đảm bảo SSR cho tất cả modules
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src/"),
