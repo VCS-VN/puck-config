@@ -11,42 +11,27 @@ import {
 import "@/styles/index.css";
 import "@measured/puck/puck.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { Provider } from "../components/ui/provider";
-import {createRouter, RouterProvider} from "@tanstack/react-router";
-import {routeTree} from "../routeTree.gen";
 // Use the generated Provider
 
 // const theme = extendTheme({});
 
 export type PageEditorProviderProps = ColorModeProviderProps & {
-  children?: ReactNode;
+  children: ReactNode;
   queryClient?: QueryClient;
   http?: HttpClientConfig;
   chakraSystem?: any;
-  router?: any;
 };
 
 const qc = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
 });
 
-const routers = createRouter({
-  routeTree,
-  defaultNotFoundComponent: () => <></>,
-  defaultPendingComponent: () => (
-    <div className="h-screen flex items-center justify-center">
-      {/* <Spin /> */}
-    </div>
-  ),
-  context: {
-    queryClient: new QueryClient(),
-  },
-});
 export function PageEditorProvider({
   children,
   queryClient,
   http,
-  router,
   ...colorModeProps // Spread color mode props (e.g., defaultTheme)
 }: PageEditorProviderProps) {
   if (http) {
@@ -64,9 +49,7 @@ export function PageEditorProvider({
   return (
     <QueryClientProvider client={qc}>
       <Provider {...propsWithDefaults}>
-        <RecoilRoot>
-          <RouterProvider router={router ? router: routers } />
-          </RecoilRoot>
+        <RecoilRoot>{children}</RecoilRoot>
       </Provider>
     </QueryClientProvider>
   );
