@@ -1,3 +1,5 @@
+'use client'
+
 import { type ComponentConfig } from "@measured/puck";
 import { withLayout } from "../../components/Layout";
 import { type FC, useEffect, useMemo, useState } from "react";
