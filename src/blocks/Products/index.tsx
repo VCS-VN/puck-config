@@ -59,29 +59,29 @@ export type ProductsProps = {
 };
 
 const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
-  mobile,
-  tablet,
-  desktop,
-  limit,
-  categoryId,
-  variableName,
-  noResultsText,
-  header: HeaderSlot,
-  footer: FooterSlot,
-  selectionMode = "limit",
-  productIds,
-  selectedProducts = [],
-  sortBy = "featured",
-  sortOrder = undefined,
-  hideOutOfStock = false,
-  bindSortVariableName,
-  bindHideOutOfStockVariableName,
-  bindCategoryVariableName,
-  bindFiltersVariableName,
-  enableUrlSync = true,
-  openMiniCartAfterAdd = true,
-  puck,
-}) => {
+                                                              mobile,
+                                                              tablet,
+                                                              desktop,
+                                                              limit,
+                                                              categoryId,
+                                                              variableName,
+                                                              noResultsText,
+                                                              header: HeaderSlot,
+                                                              footer: FooterSlot,
+                                                              selectionMode = "limit",
+                                                              productIds,
+                                                              selectedProducts = [],
+                                                              sortBy = "featured",
+                                                              sortOrder = undefined,
+                                                              hideOutOfStock = false,
+                                                              bindSortVariableName,
+                                                              bindHideOutOfStockVariableName,
+                                                              bindCategoryVariableName,
+                                                              bindFiltersVariableName,
+                                                              enableUrlSync = true,
+                                                              openMiniCartAfterAdd = true,
+                                                              puck,
+                                                            }) => {
   const variables = useRecoilValue(VariableState);
   const [productionState, setProductionState] = useRecoilState(ProductionState);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -112,14 +112,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     []
   );
 
-  const [searchQuery, setSearchQuery] = useState({})
-  const routerState = useRouterState();
-  useEffect(() => {
-    console.log("routerState",routerState)
-    if (routerState?.location?.search) {
-      setSearchQuery(routerState?.location?.search)
-    }
-  }, [routerState?.location?.search])
 
 
   const [queries, setQueries] = useState({
@@ -129,7 +121,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     sortBy,
     sortOrder,
     hideOutOfStock,
-    categoryId: searchQuery?.categoryId,
+    categoryId: categoryId,
     storeId: puck?.metadata?.entityId || puck?.metadata?.storeId,
   });
 
@@ -151,8 +143,8 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       categoryId:
         selectionMode === "category"
           ? (bindCategoryVariableName
-              ? (variables as any)[bindCategoryVariableName]
-              : undefined) || categoryId || queries?.categoryId
+          ? (variables as any)[bindCategoryVariableName]
+          : undefined) || categoryId || queries?.categoryId
           : (queries?.categoryId || undefined),
       sortBy: queries.sortBy,
       sortOrder: queries.sortOrder,
@@ -238,13 +230,11 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       sortBy,
       sortOrder,
       hideOutOfStock ,
-      categoryId: searchQuery?.categoryId
     }));
   }, [
     sortBy,
     hideOutOfStock,
     sortOrder,
-    searchQuery?.categoryId
   ]);
 
   // Bind from variable state if variable names provided (for FacetControls)
@@ -259,7 +249,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       ...prev,
       sortBy: (vSort as any) || prev.sortBy,
       hideOutOfStock: (vHide as any) ?? prev.hideOutOfStock,
-      categoryId: searchQuery?.categoryId || prev?.categoryId
     }));
   }, [variables, bindSortVariableName, bindHideOutOfStockVariableName]);
 
@@ -275,7 +264,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
         sortBy: (u.sortBy as any) ?? prev.sortBy,
         sortOrder: (u.sortOrder as any) ?? prev.sortOrder,
         hideOutOfStock: (u.hideOutOfStock as any) ?? prev.hideOutOfStock,
-        categoryId: searchQuery?.categoryId
+        categoryId: u?.categoryId
       }));
       // write filters variables
       if (bindFiltersVariableName) {
@@ -298,8 +287,8 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     const catId =
       selectionMode === "category"
         ? (bindCategoryVariableName
-            ? (variables as any)[bindCategoryVariableName]
-            : undefined) || categoryId
+        ? (variables as any)[bindCategoryVariableName]
+        : undefined) || categoryId
         : undefined;
     const pm = extraFilters?.priceMin;
     const px = extraFilters?.priceMax;
@@ -680,27 +669,27 @@ const ProductsInternal: ComponentConfig = {
     variableName: undefined,
   },
   render: ({
-    puck,
-    mobile,
-    tablet,
-    desktop,
-    limit,
-    noResultsText,
-    categoryId,
-    variableName,
-    header,
-    footer,
-    selectionMode,
-    productIds,
-    selectedProducts,
-    sortBy,
-    sortOrder,
-    hideOutOfStock,
-    bindFiltersVariableName,
-    enableUrlSync,
-    bindCategoryVariableName,
-    openMiniCartAfterAdd,
-  }) => {
+             puck,
+             mobile,
+             tablet,
+             desktop,
+             limit,
+             noResultsText,
+             categoryId,
+             variableName,
+             header,
+             footer,
+             selectionMode,
+             productIds,
+             selectedProducts,
+             sortBy,
+             sortOrder,
+             hideOutOfStock,
+             bindFiltersVariableName,
+             enableUrlSync,
+             bindCategoryVariableName,
+             openMiniCartAfterAdd,
+           }) => {
     return (
       <ProductsRender
         mobile={mobile}
