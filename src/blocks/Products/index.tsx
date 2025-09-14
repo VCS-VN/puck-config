@@ -300,8 +300,23 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
         ? (variables as any)[bindCategoryVariableName]
         : undefined) || categoryId || queries?.categoryId
         : (queries?.categoryId || undefined);
+
+    // categoryId:
+    //   selectionMode === "category"
+    //     ? (bindCategoryVariableName
+    //     ? (variables as any)[bindCategoryVariableName]
+    //     : undefined) || categoryId || queries?.categoryId
+    //     : (queries?.categoryId || undefined),
+
     const pm = extraFilters?.priceMin;
     const px = extraFilters?.priceMax;
+    console.log("selectionMode",selectionMode)
+    console.log("bindCategoryVariableName",bindCategoryVariableName)
+    console.log("(variables as any)[bindCategoryVariableName]",(variables as any)[bindCategoryVariableName])
+    console.log("categoryId",categoryId)
+    console.log("queries?.categoryId",queries?.categoryId)
+    console.log("catId",catId)
+
     updateQuery({
       q: queries.search || undefined,
       page: queries.page,
@@ -314,6 +329,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     })
   }, [
     queries.search,
+    queries?.categoryId,
     queries.page,
     queries.sortBy,
     queries.sortOrder,
