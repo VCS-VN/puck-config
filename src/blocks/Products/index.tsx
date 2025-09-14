@@ -298,8 +298,8 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       selectionMode === "category"
         ? (bindCategoryVariableName
         ? (variables as any)[bindCategoryVariableName]
-        : undefined) || categoryId
-        : undefined;
+        : undefined) || categoryId || queries?.categoryId
+        : (queries?.categoryId || undefined);
     const pm = extraFilters?.priceMin;
     const px = extraFilters?.priceMax;
     updateQuery({
