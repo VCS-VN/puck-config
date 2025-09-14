@@ -7,7 +7,7 @@ import { useGetCategoriesQuery } from "@/hooks/category/useGetCategoriesQuery";
 import { getCategoryTree } from "@/services/sale/category/category.api";
 import { matchDataCondition } from "@/blocks/CommonFunction/function";
 import { CategoryMultiSelect } from "@/components/CategoryMultiSelect";
-import {pushUrlState} from "../../utils/url";
+import {useUrlQuery} from "@/hooks/useUrlQuery";
 
 type CategoryItem = { id: string; name: string; icon?: string };
 
@@ -100,6 +100,8 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
       ((import.meta as any)?.env?.VITE_ENTITY_ID as string) ||
       puck?.metadata?.entityId ||
       "";
+
+    const { query, updateQuery } = useUrlQuery();
 
     const { data: listData } = useGetCategoriesQuery(
       {
@@ -223,7 +225,7 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
               onClick={(e: any) => {
                 if (puck?.isEditing) return e.preventDefault();
                 if (!urlRedirect) {
-                  pushUrlState({ categoryId: c?.id, page: 1 });
+                  updateQuery({ categoryId: c?.id, page: 1 })
                   return
                 }
                 const href = matchDataCondition(urlRedirect, c);
@@ -276,7 +278,7 @@ const CategoryListInternal: ComponentConfig<CategoryListProps> = {
                           onClick={(e: any) => {
                             if (puck?.isEditing) return e.preventDefault();
                             if (!urlRedirect) {
-                              pushUrlState({ categoryId: s?.id, page: 1 });
+                              updateQuery({ categoryId: s?.id, page: 1 });
                               return
                             }
                             const href = matchDataCondition(urlRedirect, s);

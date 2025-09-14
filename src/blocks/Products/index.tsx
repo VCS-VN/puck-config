@@ -26,10 +26,9 @@ import { ProductionState } from "@/services/common/production.state.ts";
 import { CategorySingleSelect } from "@/components/CategorySingleSelect";
 import { ProductMultiSelect } from "@/components/ProductMultiSelect";
 import { sendAnalyticsEvent } from "@/utils/analytics";
-import { parseUrlState, pushUrlState } from "@/utils/url";
-import { useRouterState } from '@tanstack/react-router';
 // @ts-ignore - CSS modules types handled via ambient declaration for build
 import "./style.css";
+import {useUrlQuery} from "@/hooks/useUrlQuery";
 export type ProductsProps = {
   mobile: number;
   tablet: number;
@@ -114,12 +113,42 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     []
   );
 
-  const searchQuery = useRouterState({
-    select: state => state.location.search, //
-  });
+  const { query, updateQuery } = useUrlQuery();
+
   useEffect(() => {
-    console.log("searchQuery",searchQuery)
-  }, [searchQuery]);
+    console.log("query",query)
+    if (!enableUrlSync || typeof window === "undefined" || !query) return;
+    try {
+      if (
+        bindFiltersVariableName &&
+        (query.priceMin != null || query.priceMax != null)
+      ) {
+        setVars((prev) => ({
+          ...prev,
+          [bindFiltersVariableName]: {
+            ...((prev as any)[bindFiltersVariableName] || {}),
+            priceMin: query.priceMin,
+            priceMax: query.priceMax,
+          },
+        }));
+      }
+      if (bindCategoryVariableName && query.categoryId) {
+        setVars((prev) => ({
+          ...prev,
+          [bindCategoryVariableName]: query.categoryId,
+        }));
+      }
+      setQueries((prev) => ({
+        ...prev,
+        search: (query.q as any) ?? prev.search,
+        page: (query.page as any) ?? prev.page,
+        sortBy: (query.sortBy as any) ?? prev.sortBy,
+        sortOrder: (query.sortOrder as any) ?? prev.sortOrder,
+        hideOutOfStock: (query.hideOutOfStock as any) ?? prev.hideOutOfStock,
+        categoryId: query?.categoryId
+      }));
+    } catch {}
+  }, [query]);
 
   const [queries, setQueries] = useState({
     search: debouncedValue,
@@ -128,7 +157,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     sortBy,
     sortOrder,
     hideOutOfStock,
-    categoryId: categoryId,
+    categoryId: query?.categoryId,
     storeId: puck?.metadata?.entityId || puck?.metadata?.storeId,
   });
 
@@ -237,11 +266,13 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       sortBy,
       sortOrder,
       hideOutOfStock ,
+      categoryId: query?.categoryId
     }));
   }, [
     sortBy,
     hideOutOfStock,
     sortOrder,
+    query?.categoryId
   ]);
 
   // Bind from variable state if variable names provided (for FacetControls)
@@ -256,38 +287,10 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       ...prev,
       sortBy: (vSort as any) || prev.sortBy,
       hideOutOfStock: (vHide as any) ?? prev.hideOutOfStock,
+      categoryId: query?.categoryId || prev?.categoryId
     }));
   }, [variables, bindSortVariableName, bindHideOutOfStockVariableName]);
 
-  // URL sync: read on mount
-  useEffect(() => {
-    if (!enableUrlSync || typeof window === "undefined") return;
-    try {
-      const u = parseUrlState();
-      setQueries((prev) => ({
-        ...prev,
-        search: (u.q as any) ?? prev.search,
-        page: (u.page as any) ?? prev.page,
-        sortBy: (u.sortBy as any) ?? prev.sortBy,
-        sortOrder: (u.sortOrder as any) ?? prev.sortOrder,
-        hideOutOfStock: (u.hideOutOfStock as any) ?? prev.hideOutOfStock,
-        categoryId: u?.categoryId
-      }));
-      // write filters variables
-      if (bindFiltersVariableName) {
-        const pm = u.priceMin;
-        const px = u.priceMax;
-        if (pm != null || px != null) {
-          // handled in next effect that writes into VariableState
-        }
-      }
-      // update category variable from URL if provided
-      if (bindCategoryVariableName && u.categoryId) {
-        // set via VariableState
-      }
-    } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (!enableUrlSync || typeof window === "undefined") return;
@@ -299,7 +302,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
         : undefined;
     const pm = extraFilters?.priceMin;
     const px = extraFilters?.priceMax;
-    pushUrlState({
+    updateQuery({
       q: queries.search || undefined,
       page: queries.page,
       sortBy: queries.sortBy,
@@ -308,7 +311,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       priceMin: pm,
       priceMax: px,
       categoryId: catId,
-    });
+    })
   }, [
     queries.search,
     queries.page,
@@ -324,33 +327,6 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     enableUrlSync,
   ]);
 
-  // If URL had priceMin/Max or category on first mount, set VariableState
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const u = parseUrlState();
-      if (
-        bindFiltersVariableName &&
-        (u.priceMin != null || u.priceMax != null)
-      ) {
-        setVars((prev) => ({
-          ...prev,
-          [bindFiltersVariableName]: {
-            ...((prev as any)[bindFiltersVariableName] || {}),
-            priceMin: u.priceMin,
-            priceMax: u.priceMax,
-          },
-        }));
-      }
-      if (bindCategoryVariableName && u.categoryId) {
-        setVars((prev) => ({
-          ...prev,
-          [bindCategoryVariableName]: u.categoryId,
-        }));
-      }
-    } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Analytics: impressions
   useEffect(() => {

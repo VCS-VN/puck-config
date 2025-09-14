@@ -36,7 +36,8 @@ import { CategorySingleSelect } from "@/components/CategorySingleSelect";
 import { getCategoryTree } from "@/services/sale/category/category.api";
 import { useRecoilState } from "recoil";
 import { VariableState } from "@/services/common/variable.state";
-import { pushUrlState } from "@/utils/url";
+import {useUrlQuery} from "@/hooks/useUrlQuery";
+
 
 export type CategoryGridProps = {
   title?: string;
@@ -111,6 +112,10 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
   parentCategoryId,
   bindSelectedCategoryVariableName,
 }) => {
+
+  // query
+  const { query, updateQuery } = useUrlQuery();
+
   const [vars, setVars] = useRecoilState(VariableState);
   const selectedCategory = bindSelectedCategoryVariableName
     ? (vars as any)[bindSelectedCategoryVariableName]
@@ -321,7 +326,7 @@ const CategoryGridRender: React.FC<CategoryGridProps & { puck?: any }> = ({
       ...prev,
       [bindSelectedCategoryVariableName]: item?.id,
     }));
-    pushUrlState({ categoryId: item?.id, page: 1 });
+    updateQuery({ categoryId: item?.id, page: 1 })
   };
   // const render
 
