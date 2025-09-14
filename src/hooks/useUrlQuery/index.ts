@@ -176,6 +176,7 @@ export function useUrlQuery(options: UseUrlQueryOptions = {}) {
   );
 
   return {
+    isGetQuery: hasInitRef.current,
     query,
     updateQuery,   // merge
     replaceQuery,  // overwrite toàn bộ

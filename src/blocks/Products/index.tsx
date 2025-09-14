@@ -113,7 +113,7 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
     []
   );
 
-  const { query, updateQuery } = useUrlQuery();
+  const { query, updateQuery,isGetQuery } = useUrlQuery();
 
   useEffect(() => {
     console.log("query",query)
@@ -293,30 +293,19 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
 
 
   useEffect(() => {
-    if (!enableUrlSync || typeof window === "undefined") return;
-    const catId =
+    if (!enableUrlSync || typeof window === "undefined" || !isGetQuery) return;
+    let catId =
       selectionMode === "category"
         ? (bindCategoryVariableName
         ? (variables as any)[bindCategoryVariableName]
         : undefined) || categoryId || queries?.categoryId
         : (queries?.categoryId || undefined);
 
-    // categoryId:
-    //   selectionMode === "category"
-    //     ? (bindCategoryVariableName
-    //     ? (variables as any)[bindCategoryVariableName]
-    //     : undefined) || categoryId || queries?.categoryId
-    //     : (queries?.categoryId || undefined),
-
     const pm = extraFilters?.priceMin;
     const px = extraFilters?.priceMax;
-    console.log("selectionMode",selectionMode)
-    console.log("bindCategoryVariableName",bindCategoryVariableName)
-    console.log("(variables as any)[bindCategoryVariableName]",(variables as any)[bindCategoryVariableName])
-    console.log("categoryId",categoryId)
-    console.log("queries?.categoryId",queries?.categoryId)
-    console.log("catId",catId)
-
+    if (!catId && query?.categoryId) {
+      catId = query?.categoryId
+    }
     updateQuery({
       q: queries.search || undefined,
       page: queries.page,
@@ -328,6 +317,8 @@ const ProductsRender: FC<ProductsProps & { puck?: any }> = ({
       categoryId: catId,
     })
   }, [
+    // query,
+    isGetQuery,
     queries.search,
     queries?.categoryId,
     queries.page,
